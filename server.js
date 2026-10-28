@@ -13,28 +13,44 @@ const sessions = new Map();
 app.use(express.json({ limit: "10kb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Telegram API helper
+// Telegram API helper — UPDATED DIAGNOSTICS
 async function telegram(method, data) {
   if (!BOT_TOKEN) {
-    throw new Error("Telegram bot token is not configured.");
+    throw new Error("TELEGRAM_BOT_TOKEN is missing.");
   }
 
-  const response = await fetch(
-    `https://api.telegram.org/bot${BOT_TOKEN}/${method}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    }
-  );
+  if (!CHAT_ID) {
+    throw new Error("TELEGRAM_CHAT_ID is missing.");
+  }
+
+  const url =
+    `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
+
+  console.log("Sending Telegram request:", method);
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data),
+    signal: AbortSignal.timeout(15000)
+  });
 
   const result = await response.json();
 
+  console.log("Telegram HTTP status:", response.status);
+  console.log(
+    "Telegram response:",
+    JSON.stringify({
+      ok: result.ok,
+      description: result.description
+    })
+  );
+
   if (!response.ok || !result.ok) {
     throw new Error(
-      result.description || "Telegram request failed."
+      result.description || `Telegram HTTP ${response.status}`
     );
   }
 
@@ -59,12 +75,10 @@ app.post("/api/session", (req, res) => {
     status: "idle"
   });
 
-  res.json({
-    sessionId
-  });
+  res.json({ sessionId });
 });
 
-// Request Telegram approval
+// Request Telegram approval for a test-only demo
 app.post("/api/approval-request", async (req, res) => {
   const { sessionId, stage } = req.body || {};
 
@@ -86,6 +100,8 @@ app.post("/api/approval-request", async (req, res) => {
   }
 
   if (!CHAT_ID || !BOT_TOKEN) {
+    console.error("Telegram environment variables are missing.");
+
     return res.status(503).json({
       error: "Telegram environment variables are missing."
     });
@@ -104,22 +120,21 @@ app.post("/api/approval-request", async (req, res) => {
   try {
     await telegram("sendMessage", {
       chat_id: CHAT_ID,
-
       text:
         "DEMO APPROVAL REQUEST\n\n" +
         "Stage: " + stageNames[stage] + "\n" +
         "Session: " + sessionId + "\n\n" +
-        "No PIN or OTP values are collected or transmitted.",
+        "Test notification only. No PIN or verification codes are sent.",
 
       reply_markup: {
         inline_keyboard: [
           [
             {
-              text: "Approve",
+              text: "Approve demo",
               callback_data: `approve:${sessionId}:${stage}`
             },
             {
-              text: "Decline",
+              text: "Decline demo",
               callback_data: `decline:${sessionId}:${stage}`
             }
           ]
@@ -127,7 +142,9 @@ app.post("/api/approval-request", async (req, res) => {
       }
     });
 
-    res.json({
+    console.log("Telegram notification sent successfully.");
+
+    return res.json({
       ok: true,
       status: "pending"
     });
@@ -135,8 +152,14 @@ app.post("/api/approval-request", async (req, res) => {
   } catch (error) {
     session.status = "idle";
 
-    res.status(502).json({
-      error: "Telegram notification failed."
+    // UPDATED: show the actual error in Render Logs
+    console.error(
+      "Telegram notification failed:",
+      error.message
+    );
+
+    return res.status(502).json({
+      error: "Telegram notification failed. Check Render Logs."
     });
   }
 });
@@ -144,7 +167,6 @@ app.post("/api/approval-request", async (req, res) => {
 // Check demo approval status
 app.get("/api/status", (req, res) => {
   const { sessionId, stage } = req.query;
-
   const session = sessions.get(sessionId);
 
   if (!session) {
@@ -154,14 +176,10 @@ app.get("/api/status", (req, res) => {
   }
 
   if (session.stage !== stage) {
-    return res.json({
-      status: "idle"
-    });
+    return res.json({ status: "idle" });
   }
 
-  res.json({
-    status: session.status
-  });
+  res.json({ status: session.status });
 });
 
 // Receive Telegram inline-button clicks
@@ -172,13 +190,13 @@ app.post("/telegram-webhook", async (req, res) => {
 
   if (!query?.data) return;
 
-  const match = /^(approve|decline):([a-f0-9]+):(pin|code1|code2)$/
-    .exec(query.data);
+  const match =
+    /^(approve|decline):([a-f0-9]+):(pin|code1|code2)$/
+      .exec(query.data);
 
   if (!match) return;
 
   const [, decision, sessionId, stage] = match;
-
   const session = sessions.get(sessionId);
 
   if (
@@ -191,7 +209,12 @@ app.post("/telegram-webhook", async (req, res) => {
         callback_query_id: query.id,
         text: "This demo request is no longer active."
       });
-    } catch (_) {}
+    } catch (error) {
+      console.error(
+        "Telegram callback error:",
+        error.message
+      );
+    }
 
     return;
   }
@@ -218,7 +241,10 @@ app.post("/telegram-webhook", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Telegram callback update failed.");
+    console.error(
+      "Telegram callback update failed:",
+      error.message
+    );
   }
 });
 
