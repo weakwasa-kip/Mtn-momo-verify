@@ -19,7 +19,7 @@ async function telegram(method, data) {
     throw new Error("Telegram environment variables are missing.");
   }
 
-  const url = `https://telegram.org{BOT_TOKEN}/${method}`;
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
   
   const response = await fetch(url, {
     method: "POST",
