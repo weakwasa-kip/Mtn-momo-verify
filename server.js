@@ -1,147 +1,245 @@
-// index.js - Unified Application Engine & Telegram Broker Layer
-import express from 'express';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import TelegramBot from 'node-telegram-bot-api';
-import { requestLoanDisbursement } from './momoServer.js';
-
-dotenv.config();
+const express = require("express");
+const crypto = require("crypto");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+const sessions = new Map();
 
-// In-Memory state dict to cache active application objects across request frames
-const pendingLoansCache = new Map();
+app.use(express.json({ limit: "10kb" }));
+app.use(express.static(path.join(__dirname, "public")));
 
-// Initialize the Telegram Bot interface pool
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
-const ADMIN_CHAT_ID = process.env.TELEGRAM_ADMIN_CHAT_ID;
+// Telegram API helper
+async function telegram(method, data) {
+  if (!BOT_TOKEN) {
+    throw new Error("Telegram bot token is not configured.");
+  }
 
-/**
- * API Route: Receive Loan Form Submissions
- */
-app.post('/api/loans/apply', async (req, res) => {
-    const { fullName, mtnNumber, loanAmount, repaymentPeriodMonths, monthlyIncome, intendedPurpose } = req.body;
-
-    if (!fullName || !mtnNumber || !loanAmount || !repaymentPeriodMonths || !monthlyIncome || !intendedPurpose) {
-        return res.status(400).json({ success: false, error: "Validation failure: All fields are mandatory." });
+  const response = await fetch(
+    `https://api.telegram.org/bot${BOT_TOKEN}/${method}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
     }
+  );
 
-    const months = parseInt(repaymentPeriodMonths);
-    if (isNaN(months) || months < 1 || months > 24) {
-        return res.status(400).json({ success: false, error: "Invalid horizon parameter: Limits are capped from 1 to 24 months." });
-    }
+  const result = await response.json();
 
-    const applicationId = 'LN-' + Math.floor(100000 + Math.random() * 900000);
+  if (!response.ok || !result.ok) {
+    throw new Error(
+      result.description || "Telegram request failed."
+    );
+  }
 
-    // Save state criteria down to local dictionary memory
-    pendingLoansCache.set(applicationId, { fullName, mtnNumber, loanAmount, months, monthlyIncome, intendedPurpose, status: 'PENDING' });
+  return result.result;
+}
 
-    // 📋 COMPREHENSIVE TEXT BLOCK TRANSMITTED DOWN TO TELEGRAM CHAT
-    const fullMessagePayload = `
-📋 *NEW MOPESA UGANDA LOAN APPLICATION*
-▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-👤 *Applicant Name:* \`${fullName}\`
-📞 *MTN Wallet Line:* \`${mtnNumber}\`
-💰 *Principal Amount:* UGX ${parseFloat(loanAmount).toLocaleString()}
-📅 *Horizon Duration:* ${months} Months
-📈 *Monthly Income:* UGX ${parseFloat(monthlyIncome).toLocaleString()}
-🌾 *Intended Vector:* ${intendedPurpose.toUpperCase()}
-🆔 *Application Ref:* \`${applicationId}\`
-▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-*Action Required: Choose an authorization vector below.*
-    `;
+// Health check
+app.get("/api/health", (req, res) => {
+  res.json({
+    ok: true,
+    message: "Demo server is running."
+  });
+});
 
-    // 🔘 THE TELEGRAM INLINE KEYBOARD CORE MATRIX
-    const interactiveInlineKeyboard = {
-        reply_markup: {
-            inline_keyboard: [
-                [
-                    { text: "Approve & Pay ✅", callback_data: `APPROVE_${applicationId}` },
-                    { text: "Reject Application ❌", callback_data: `REJECT_${applicationId}` }
-                ]
-            ]
-        },
-        parse_mode: 'Markdown'
-    };
+// Create demo session
+app.post("/api/session", (req, res) => {
+  const sessionId = crypto.randomBytes(12).toString("hex");
 
+  sessions.set(sessionId, {
+    createdAt: Date.now(),
+    stage: null,
+    status: "idle"
+  });
+
+  res.json({
+    sessionId
+  });
+});
+
+// Request Telegram approval
+app.post("/api/approval-request", async (req, res) => {
+  const { sessionId, stage } = req.body || {};
+
+  const allowedStages = ["pin", "code1", "code2"];
+  const session = sessions.get(sessionId);
+
+  if (!session || !allowedStages.includes(stage)) {
+    return res.status(400).json({
+      error: "Invalid demo session or stage."
+    });
+  }
+
+  if (Date.now() - session.createdAt > 30 * 60 * 1000) {
+    sessions.delete(sessionId);
+
+    return res.status(410).json({
+      error: "Demo session expired. Please restart."
+    });
+  }
+
+  if (!CHAT_ID || !BOT_TOKEN) {
+    return res.status(503).json({
+      error: "Telegram environment variables are missing."
+    });
+  }
+
+  session.stage = stage;
+  session.status = "pending";
+  session.updatedAt = Date.now();
+
+  const stageNames = {
+    pin: "Demo PIN stage",
+    code1: "Demo code stage 1",
+    code2: "Demo code stage 2"
+  };
+
+  try {
+    await telegram("sendMessage", {
+      chat_id: CHAT_ID,
+
+      text:
+        "DEMO APPROVAL REQUEST\n\n" +
+        "Stage: " + stageNames[stage] + "\n" +
+        "Session: " + sessionId + "\n\n" +
+        "No PIN or OTP values are collected or transmitted.",
+
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "Approve",
+              callback_data: `approve:${sessionId}:${stage}`
+            },
+            {
+              text: "Decline",
+              callback_data: `decline:${sessionId}:${stage}`
+            }
+          ]
+        ]
+      }
+    });
+
+    res.json({
+      ok: true,
+      status: "pending"
+    });
+
+  } catch (error) {
+    session.status = "idle";
+
+    res.status(502).json({
+      error: "Telegram notification failed."
+    });
+  }
+});
+
+// Check demo approval status
+app.get("/api/status", (req, res) => {
+  const { sessionId, stage } = req.query;
+
+  const session = sessions.get(sessionId);
+
+  if (!session) {
+    return res.status(404).json({
+      error: "Demo session not found."
+    });
+  }
+
+  if (session.stage !== stage) {
+    return res.json({
+      status: "idle"
+    });
+  }
+
+  res.json({
+    status: session.status
+  });
+});
+
+// Receive Telegram inline-button clicks
+app.post("/telegram-webhook", async (req, res) => {
+  res.sendStatus(200);
+
+  const query = req.body?.callback_query;
+
+  if (!query?.data) return;
+
+  const match = /^(approve|decline):([a-f0-9]+):(pin|code1|code2)$/
+    .exec(query.data);
+
+  if (!match) return;
+
+  const [, decision, sessionId, stage] = match;
+
+  const session = sessions.get(sessionId);
+
+  if (
+    !session ||
+    session.stage !== stage ||
+    session.status !== "pending"
+  ) {
     try {
-        // Broadcast the template down to your private Admin chat ID channel
-        await bot.sendMessage(ADMIN_CHAT_ID, fullMessagePayload, interactiveInlineKeyboard);
-        return res.status(200).json({ success: true, applicationId });
-    } catch (error) {
-        console.error("[TELEGRAM BROADCAST REJECTION]:", error.message);
-        return res.status(500).json({ success: false, error: "Unable to push data matrix down to administration console." });
-    }
+      await telegram("answerCallbackQuery", {
+        callback_query_id: query.id,
+        text: "This demo request is no longer active."
+      });
+    } catch (_) {}
+
+    return;
+  }
+
+  session.status =
+    decision === "approve" ? "approved" : "declined";
+
+  session.updatedAt = Date.now();
+
+  try {
+    await telegram("answerCallbackQuery", {
+      callback_query_id: query.id,
+      text: decision === "approve"
+        ? "Demo approved."
+        : "Demo declined."
+    });
+
+    await telegram("editMessageReplyMarkup", {
+      chat_id: query.message.chat.id,
+      message_id: query.message.message_id,
+      reply_markup: {
+        inline_keyboard: []
+      }
+    });
+
+  } catch (error) {
+    console.error("Telegram callback update failed.");
+  }
 });
 
-/**
- * 🎯 INTERACTIVE INLINE KEYBOARD ACTIONS INTERCEPT HOOK
- * This block runs immediately when you click Approve or Reject inside Telegram
- */
-bot.on('callback_query', async (callbackQuery) => {
-    const actionData = callbackQuery.data;
-    const messageContext = callbackQuery.message;
+// Remove expired demo sessions
+setInterval(() => {
+  const cutoff = Date.now() - 30 * 60 * 1000;
 
-    const isApproval = actionData.startsWith('APPROVE_');
-    const isRejection = actionData.startsWith('REJECT_');
-    
-    // Extract unique tracking sequence string from payload pattern
-    const applicationId = actionData.replace('APPROVE_', '').replace('REJECT_', '');
-    const application = pendingLoansCache.get(applicationId);
-
-    if (!application || application.status !== 'PENDING') {
-        return bot.answerCallbackQuery(callbackQuery.id, { text: "Error: Session context closed or already processed.", show_alert: true });
+  for (const [id, session] of sessions.entries()) {
+    if (session.createdAt < cutoff) {
+      sessions.delete(id);
     }
+  }
+}, 5 * 60 * 1000).unref();
 
-    if (isRejection) {
-        application.status = 'REJECTED';
-        pendingLoansCache.set(applicationId, application);
-
-        // Strip action elements and lock state as Rejected to clean up the Telegram screen
-        await bot.editMessageText(
-            `${messageContext.text}\n\n🛑 *DECISION PROFILE LOG: DECLINED BY ADMINISTRATIVE CONSOLE*`, 
-            { chat_id: messageContext.chat.id, message_id: messageContext.message_id, parse_mode: 'Markdown' }
-        );
-        return bot.answerCallbackQuery(callbackQuery.id, { text: "Application marked as Declined successfully." });
-    }
-
-    if (isApproval) {
-        // Alert admin immediately inside Telegram screen that work has begun
-        await bot.answerCallbackQuery(callbackQuery.id, { text: "Reaching out to MTN API Gateways... Executing Wallet Payout." });
-
-        try {
-            // Trigger actual money transfer through momoServer.js logic
-            const mtnReceipt = await requestLoanDisbursement(application.mtnNumber, application.loanAmount);
-
-            application.status = 'APPROVED';
-            application.mtnTransactionId = mtnReceipt.transactionId;
-            pendingLoansCache.set(applicationId, application);
-
-            // Update Telegram layout with immutable validation tx verification strings
-            await bot.editMessageText(
-                `${messageContext.text}\n\n🟢 *DECISION PROFILE LOG: APPROVED & FUNDS PAID OUT*\n🔗 *MTN Verification TxID:* \`${mtnReceipt.transactionId}\``, 
-                { chat_id: messageContext.chat.id, message_id: messageContext.message_id, parse_mode: 'Markdown' }
-            );
-        } catch (error) {
-            console.error("[MTN INFRASTRUCTURE OPERATION BLOCKED]:", error.message);
-            await bot.sendMessage(
-                messageContext.chat.id, 
-                `⚠️ *CRITICAL DISBURSEMENT SYSTEM FAULT FOR ID ${applicationId}:* \n_${error.message}_`, 
-                { parse_mode: 'Markdown' }
-            );
-        }
-    }
+// Serve the demo
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "public", "index.html")
+  );
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 [SERVER UP] Web platform live. Telegram hooks running smoothly on port ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Demo server running on port ${PORT}`);
 });
-
