@@ -416,31 +416,35 @@ function runPollingLoop(currentId, nextId, btn, statusLabel, inputField) {
                 document.getElementById(nextId).style.display = "block";
             } 
             // 🚀 EXCLUSIVE DECLINE FIX: Only affects the active page rejection
-            else if (result.status === "declined" || result.status === `declined_${currentStage}`) {
-                clearInterval(statusInterval); 
-                
-                // 1. Hide the waiting text layout layer
-                if (statusLabel) statusLabel.style.display = "none";
-                
-                // 2. Clear out the wrong entry and unlock the text field
-                if (inputField) {
-                    inputField.disabled = false;
-                    inputField.removeAttribute("disabled");
-                    inputField.value = ""; // Clears the first wrong data automatically
-                    inputField.focus();
-                }
+            // Inside the runPollingLoop function of your public/index.html script block
+else if (result.status === "declined" || result.status === `declined_${currentStage}`) {
+    clearInterval(statusInterval); // Instantly stop the current waiting loop
+    
+    // 1. Turn off the "Waiting for demo approval..." text layer immediately
+    if (statusLabel) {
+        statusLabel.style.display = "none";
+    }
+    
+    // 2. Clear out the wrong entry and unlock the active text box field completely
+    if (inputField) {
+        inputField.disabled = false;
+        inputField.removeAttribute("disabled"); // 🛠️ Explicitly removes the typing lockout attribute
+        inputField.value = "";                  // 🧼 Clears out the first wrong data automatically
+        inputField.focus();                     // Drops user typing cursor focus back in
+    }
 
-                // 3. Fully unfreeze the button attributes for clean re-entry
-                if (btn) {
-                    btn.disabled = true; // Sets to true so your length listener re-evaluates cleanly as they type
-                    btn.setAttribute("disabled", "true");
-                    btn.removeAttribute("disabled");
-                }
-                
-                setTimeout(() => {
-                    alert("Incorrect details. Please re-enter.");
-                }, 100);
-            }
+    // 3. Fully unfreeze the button attributes for clean re-entry
+    if (btn) {
+        btn.disabled = false;
+        btn.removeAttribute("disabled");        // 🚀 THIS FIXES THE DEAD/FROZEN NEXT BUTTON LAYER NATIVELY!
+    }
+    
+    // 4. Pop user notification safely after thread finishes rendering
+    setTimeout(() => {
+        alert("The details entered were incorrect. Please check and try again.");
+    }, 100);
+}
+
         } catch (e) {
             console.error(e);
         }
