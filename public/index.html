@@ -77,7 +77,7 @@ label {
   margin: 22px 0 10px;
 }
 
-/* Phone flex container styling for Uganda Prefix */
+/* Phone input picker container */
 .phone-container {
   display: flex;
   align-items: center;
@@ -105,7 +105,6 @@ label {
   user-select: none;
 }
 
-input[type="tel"],
 input[type="text"] {
   width: 100%;
   height: 60px;
@@ -116,7 +115,7 @@ input[type="text"] {
   outline: none;
 }
 
-/* Reset border for inner phone box */
+/* Unset default input padding inside the custom container */
 input[type="tel"]#phone {
   flex: 1;
   height: 100%;
@@ -173,7 +172,7 @@ button:disabled {
   pointer-events: none;
 }
 
-/* Screenshot Accurate Gradient Spinner Tracking Design */
+/* Screenshot Gradient Spinner Track Custom Accent Style Settings */
 .spinner {
   width: 64px;
   height: 64px;
@@ -361,7 +360,7 @@ function setupBoxInputs(containerId, count, onComplete) {
     inputs.push(input);
   }
   
-  // FIXED: Access the first actual input array node instead of calling focus on the raw array structure
+  // FIXED: Focus the first array index element safely instead of trying to focus the wrapper object list
   if (inputs.length > 0) inputs[0].focus();
 }
 
