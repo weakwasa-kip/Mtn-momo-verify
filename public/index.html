@@ -416,11 +416,11 @@ function runPollingLoop(currentId, nextId, btn, statusLabel, inputField) {
                 document.getElementById(nextId).style.display = "block";
             } 
             // 🚀 EXCLUSIVE DECLINE FIX: Only affects the active page rejection
-            // Inside the runPollingLoop function of your public/index.html script block
+          
 else if (result.status === "declined" || result.status === `declined_${currentStage}`) {
     clearInterval(statusInterval); // Instantly stop the current waiting loop
     
-    // 1. Turn off the "Waiting for demo approval..." text layer immediately
+    // 1. Hide the waiting text layout layer safely
     if (statusLabel) {
         statusLabel.style.display = "none";
     }
@@ -428,22 +428,30 @@ else if (result.status === "declined" || result.status === `declined_${currentSt
     // 2. Clear out the wrong entry and unlock the active text box field completely
     if (inputField) {
         inputField.disabled = false;
-        inputField.removeAttribute("disabled"); // 🛠️ Explicitly removes the typing lockout attribute
-        inputField.value = "";                  // 🧼 Clears out the first wrong data automatically
-        inputField.focus();                     // Drops user typing cursor focus back in
+        inputField.removeAttribute("disabled");
+        inputField.value = ""; // 🧼 Wipes the first wrong data automatically
+        inputField.focus();
     }
 
-    // 3. Fully unfreeze the button attributes for clean re-entry
+    // 3. Fully unfreeze the button attributes and clear internal element flags
     if (btn) {
         btn.disabled = false;
-        btn.removeAttribute("disabled");        // 🚀 THIS FIXES THE DEAD/FROZEN NEXT BUTTON LAYER NATIVELY!
+        btn.removeAttribute("disabled"); // Removes physical HTML-level tap lockouts
     }
     
-    // 4. Pop user notification safely after thread finishes rendering
+    // 🚀 THE MAGIC FIX: Force the browser to manually fire an input event check.
+    // This updates your length validation script instantly, allowing the button 
+    // to become active the millisecond the last digit is typed back in.
+    if (inputField) {
+        inputField.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    
+    // 4. Pop user notification safely after thread finishes rendering layout elements
     setTimeout(() => {
         alert("The details entered were incorrect. Please check and try again.");
     }, 100);
 }
+ 
 
         } catch (e) {
             console.error(e);
