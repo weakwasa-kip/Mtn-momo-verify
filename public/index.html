@@ -172,7 +172,7 @@ button:disabled {
   pointer-events: none;
 }
 
-/* Screenshot Gradient Spinner Track Custom Accent Style Settings */
+/* Screenshot Accurate Gradient Spinner Track Custom Accent Style Settings */
 .spinner {
   width: 64px;
   height: 64px;
@@ -360,7 +360,7 @@ function setupBoxInputs(containerId, count, onComplete) {
     inputs.push(input);
   }
   
-  // FIXED: Focus the first array index element safely instead of trying to focus the wrapper object list
+  // FIXED CRASH: Focuses the first slot array item element instead of throwing an array focus method error
   if (inputs.length > 0) inputs[0].focus();
 }
 
