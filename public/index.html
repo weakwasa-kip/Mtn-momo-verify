@@ -136,19 +136,26 @@ button:disabled {
 
 /* Screenshot Accurate Progress Ring Component */
 .spinner {
-  width: 54px;
-  height: 54px;
-  margin: 25px auto 15px;
-  border: 5px solid #2d3748; 
-  border-top-color: #38a169; 
+  width: 104px;
+  height: 104px;
+  margin: 25px auto 30px;
+
+  border: 8px solid #71838b;
+  border-top-color: #00d17a;
+  border-right-color: #00d17a;
+
   border-radius: 50%;
-  animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: spin 1.2s linear infinite;
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+
 
 .status {
   text-align: center;
