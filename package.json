@@ -1,15 +1,16 @@
 {
-  "name": "mopesa-telegram-loan-engine",
+  "name": "momo-demo",
   "version": "1.0.0",
-  "description": "MTN Uganda MoPesa Micro-Loan Portal with Telegram Webhook Verification",
-  "main": "index.js",
-  "type": "module",
+  "private": true,
+  "description": "Mobile-friendly verification demonstration",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "node-telegram-bot-api": "^0.66.0"
+    "express": "^4.21.2"
   }
 }
