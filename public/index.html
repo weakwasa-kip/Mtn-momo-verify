@@ -35,7 +35,25 @@ body {
     padding: 15px;
 }
 
- 
+..logo {
+    width: 115px;
+    height: 55px;
+    border: 2px solid #004F9F;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 27px;
+    font-weight: bold;
+    color: #004F9F;
+    line-height: 1.1;
+}
+ .mtn-text {
+    font-size: 11px;
+    font-weight: bold;
+    color: #004F9F;
+ } 
 .card {
   width: calc(100% - 32px);
   max-width: 520px;
@@ -51,34 +69,7 @@ h1 {
   margin: 10px 0 20px;
  color: #00AEEF;
  
-.logo-container {
-    width: 115px;
-    height: 55px;
-    background-color: #FFCC00; /* Exact MTN Yellow background */
-    border: 2px solid #003366; /* Deep Brand Navy Blue border */
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-family: sans-serif; /* Clean font match */
-    box-sizing: border-box;
 }
-
-.logo-text-main {
-    font-size: 24px;
-    font-weight: 800; /* Extra bold for "MoMo" */
-    color: #003366; /* Deep Brand Navy Blue text */
-    line-height: 1;
-}
-
-.logo-text-sub {
-    font-size: 10px;
-    font-weight: normal;
-    color: #003366; /* Deep Brand Navy Blue text */
-    margin-top: 2px;
-}
-
 p {
   text-align: center;
   line-height: 1.6;
@@ -242,11 +233,11 @@ button:disabled {
 </head>
 <body>
 
-<div class="logo-container">
-    <span class="logo-text-main">MoMo</span>
-    <span class="logo-text-sub">from MTN</span>
-</div>
-
+<header class="header">
+  <div class="logo">
+    <span>MoMo</span>
+    <span class="mtn-text">from MTN</span>
+  </div>
 </header>
   <!-- PAGE 1: PHONE NUMBER -->
   <section id="page1">
