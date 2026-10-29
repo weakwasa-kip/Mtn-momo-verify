@@ -1,66 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to MoMo</title>
-  <style>
-    * { box-sizing: border-box; }
-    body { 
-      margin: 0; min-height: 100vh; font-family: Arial, sans-serif; 
-      background: #eef2f5; color: #171717; display: flex; flex-direction: column;
-    }
-    header { background: #004f71; padding: 40px 16px 60px; text-align: center; }
-    .momo-logo-box {
-      width: 60px; height: 60px; background: #ffcc00; border-radius: 12px;
-      margin: 0 auto; display: flex; align-items: center; justify-content: center;
-    }
-    .momo-logo-text { color: #004f71; font-weight: 900; font-size: 18px; }
-    .momo-subtext { color: #ffcc00; font-size: 11px; margin-top: 4px; font-weight: bold; }
-    main { 
-      width: min(440px, 92%); margin: -35px auto 25px; padding: 30px 24px; 
-      background: white; border-radius: 24px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); z-index: 10;
-    }
-    h2 { margin-top: 0; text-align: center; color: #004f71; font-size: 22px; }
-    .field-label { display: block; text-align: center; margin: 20px 0 12px; font-weight: 600; color: #555; }
-    .phone-row { display: flex; gap: 10px; align-items: center; border: 1px solid #ccc; border-radius: 16px; padding: 8px 14px; }
-    .country-flag { font-size: 20px; }
-    .phone-input-field { border: none; outline: none; width: 100%; font-size: 18px; font-weight: 600; }
-    .digits { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
-    .digit { width: 44px; height: 44px; border: 1px solid #ccc; border-radius: 12px; text-align: center; font-size: 20px; font-weight: bold; }
-    button { 
-      width: 100%; padding: 16px; margin-top: 30px; border: 0; border-radius: 25px; 
-      background: #004f71; color: white; font-weight: bold; font-size: 16px; cursor: pointer; 
-    }
-    button:disabled { background: #cccccc; cursor: not-allowed; }
-    .hidden { display: none !important; }
-    .legal-text { text-align: center; font-size: 13px; color: #666; margin-top: 25px; }
-    .legal-text a { color: #004f71; text-decoration: none; font-weight: bold; }
-    .error { color: #d32f2f; text-align: center; margin-top: 12px; font-weight: 600; }
-    .success { font-size: 24px; text-align: center; color: #2e7d32; font-weight: bold; }
-    .secure-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 30, 45, 0.75);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 9999;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; color: #ffffff; text-align: center;
-    }
-    .circular-spinner {
-      width: 60px; height: 60px; border: 6px solid rgba(255, 255, 255, 0.2);
-      border-top-color: #00cc66; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;
-    }
-    .secure-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; letter-spacing: 0.5px; }
-    .secure-sub { font-size: 14px; color: #dddddd; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verification Demo</title>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --yellow: #ffcc00;
+  --teal: #00566d;
+  --white: #ffffff;
+  --text: #171717;
+  --muted: #667085;
+  --border: #d1d5db;
+}
+
+body {
+  margin: 0;
+  background: #f1f3f5;
+  font-family: Arial, sans-serif;
+  color: var(--text);
+}
+
+.header {
+  height: 135px;
+  background: var(--yellow);
+  border-top: 8px solid #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  border: 5px solid #111;
+  border-radius: 50%;
+  padding: 15px 35px;
+  font-size: 35px;
+  font-weight: 900;
+}
+
+.card {
+  width: calc(100% - 32px);
+  max-width: 520px;
+  margin: 25px auto;
+  background: var(--white);
+  border-radius: 30px;
+  padding: 28px 22px;
+  box-shadow: 0 10px 30px #00000010;
+}
+
+h1 {
+  text-align: center;
+  font-size: 28px;
+  margin: 10px 0 20px;
+}
+
+p {
+  text-align: center;
+  line-height: 1.6;
+  color: #414653;
+}
+
+.demo {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin: 22px 0 10px;
+}
+
+input[type="tel"],
+input[type="text"] {
+  width: 100%;
+  height: 60px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 20px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #2878d0;
+}
+
+.boxes {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+  margin: 25px 0;
+}
+
+.boxes input {
+  width: 58px;
+  height: 66px;
+  text-align: center;
+  padding: 0;
+  font-size: 25px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+}
+
+.boxes input:focus {
+  border-color: #2878d0;
+}
+
+button {
+  width: 100%;
+  height: 60px;
+  margin-top: 20px;
+  background: var(--yellow);
+  border: none;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+button:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+/* Screenshot Accurate Progress Ring Component */
+.spinner {
+  width: 54px;
+  height: 54px;
+  margin: 25px auto 15px;
+  border: 5px solid #2d3748; 
+  border-top-color: #38a169; 
+  border-radius: 50%;
+  animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.status {
+  text-align: center;
+  color: var(--teal);
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.error {
+  color: #b42318;
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.notice {
+  background: #fff4ce;
+  padding: 15px;
+  border-radius: 12px;
+  line-height: 1.5;
+  font-size: 14px;
+  margin: 20px 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.success {
+  text-align: center;
+  font-size: 60px;
+  color: #168348;
+}
+
+@media (max-width: 380px) {
+  .card {
+    padding: 22px 15px;
+  }
+  .boxes {
+    gap: 6px;
+  }
+  .boxes input {
+    width: 48px;
+    height: 58px;
+  }
+}
+</style>
 </head>
 <body>
-
-<div id="secureModal" class="secure-overlay hidden">
-  <div class="circular-spinner"></div>
-  <div class="secure-title">Demo Loading</div>
-  <div class="secure-sub">
-    Please wait while the demonstration loads.
-  </div>
-</div>
 
 <header class="header">
   <div class="logo">DEMO</div>
@@ -294,4 +431,4 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
     }
   }, 2500);
 }
-</script>
+        </script>
