@@ -135,15 +135,38 @@ button:disabled {
 }
 
 /* Screenshot Accurate Progress Ring Component */
-.spinner {
-  width: 54px;
-  height: 54px;
-  margin: 25px auto 15px;
-  border: 5px solid #2d3748; 
-  border-top-color: #38a169; 
-  border-radius: 50%;
-  animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+/* Container to keep layout alignment intact */
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px auto;
 }
+
+/* The exact visual look from your screenshot */
+.secure-loading-ring {
+    width: 70px;
+    height: 70px;
+    
+    /* Dark grey background ring track */
+    border: 6px solid #4a5568; 
+    
+    /* Bright green active indicator segment */
+    border-top: 6px solid #00df89; 
+    border-right: 6px solid #00df89;
+    
+    border-radius: 50%;
+    animation: spin-smooth 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    
+    /* Subtle glow effect seen in the screenshot */
+    box-shadow: 0 0 10px rgba(0, 223, 137, 0.15);
+}
+
+@keyframes spin-smooth {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 
 @keyframes spin {
   from { transform: rotate(0deg); }
