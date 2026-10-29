@@ -20,58 +20,42 @@
 
 body {
   margin: 0;
-  background: #edf2f4;
+  background: #f1f3f5;
   font-family: Arial, sans-serif;
-  color: #002d3a;
+  color: var(--text);
 }
 
 .header {
-  height: 305px;
-  background: #00566d;
+  height: 135px;
+  background: var(--yellow);
+  border-top: 8px solid #111;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 20px;
+}
+
+.logo {
+  border: 5px solid #111;
+  border-radius: 50%;
+  padding: 15px 35px;
+  font-size: 35px;
+  font-weight: 900;
 }
 
 .card {
-  width: calc(100% - 36px);
-  max-width: 628px;
-  margin: -60px auto 25px;
-  background: #ffffff;
-  border-radius: 38px;
-  padding: 35px 28px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  position: relative;
-  z-index: 1;
+  width: calc(100% - 32px);
+  max-width: 520px;
+  margin: 25px auto;
+  background: var(--white);
+  border-radius: 30px;
+  padding: 28px 22px;
+  box-shadow: 0 10px 30px #00000010;
 }
 
 h1 {
   text-align: center;
   font-size: 28px;
-  color: #00566d;
-  margin: 10px 0 30px;
-}
-
-button {
-  width: 100%;
-  height: 60px;
-  margin-top: 30px;
-  background: #00566d;
-  color: #fff;
-  border: none;
-  border-radius: 50px;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-button:disabled {
-  background: #ccc !important;
-  color: #fff !important;
-  cursor: not-allowed !important;
-  pointer-events: none;
+  margin: 10px 0 20px;
 }
 
 p {
@@ -96,13 +80,12 @@ label {
 input[type="tel"],
 input[type="text"] {
   width: 100%;
-  height: 56px;
-  border: 1.5px solid #c9cdd1;
-  border-radius: 30px;
-  padding: 0 20px;
-  font-size: 18px;
+  height: 60px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 20px;
   outline: none;
-  background: #fff;
 }
 
 input:focus {
@@ -133,15 +116,15 @@ input:focus {
 
 button {
   width: 100%;
-  height: 88px;
-  margin-top: 30px;
-  background: #00566d;
-  color: #ffffff;
+  height: 60px;
+  margin-top: 20px;
+  background: var(--yellow);
   border: none;
-  border-radius: 50px;
-  font-size: 23px;
+  border-radius: 12px;
+  font-size: 20px;
   font-weight: bold;
   cursor: pointer;
+  opacity: 1;
   transition: opacity 0.2s ease;
 }
 
@@ -153,14 +136,16 @@ button:disabled {
 
 /* Screenshot Accurate Progress Ring Component */
 .spinner {
-  width: 90px;
-  height: 90px;
-  margin: 25px auto 35px;
-  border: 7px solid #475869;
-  border-top-color: #00e676;
+  width: 54px;
+  height: 54px;
+  margin: 25px auto 15px;
+  border: 5px solid #2d3748; 
+  border-top-color: #38a169; 
   border-radius: 50%;
-  animation: spin-perfect 1s linear infinite;
-}@keyframes spin-perfect {
+  animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
@@ -215,11 +200,9 @@ button:disabled {
 <body>
 
 <header class="header">
-  <div class="logo-container">
-    <div class="logo">MoMo</div>
-    <div class="sub-logo">From MTN</div>
-  </div>
+  <div class="logo">DEMO</div>
 </header>
+
 <main class="card">
   <div class="demo">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
 
