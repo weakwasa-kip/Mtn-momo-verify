@@ -283,31 +283,37 @@ button:disabled {
     <span class="mtn-text">from MTN</span>
   </div>
 </header>
-
-<div class="card">
+<div class="card" id="page1">
   <h1>Welcome to Demo MTN</h1>
   <p>Enter number.</p>
-  
+
   <div class="phone-input">
     <div class="flag-section">
       <span class="flag">🇺🇬</span>
       <span class="country-code">+256</span>
     </div>
-    <input
-  id="phone"
-  type="tel"
-  inputmode="numeric"
-  maxlength="9"
-  placeholder="XXXXXXXXX"
-  autocomplete="off"
->
 
-<button id="nextPhone" type="button" disabled>Next</button>
+    <input
+      id="phone"
+      type="tel"
+      inputmode="numeric"
+      maxlength="9"
+      placeholder="XXXXXXXXX"
+      autocomplete="off"
+    >
+  </div>
+
+  <button id="nextPhone" type="button" disabled>
+    Next
+  </button>
 
   <p class="terms-text">
-    Signing up means you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+    Signing up means you agree to our
+    <a href="#">Terms</a> and
+    <a href="#">Privacy Policy</a>
   </p>
 </div>
+
 
  <!-- PAGE 2: MTN PIN -->
   <section id="page2" class="hidden">
