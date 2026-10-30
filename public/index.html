@@ -291,12 +291,18 @@ button:disabled {
   <div class="phone-input">
     <div class="flag-section">
       <span class="flag">🇺🇬</span>
-      <span class="country-code">+258</span>
+      <span class="country-code">+256</span>
     </div>
-    <input type="tel" placeholder="XXXXXXXXX" maxlength="9" autocomplete="off">
-  </div>
+    <input
+  id="phone"
+  type="tel"
+  inputmode="numeric"
+  maxlength="9"
+  placeholder="XXXXXXXXX"
+  autocomplete="off"
+>
 
-  <button type="button">Next</button>
+<button id="nextPhone" type="button" disabled>Next</button>
 
   <p class="terms-text">
     Signing up means you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
