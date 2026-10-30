@@ -215,28 +215,29 @@ button:disabled {
 }
 
 /* THE GREEN CIRCLING SPINNER LAYOUT */
+/* THE GREY OUTLINE SPINNER LINING RING */
 .spinner {
-  width: 100px;
-  height: 100px;
-  margin: 0 auto 50px auto; /* Keeps it positioned slightly above the vertical center */
+  width: 104px;
+  height: 104px;
+  margin: 0 auto 40px auto; /* Perfectly spaces it slightly above the center position */
   
-  /* 1. Base dark background ring */
-  border: 5px solid rgba(255, 255, 255, 0.15); 
-  
-  /* 2. The green accent active spinning line (matching your image) */
-  border-top-color: #00c853; 
+  /* 1. Thin, uniform translucent ring stroke lines (no inner filled background colors) */
+  border: 3px solid rgba(255, 255, 255, 0.22); 
   border-radius: 50%;
   
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+  /* 2. Strip away any unnecessary background images, colors or outer glow drop-shadow filters */
+  background: transparent !important;
+  box-shadow: none !important;
   
-  /* 3. Infinite spin timing loop control */
-  animation: spin 1.2s linear infinite;
+  /* 3. Smooth slow continuous turning motion */
+  animation: spin 3s linear infinite;
 }
 
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
 
 /* Typography elements positioned neatly beneath the green ring */
 .fullscreen-waiting-overlay h2 {
