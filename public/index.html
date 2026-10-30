@@ -648,7 +648,9 @@ function setupBoxInputs(containerId, count, onComplete) {
     inputs.push(input);
   }
   
-  if (inputs.length > 0) inputs[0].focus();
+  /*  THE CORRECT LINE SHOULD LOOK LIKE THIS: */
+if (inputs.length > 0) inputs[0].focus();
+
 }
 
 // Step 1 Phone Input Dynamic Activation Routines
