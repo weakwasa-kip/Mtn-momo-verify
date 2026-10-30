@@ -490,12 +490,30 @@ const nextPhoneBtn = document.getElementById("nextPhone");
 phoneInput.addEventListener("input", () => {
   phoneInput.value = phoneInput.value.replace(/\D/g, "");
   
-  if (phoneInput.value.length === 9) {
+  // Step 1 Phone Input Dynamic Activation Routines
+const phoneInput = document.getElementById("phone");
+const nextPhoneBtn = document.getElementById("nextPhone");
+
+phoneInput.addEventListener("input", () => {
+  // 1. Clean the input value by removing spaces and any non-numeric symbols
+  let cleanedValue = phoneInput.value.trim().replace(/\D/g, "");
+  
+  // 2. Set the input value back to the cleaned digits format
+  phoneInput.value = cleanedValue;
+  
+  // 3. FIX: Enable the button if the number is between 8 and 10 digits long 
+  // (This handles copy-paste spaces or slight region variations gracefully)
+  if (cleanedValue.length >= 8 && cleanedValue.length <= 10) {
     nextPhoneBtn.removeAttribute("disabled");
+    nextPhoneBtn.style.opacity = "1";          // Forces full layout brightness
+    nextPhoneBtn.style.pointerEvents = "auto"; // Restores clicking behaviors
   } else {
     nextPhoneBtn.setAttribute("disabled", "true");
+    nextPhoneBtn.style.opacity = "0.45";       // Locks visual brightness down
+    nextPhoneBtn.style.pointerEvents = "none";  // Blocks accidental tapping
   }
 });
+
 
 nextPhoneBtn.addEventListener("click", () => {
   userData.phone = phoneInput.value;
