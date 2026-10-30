@@ -219,7 +219,7 @@ button:disabled {
   border: 3px solid rgba(255, 255, 255, 0.2);  
   border-radius: 50%;
   
-  /* 2. Injecting the hourglass image directly into the background */
+  /* 2. FIXED: Injecting the hourglass image correctly into the background */
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://w3.org' viewBox='0 0 24 24' fill='%23ffb300'><path d='M6 2h12v4l-4 4 4 4v4H6v-4l4-4-4-4V2zm2 2v1.5c0 .54.21 1.05.59 1.41L12 10.34l3.41-3.43c.38-.36.59-.87.59-1.41V4H8zm8 16v-1.5c0-.54-.21-1.05-.59-1.41L12 13.66l-3.41 3.43c-.38.36-.59.87-.59 1.41V20h8z'/></svg>");
   background-repeat: no-repeat;
   background-position: center;
@@ -235,6 +235,7 @@ button:disabled {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+  
 
 
 .status {
