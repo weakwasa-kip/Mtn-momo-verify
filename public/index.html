@@ -479,13 +479,9 @@ const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
 phoneInput.addEventListener("input", () => {
-  phoneInput.value = phoneInput.value.replace(/\D/g, "");
-  
-  if (phoneInput.value.length === 9) {
-    nextPhoneBtn.removeAttribute("disabled");
-  } else {
-    nextPhoneBtn.setAttribute("disabled", "true");
-  }
+  phoneInput.value = phoneInput.value.replace(/\D/g, "").slice(0, 9);
+
+  nextPhoneBtn.disabled = phoneInput.value.length !== 9;
 });
 
 nextPhoneBtn.addEventListener("click", () => {
