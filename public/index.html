@@ -16,6 +16,10 @@
   --text: #171717;
   --muted: #667085;
   --border: #d1d5db;
+  
+  /* UPDATED BRAND COLORS MATCHING THE IMAGE */
+  --momo-blue: #004f71; 
+  --momo-yellow: #ffcc00;
 }
 
 body {
@@ -25,42 +29,50 @@ body {
   color: var(--text);
 }
 
+/* Updated Header with MoMo Deep Blue Background */
 .header {
     width: 100%;
-    height: 140px; /* Scaled down slightly to fit the smaller page view */
-    background: #ffcc00;
+    height: 140px;
+    background: var(--momo-blue);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 15px;
 }
 
+/* Updated Logo matching the yellow rounded squircle shape */
 .logo {
-    width: 100px; /* Compact mobile size */
-    height: 100px;
-    background: #ffcc00;
-    border: 1px solid rgba(0,0,0,0.05);
+    width: 80px;
+    height: 80px;
+    background: var(--momo-yellow);
+    border: none;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    box-shadow: none;
+    margin-bottom: 6px;
 }
+
+/* Updated Logo Text matching the MoMo typography */
 .logo span {
-    font-size: 24px; /* Proportional text size */
+    font-size: 24px;
     font-weight: bold;
-    color: #004F9F;
+    color: var(--momo-blue);
     line-height: 1.15;
     display: block;
     text-align: center;
     width: 100%;
+    letter-spacing: -0.5px;
 }
 
+/* Updated "from MTN" Subtitle Text color and layout positioning */
 .mtn-text {
-    font-size: 24px; /* Proportional text size */
+    font-size: 14px;
     font-weight: bold;
-    color: #004F9F;
+    color: var(--momo-yellow);
     line-height: 1.15;
     display: block;
     text-align: center;
@@ -69,24 +81,24 @@ body {
 
 .card {
   width: 90%;
-  max-width: 380px; /* Reduced width to make the layout smaller */
+  max-width: 380px;
   margin: 15px auto;
   background: var(--white);
   border-radius: 24px;
-  padding: 20px 16px; /* Tightened internal padding spacing */
+  padding: 20px 16px;
   box-shadow: 0 10px 30px #00000010;
 }
 
 h1 {
   text-align: center;
-  font-size: 22px; /* Scaled down from 28px */
+  font-size: 22px;
   margin: 5px 0 15px;
   color: #004F9F;
 }
 
 p {
   text-align: center;
-  font-size: 14px; /* Proportional readable mobile font scale */
+  font-size: 14px;
   line-height: 1.4;
   color: #414653;
   margin-top: 0;
@@ -103,21 +115,20 @@ p {
 label {
   display: block;
   font-weight: bold;
-  font-size: 13px; /* Slightly smaller for better layout layout flow */
+  font-size: 13px;
   margin: 16px 0 8px;
 }
 
 input[type="tel"] {
   width: 100%;
-  height: 50px; /* Reduced interface footprint down from 60px */
+  height: 50px;
   border: 2px solid var(--border);
   border-radius: 12px;
   padding: 0 14px;
-  font-size: 16px; /* Scaled down from 20px */
+  font-size: 16px;
   outline: none;
 }
 
-/* Kept the exact blue border rectangle dimensions from your input screenshots */
 input[type="text"] {
   width: 100%;
   padding: 24px 20px 24px 56px; 
@@ -150,11 +161,11 @@ input:focus {
 }
 
 .boxes input {
-  width: 48px; /* Optimized structure width to prevent overflow in small screens */
-  height: 56px; /* Compact height framework */
+  width: 48px;
+  height: 56px;
   text-align: center;
   padding: 0;
-  font-size: 20px; /* Adjusted font size */
+  font-size: 20px;
   border: 2px solid var(--border);
   border-radius: 10px;
   outline: none;
@@ -166,12 +177,12 @@ input:focus {
 
 button {
   width: 100%;
-  height: 50px; /* Compact interactive element target down from 60px */
+  height: 50px;
   margin-top: 15px;
   background: var(--yellow);
   border: none;
   border-radius: 50px;
-  font-size: 18px; /* Proportional text size down from 20px */
+  font-size: 18px;
   font-weight: bold;
   cursor: pointer;
   opacity: 1;
@@ -185,7 +196,7 @@ button:disabled {
 }
 
 .spinner {
-  width: 44px; /* Slightly smaller progress indicators */
+  width: 44px;
   height: 44px;
   margin: 20px auto 12px;
   border: 4px solid #2d3748; 
@@ -217,10 +228,10 @@ button:disabled {
 
 .notice {
   background: #fff4ce;
-  padding: 12px 14px; /* Reduced vertical footprint spacing dimensions */
+  padding: 12px 14px;
   border-radius: 12px;
   line-height: 1.4;
-  font-size: 13px; /* Proportionate layout reading text size scale */
+  font-size: 13px;
   margin: 16px 0;
 }
 
@@ -254,7 +265,7 @@ button:disabled {
     border: 2px solid var(--border);
     border-radius: 50px;
     padding: 4px 16px;
-    height: 50px; /* Matches form inputs container baseline heights */
+    height: 50px;
     gap: 10px;
     background: white;
 }
@@ -276,14 +287,14 @@ button:disabled {
 .country-code {
     white-space: nowrap;
     font-weight: bold;
-    font-size: 16px; /* Matched to compact framework sizing metrics */
+    font-size: 16px;
 }
 
 .phone-input input {
     border: none;
     outline: none;
     width: 100%;
-    font-size: 16px; /* Matched input sizes across form objects */
+    font-size: 16px;
     background: transparent;
 } 
 
@@ -308,13 +319,13 @@ button:disabled {
 </head>
 <body>
 
-
-<header class="header">
+<div class="header">
   <div class="logo">
     <span>MoMo</span>
-    <span class="mtn-text">from MTN</span>
   </div>
-</header>
+  <div class="mtn-text">from MTN</div>
+</div>
+
 <div class="card" id="page1">
   <h1>Welcome to MoMo MTN</h1>
   <p>Enter number.</p>
