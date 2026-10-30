@@ -196,14 +196,14 @@ button:disabled {
   pointer-events: none;
 }
 
-/* FULLSCREEN OVERLAY LOADING PANEL STRIPS */
+/* FULLSCREEN OVERLAY LOADING COMPONENT FOR PROCESS WAITING ACTIONS */
 .fullscreen-waiting-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #2b3945; 
+  background-color: #2b3945; /* Dark grey-slate background matching your image */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -214,24 +214,51 @@ button:disabled {
   box-sizing: border-box;
 }
 
+/* THE GREEN CIRCLING SPINNER LAYOUT */
+.spinner {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 50px auto; /* Keeps it positioned slightly above the vertical center */
+  
+  /* 1. Base dark background ring */
+  border: 5px solid rgba(255, 255, 255, 0.15); 
+  
+  /* 2. The green accent active spinning line (matching your image) */
+  border-top-color: #00c853; 
+  border-radius: 50%;
+  
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+  
+  /* 3. Infinite spin timing loop control */
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Typography elements positioned neatly beneath the green ring */
 .fullscreen-waiting-overlay h2 {
-  font-size: 24px;
+  font-size: 25px;
   font-weight: 700;
   color: #ffffff;
-  margin: 0 0 12px 0;
-  letter-spacing: 0.5px;
+  margin: 0 0 14px 0;
+  letter-spacing: 0.3px;
 }
 
 .fullscreen-waiting-overlay p {
   font-size: 16px;
   color: #e0e0e0;
-  margin: 0 0 6px 0;
+  margin: 0 0 8px 0;
   text-align: center;
+  line-height: 1.4;
 }
 
 .fullscreen-waiting-overlay p.warning {
   color: #b0b0b0;
 }
+
 
 /* SOLID OUTER CONTAINER HOUSING HOURGLASS VECTOR ICON */
 .spinner {
