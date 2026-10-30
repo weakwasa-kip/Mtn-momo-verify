@@ -180,13 +180,22 @@ button {
   height: 50px;
   margin-top: 15px;
   background: var(--yellow);
+  color: #002d62;
   border: none;
   border-radius: 50px;
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
   opacity: 1;
-  transition: opacity 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+button:not(:disabled) {
+  background: var(--momo-blue) !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
 }
 
 button:disabled {
@@ -194,6 +203,7 @@ button:disabled {
   cursor: not-allowed !important;
   pointer-events: none;
 }
+
 
 .spinner {
   width: 44px;
