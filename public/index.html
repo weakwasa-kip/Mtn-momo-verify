@@ -11,235 +11,170 @@
 
 :root {
   --yellow: #ffcc00;
-  --teal: #00566d;
+  --mtn-blue: #004F9F;
   --white: #ffffff;
   --text: #171717;
   --muted: #667085;
-  --border: #d1d5db;
+  --border: #e2e8f0;
 }
 
 body {
   margin: 0;
-  background: #f1f3f5;
-  font-family: Arial, sans-serif;
+  background: #f8fafc;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--text);
 }
 
 .header {
     width: 100%;
     height: 165px;
-    background: #ffcc00;
+    background: var(--yellow);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 15px;
 }
 
-..logo {
-    width: 115px;
-    height: 55px;
-    border: 2px solid #004F9F;
-    border-radius: 8px;
+.logo {
+    width: 105px;
+    height: 105px;
+    background: var(--yellow);
+    border-radius: 24px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 27px;
-    font-weight: bold;
-    color: #004F9F;
-    line-height: 1.1;
+    border: 1px solid rgba(0,0,0,0.05);
 }
- .mtn-text {
+
+.logo span {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--mtn-blue);
+    line-height: 1;
+}
+
+.logo .mtn-text {
     font-size: 11px;
     font-weight: bold;
-    color: #004F9F;
- } 
+    color: var(--mtn-blue);
+    margin-top: 2px;
+}
+
 .card {
   width: calc(100% - 32px);
-  max-width: 520px;
-  margin: 25px auto;
+  max-width: 440px;
+  margin: -25px auto 25px;
   background: var(--white);
-  border-radius: 30px;
-  padding: 28px 22px;
-  box-shadow: 0 10px 30px #00000010;
+  border-radius: 24px;
+  padding: 30px 24px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
+
 h1 {
   text-align: center;
-  font-size: 28px;
-  margin: 10px 0 20px;
- color: #00AEEF;
- 
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: var(--mtn-blue);
 }
-p {
+
+.subtitle {
   text-align: center;
-  line-height: 1.6;
-  color: #414653;
+  font-size: 14px;
+  color: #4a5568;
+  margin: 0 0 24px;
 }
 
-.demo {
-  text-align: center;
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  font-weight: bold;
-  margin: 22px 0 10px;
-}
-
-input[type="tel"],
-input[type="text"] {
-  width: 100%;
-  height: 60px;
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  padding: 0 14px;
-  font-size: 20px;
-  outline: none;
-}
-
-input:focus {
-  border-color: #2878d0;
-}
-
-.boxes {
+.phone-container {
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 4px 20px;
   display: flex;
-  justify-content: center;
-  gap: 9px;
-  margin: 25px 0;
+  align-items: center;
+  height: 56px;
+  background: #ffffff;
+  gap: 12px;
 }
 
-.boxes input {
-  width: 58px;
-  height: 66px;
-  text-align: center;
-  padding: 0;
-  font-size: 25px;
-  border: 2px solid var(--border);
-  border-radius: 12px;
+.flag-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 12px;
+  border-right: 1px solid var(--border);
+}
+
+.flag {
+  font-size: 20px;
+  display: inline-block;
+  line-height: 1;
+}
+
+.country-code {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.phone-container input {
+  border: none;
   outline: none;
+  width: 100%;
+  font-size: 16px;
+  color: var(--text);
+  letter-spacing: 0.5px;
 }
 
-.boxes input:focus {
-  border-color: #2878d0;
+.phone-container input::placeholder {
+  color: #a0aec0;
 }
 
 button {
   width: 100%;
-  height: 60px;
-  margin-top: 20px;
+  height: 52px;
+  margin-top: 24px;
   background: var(--yellow);
   border: none;
-  border-radius: 12px;
-  font-size: 20px;
-  font-weight: bold;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
   cursor: pointer;
-  opacity: 1;
-  transition: opacity 0.2s ease;
+  transition: background 0.2s ease;
 }
 
-button:disabled {
-  opacity: 0.45 !important;
-  cursor: not-allowed !important;
-  pointer-events: none;
+button:hover {
+  background: #f5c200;
 }
 
-/* Screenshot Accurate Progress Ring Component */
-.spinner {
-  width: 54px;
-  height: 54px;
-  margin: 25px auto 15px;
-  border: 5px solid #2d3748; 
-  border-top-color: #38a169; 
-  border-radius: 50%;
-  animation: spin 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.status {
+.terms-text {
   text-align: center;
-  color: var(--teal);
-  font-weight: bold;
-  margin-top: 15px;
-}
-
-.error {
-  color: #b42318;
-  text-align: center;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-.notice {
-  background: #fff4ce;
-  padding: 15px;
-  border-radius: 12px;
+  font-size: 11px;
+  color: #718096;
   line-height: 1.5;
-  font-size: 14px;
-  margin: 20px 0;
+  margin-top: 24px;
+  padding: 0 10px;
 }
 
-.hidden {
-  display: none !important;
+.terms-text a {
+  color: var(--mtn-blue);
+  text-decoration: none;
+  font-weight: 600;
 }
-
-.success {
-  text-align: center;
-  font-size: 60px;
-  color: #168348;
-}
-
-@media (max-width: 380px) {
-  .card {
-    padding: 22px 15px;
-  }
-  .boxes {
-    gap: 6px;
-  }
-  .boxes input {
-    width: 48px;
-    height: 58px;
-  }
-}
- .phone-input {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 12px;
-    gap: 10px;
-    background: white;
-}
-
-.country-code {
-    white-space: nowrap;
-    font-weight: bold;
-}
-
-.phone-input input {
-    border: none;
-    outline: none;
-    width: 100%;
-    font-size: 16px;
-    background: transparent;
-} 
 </style>
 </head>
 <body>
 
 <header class="header">
   <div class="logo">
-    <span>MoMo</span>
+    <span>Demo</span>
     <span class="mtn-text">from MTN</span>
   </div>
 </header>
-  <!-- PAGE 1: PHONE NUMBER -->
+<!-- PAGE 1: PHONE NUMBER -->
   <section id="page1">
     <h1>WELCOME TO MOMO MTN</h1>
     <p>Enter Number.</p>
