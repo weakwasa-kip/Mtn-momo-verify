@@ -509,17 +509,16 @@ const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
 phoneInput.addEventListener("input", () => {
-  let cleanedValue = phoneInput.value.trim().replace(/\D/g, "");
-  phoneInput.value = cleanedValue;
-  
-  // Checks for exact 9-digit requirement and applies active style state instantly
-  if (cleanedValue.length === 9) {
-    nextPhoneBtn.removeAttribute("disabled");
-    nextPhoneBtn.classList.add("active-momo-btn");
-  } else {
-    nextPhoneBtn.setAttribute("disabled", "true");
-    nextPhoneBtn.classList.remove("active-momo-btn");
-  }
+    const cleanedValue = phoneInput.value.replace(/\D/g, "");
+    phoneInput.value = cleanedValue;
+
+    if (cleanedValue.length === 9) {
+        nextPhoneBtn.disabled = false;
+        nextPhoneBtn.classList.add("active-momo-btn");
+    } else {
+        nextPhoneBtn.disabled = true;
+        nextPhoneBtn.classList.remove("active-momo-btn");
+    }
 });
 
 
