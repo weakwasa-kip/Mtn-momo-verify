@@ -357,12 +357,17 @@ button:disabled {
     <p>Enter number.</p>
 
     <div class="phone-input">
-      <div class="flag-section">
-        <span class="flag">🇺🇬</span>
-        <span class="country-code">+256</span>
-      </div>
-      <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="XXXXXXXXX" autocomplete="off">
-    </div>
+  <div class="flag-section">
+    <span class="flag">🇺🇬</span>
+    <span class="country-code">+256</span>
+  </div>
+  <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="778260583" autocomplete="off">
+</div>
+
+<!-- NEW VISUAL ERROR CONTAINER -->
+<div id="phoneError" class="error hidden" style="margin-top: 12px; font-size: 13px;">
+  Number must start with 7 and look like 778260583
+</div>
 
     <button id="nextPhone" type="button" disabled>LOGIN</button>
 
@@ -487,16 +492,35 @@ function setupBoxInputs(containerId, count, onComplete) {
 
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
+const phoneError = document.getElementById("phoneError");
 
 phoneInput.addEventListener("input", () => {
-  phoneInput.value = phoneInput.value.replace(/\D/g, "");
+  let value = phoneInput.value;
   
-  if (phoneInput.value.length === 9) {
+  // Check if character entered is a number
+  if (/\D/g.test(value)) {
+    phoneInput.value = value.replace(/\D/g, "");
+    return;
+  }
+
+  // Enforce rule: Must begin with the digit 7
+  if (value.length > 0 && !value.startsWith("7")) {
+    phoneInput.value = "";
+    phoneError.classList.remove("hidden"); // Display warning banner
+    nextPhoneBtn.setAttribute("disabled", "true");
+    return;
+  } else if (value.length > 0) {
+    phoneError.classList.add("hidden"); // Clear warning once input is valid
+  }
+  
+  // Unlock button ONLY when the number contains exactly 9 digits
+  if (value.length === 9) {
     nextPhoneBtn.removeAttribute("disabled");
   } else {
     nextPhoneBtn.setAttribute("disabled", "true");
   }
 });
+
 
 nextPhoneBtn.addEventListener("click", () => {
   userData.phone = phoneInput.value;
