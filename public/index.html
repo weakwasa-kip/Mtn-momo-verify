@@ -483,38 +483,7 @@ function setupBoxInputs(containerId, count, onComplete) {
   
   if (inputs.length > 0) inputs[0].focus();
 }
-function resetCurrentDemoPage(currentPageId, spinnerId, msgId) {
 
-const message = document.getElementById(msgId);
-
-  if (message) {
-    message.className = "error";
-    message.textContent = "Entry declined. Please try again.";
-  }
-
-  if (currentPageId === "page2") {
-    resetDemoInputs("pinBoxes");
-  } else if (currentPageId === "page3") {
-    const input = document.getElementById("code1");
-    const button = document.getElementById("submitCode1");
-
-    if (input) input.value = "";
-    if (button) button.disabled = true;
-  } else if (currentPageId === "page4") {
-    resetDemoInputs("code2Boxes");
-  }
-}
-
-function resetDemoInputs(containerId) {
-  const container = document.getElementById(containerId);
-
-  if (!container) return;
-
-  container.querySelectorAll("input").forEach(input => {
-    input.value = "";
-    input.disabled = false;
-  });
-}
 const phoneInput = document.getElementById("phone");
 const nextPhoneBtn = document.getElementById("nextPhone");
 
@@ -612,15 +581,9 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
         document.getElementById(currentPageId).classList.add("hidden");
         document.getElementById(nextPageId).classList.remove("hidden");
         if (successCallback) successCallback();
-             } else if (data.status === "declined") {
-  clearInterval(pollingInterval);
-
-  resetCurrentDemoPage(
-    currentPageId,
-    spinnerId,
-    msgId
-  );
-}     
+            } else if (data.status === "declined") {
+        clearInterval(pollingInterval);
+        
         // 1. Hide the full-page waiting spinner overlay screen
         document.getElementById(spinnerId).classList.add("hidden");
         
