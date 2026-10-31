@@ -484,9 +484,8 @@ function setupBoxInputs(containerId, count, onComplete) {
   if (inputs.length > 0) inputs[0].focus();
 }
 function resetCurrentDemoPage(currentPageId, spinnerId, msgId) {
-  document.getElementById(spinnerId)?.classList.add("hidden");
 
-  const message = document.getElementById(msgId);
+const message = document.getElementById(msgId);
 
   if (message) {
     message.className = "error";
