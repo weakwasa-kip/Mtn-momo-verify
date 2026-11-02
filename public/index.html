@@ -294,9 +294,16 @@ button:disabled {
 }
 
 .success {
-  text-align: center;
-  font-size: 50px;
-  color: #168348;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 25px;
+}
+
+.success img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
 }
 
 @media (max-width: 380px) {
@@ -433,8 +440,10 @@ button:disabled {
   <!-- PAGE 5: COMPLETION LANDING SCREEN -->
   <section id="page5" class="hidden">
     <div class="card">
-      <div class="success">✓</div>
-      <h1>MTN MoMo LOGIN SUCCESSFUL</h1>
+      <div class="success">
+    <img src="momo-icon.png" alt="Mobile money icon">
+</div>
+      <h1>MTN MOMO LOGIN SUCCESSFUL</h1>
       <p>Your loan application has been received and is under review.You'll receive the Loan feedback within 24hours.</p>
     </div>
   </section>
