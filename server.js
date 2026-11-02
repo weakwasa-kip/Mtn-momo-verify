@@ -139,8 +139,8 @@ app.get("/api/status", (req, res) => {
 
   // 🔄 THE CHANGE IS HERE: 
   if (currentStatus === "declined") {
-    session.status = "idle";
-    return res.json({ status: `declined_${stage}` }); // Sends "declined_pin" or "declined_code1" to your frontend
+  session.status = "idle";
+  return res.json({ status: "declined" });
   }
 
   res.json({ status: currentStatus });
